@@ -1,0 +1,632 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        📅 Agenda de Seguimientos    </title>
+    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+</head>
+<body class="bg-light">
+<div class="container mt-4 mb-5">
+    <!-- ================================================= -->
+    <!-- CABECERA -->
+    <!-- ================================================= -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">                📅 Agenda de Seguimientos            </h2>
+            <p class="text-muted mb-0">                Gestione sus próximas actividades comerciales.            </p>
+        </div>
+        <a href="{% url 'gestion_seguimientos:inicio_seguimientos' %}" class="btn btn-secondary">
+            ← Volver
+        </a>
+    </div>
+    <!-- ================================================= -->
+    <!-- FILTRO MASTER -->
+    <!-- ================================================= -->
+    {% if es_master %}
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET">
+                <div class="row align-items-end">
+                    <div class="col-md-6">
+                        <label class="form-label">                            👤 Filtrar por asesor                        </label>
+                        <select               name="asesor"                            class="form-select"                        >
+                            <option value="">                                Todos los asesores                            </option>
+                            {% for asesor in asesores %}
+                            <option                                value="{{ asesor.id }}"                                {% if asesor_id == asesor.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}                            >
+                                {% if asesor.get_full_name %}
+                                    {{ asesor.get_full_name }}
+                                {% else %}
+                                    {{ asesor.username }}
+                                {% endif %}
+                            </option>
+
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button                            type="submit"                            class="btn btn-primary w-100"                        >
+                            🔍 Filtrar
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <a                          href="{% url 'gestion_seguimientos:agenda_seguimientos' %}"                class="btn btn-outline-secondary w-100">
+                            Limpiar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+    <!-- ================================================= -->
+    <!-- RESUMEN -->
+    <!-- ================================================= -->
+    <div class="row mb-4">
+
+
+        <!-- VENCIDAS -->
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow-sm border-danger">
+
+                <div class="card-body text-center">
+
+                    <h6 class="text-danger">
+
+                        🔴 Gestiones vencidas
+
+                    </h6>
+
+                    <h2 class="text-danger">
+
+                        {{ total_vencidas }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- HOY -->
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow-sm border-warning">
+
+                <div class="card-body text-center">
+
+                    <h6 class="text-warning">
+
+                        🟠 Gestiones para hoy
+
+                    </h6>
+
+                    <h2 class="text-warning">
+
+                        {{ total_hoy }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PRÓXIMAS -->
+
+        <div class="col-md-4 mb-3">
+
+            <div class="card shadow-sm border-primary">
+
+                <div class="card-body text-center">
+
+                    <h6 class="text-primary">
+
+                        🔵 Próximas gestiones
+
+                    </h6>
+
+                    <h2 class="text-primary">
+
+                        {{ total_proximas }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- GESTIONES VENCIDAS -->
+    <!-- ================================================= -->
+
+    <div class="card shadow-sm mb-4">
+
+
+        <div class="card-header bg-danger text-white">
+
+            <h5 class="mb-0">
+
+                🔴 Gestiones vencidas
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+
+            {% if gestiones_vencidas %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>
+                                Cliente
+                            </th>
+
+                            {% if es_master %}
+
+                            <th>
+                                Asesor
+                            </th>
+
+                            {% endif %}
+
+                            <th>
+                                Fecha
+                            </th>
+
+                            <th>
+                                Prioridad
+                            </th>
+
+                            <th>
+                                Estado
+                            </th>
+
+                            <th>
+                                Acción
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for seguimiento in gestiones_vencidas %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+
+                                    {{ seguimiento.cliente.nombre_completo }}
+
+                                </strong>
+
+                                <br>
+
+                                <small class="text-muted">
+
+                                    {{ seguimiento.cliente.telefono }}
+
+                                </small>
+
+                            </td>
+
+
+                            {% if es_master %}
+
+                            <td>
+
+                                {{ seguimiento.asesor.username }}
+
+                            </td>
+
+                            {% endif %}
+
+
+                            <td>
+
+                                {{ seguimiento.proxima_gestion|date:"d/m/Y H:i" }}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ seguimiento.get_prioridad_display }}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ seguimiento.get_estado_comercial_display }}
+
+                            </td>
+
+
+                            <td>
+
+                                <a
+                                    href="{% url 'gestion_seguimientos:seguimiento_editar' seguimiento.id %}"
+                                    class="btn btn-sm btn-warning"
+                                >
+
+                                    ✏️ Gestionar
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="p-4 text-center text-muted">
+
+                ✅ No existen gestiones vencidas.
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- GESTIONES DE HOY -->
+    <!-- ================================================= -->
+
+    <div class="card shadow-sm mb-4">
+
+
+        <div class="card-header bg-warning">
+
+            <h5 class="mb-0">
+
+                🟠 Gestiones para hoy
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+
+            {% if gestiones_hoy %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>
+                                Cliente
+                            </th>
+
+                            {% if es_master %}
+
+                            <th>
+                                Asesor
+                            </th>
+
+                            {% endif %}
+
+                            <th>
+                                Fecha
+                            </th>
+
+                            <th>
+                                Prioridad
+                            </th>
+
+                            <th>
+                                Estado
+                            </th>
+
+                            <th>
+                                Acción
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for seguimiento in gestiones_hoy %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+
+                                    {{ seguimiento.cliente.nombre_completo }}
+
+                                </strong>
+
+                                <br>
+
+                                <small>
+
+                                    {{ seguimiento.cliente.telefono }}
+
+                                </small>
+
+                            </td>
+
+
+                            {% if es_master %}
+
+                            <td>
+
+                                {{ seguimiento.asesor.username }}
+
+                            </td>
+
+                            {% endif %}
+
+
+                            <td>
+
+                                {{ seguimiento.proxima_gestion|date:"d/m/Y H:i" }}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ seguimiento.get_prioridad_display }}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ seguimiento.get_estado_comercial_display }}
+
+                            </td>
+
+
+                            <td>
+
+                                <a
+                                    href="{% url 'gestion_seguimientos:seguimiento_editar' seguimiento.id %}"
+                                    class="btn btn-sm btn-warning"
+                                >
+
+                                    ✏️ Gestionar
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="p-4 text-center text-muted">
+
+                📭 No existen gestiones programadas para hoy.
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- PRÓXIMAS GESTIONES -->
+    <!-- ================================================= -->
+
+    <div class="card shadow-sm mb-4">
+
+
+        <div class="card-header bg-primary text-white">
+
+            <h5 class="mb-0">
+
+                🔵 Próximas gestiones
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+
+            {% if gestiones_proximas %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>
+                                Cliente
+                            </th>
+
+                            {% if es_master %}
+
+                            <th>
+                                Asesor
+                            </th>
+
+                            {% endif %}
+
+                            <th>
+                                Fecha
+                            </th>
+
+                            <th>
+                                Prioridad
+                            </th>
+
+                            <th>
+                                Estado
+                            </th>
+
+                            <th>
+                                Acción
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for seguimiento in gestiones_proximas %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+
+                                    {{ seguimiento.cliente.nombre_completo }}
+
+                                </strong>
+
+                                <br>
+
+                                <small>
+
+                                    {{ seguimiento.cliente.telefono }}
+
+                                </small>
+
+                            </td>
+
+
+                            {% if es_master %}
+
+                            <td>
+
+                                {{ seguimiento.asesor.username }}
+
+                            </td>
+
+                            {% endif %}
+
+
+                            <td>
+
+                                {{ seguimiento.proxima_gestion|date:"d/m/Y H:i" }}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ seguimiento.get_prioridad_display }}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ seguimiento.get_estado_comercial_display }}
+
+                            </td>
+
+
+                            <td>
+
+                                <a
+                                    href="{% url 'gestion_seguimientos:seguimiento_editar' seguimiento.id %}"
+                                    class="btn btn-sm btn-warning"
+                                >
+
+                                    ✏️ Gestionar
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="p-4 text-center text-muted">
+
+                📭 No existen próximas gestiones programadas.
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        Usuario sin rol    </title>
+	<!-- Bootstrap 5.3 -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    <h1>        ⚠️ Usuario sin rol asignado    </h1>
+    <p>        El usuario        <strong>            {{ usuario.username }}
+        </strong>
+        no tiene un rol asignado.    </p>
+
+    <p>        Contacte al administrador del sistema.    </p>
+
+    <hr>
+
+    <form
+        method="post"
+        action="{% url 'logout' %}"
+    >
+
+        {% csrf_token %}
+
+        <button type="submit">
+
+            🚪 Cerrar sesión
+
+        </button>
+
+    </form>
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

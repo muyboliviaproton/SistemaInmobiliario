@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>Dashboard - Sistema Inmobiliario</title>
+	<!-- Bootstrap 5.3 -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    <h1>        🏡 Sistema de Gestión Inmobiliaria    </h1>
+    <hr>
+    <h2>        Bienvenido, {{ usuario.username }}    </h2>
+    <p>        Rol actual: <strong>{{ rol }}</strong>    </p>
+    <hr>
+    {% if rol == 'MASTER' %}
+        <h2>Panel MASTER</h2>
+        <p>            Tienes acceso completo al sistema.        </p>
+        <ul>
+            <li>👥 Gestión de Clientes</li>
+            <li>🏡 Gestión de Lotes</li>
+            <li>📞 Seguimientos</li>
+            <li>📅 Agenda de Visitas</li>
+            <li>🔔 Recordatorios</li>
+            <li>🗺️ Mapa General</li>
+            <li>💼 Oportunidades Comerciales</li>
+            <li>👤 Administración de Usuarios</li>
+        </ul>
+
+    {% elif rol == 'ASESOR' %}
+
+        <h2>Panel ASESOR</h2>
+
+        <p>
+            Bienvenido al panel de gestión comercial.
+        </p>
+
+        <ul>
+            <li>👥 Mis Clientes</li>
+            <li>🏡 Consultar Lotes</li>
+            <li>📞 Mis Seguimientos</li>
+            <li>📅 Mis Visitas</li>
+            <li>🔔 Mis Recordatorios</li>
+            <li>🗺️ Mapa de Lotes</li>
+            <li>💼 Mis Oportunidades</li>
+        </ul>
+
+    {% else %}
+
+        <h2>⚠️ Usuario sin rol asignado</h2>
+
+        <p>
+            Contacte al administrador del sistema.
+        </p>
+
+    {% endif %}
+
+    <hr>
+
+<form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+
+    <button type="submit">
+        🚪 Cerrar sesión
+    </button>
+</form>
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

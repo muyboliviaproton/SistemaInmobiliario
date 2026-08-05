@@ -1,0 +1,146 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Eliminar Oportunidad
+    </title>
+
+    <link
+        href="{% static 'bootstrap/css/bootstrap.min.css' %}"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body class="bg-light">
+
+
+<div class="container mt-5">
+
+
+    <div class="card shadow">
+
+
+        <!-- ================================================= -->
+        <!-- CABECERA -->
+        <!-- ================================================= -->
+
+        <div class="card-header bg-danger text-white">
+
+            <h4 class="mb-0">
+
+                🗑️ Eliminar Oportunidad
+
+            </h4>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- CONTENIDO -->
+        <!-- ================================================= -->
+
+        <div class="card-body text-center">
+
+
+            <div class="alert alert-warning">
+
+                ⚠️ ¿Está seguro de que desea eliminar
+                esta oportunidad comercial?
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- INFORMACIÓN -->
+            <!-- ================================================= -->
+
+            <div class="mb-4">
+
+
+                <h5>
+
+                    {{ oportunidad.nombre }}
+
+                </h5>
+
+
+                <p class="mb-1">
+
+                    <strong>
+                        Cliente:
+                    </strong>
+
+                    {{ cliente.nombre_completo }}
+
+                </p>
+
+
+                <p class="mb-1">
+
+                    <strong>
+                        Etapa:
+                    </strong>
+
+                    {{ oportunidad.get_etapa_display }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Asesor:
+                    </strong>
+
+                    {{ oportunidad.asesor.username }}
+
+                </p>
+
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- FORMULARIO -->
+            <!-- ================================================= -->
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <div class="d-flex justify-content-center gap-2">
+
+
+                    <a
+                        href="{% url 'oportunidades:oportunidad_lista' %}"
+                        class="btn btn-secondary"
+                    >
+
+                        ← Cancelar
+
+                    </a>
+
+
+                    <button                        type="submit"                        class="btn btn-danger"            >                🗑️ Sí, eliminar oportunidad                   </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

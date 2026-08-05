@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        Nueva Oportunidad    </title>
+    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="card shadow">
+        <!-- ================================================= -->
+        <!-- CABECERA -->
+        <!-- ================================================= -->
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">                ➕ Nueva Oportunidad Comercial            </h4>
+        </div>
+        <!-- ================================================= -->
+        <!-- CONTENIDO -->
+        <!-- ================================================= -->
+        <div class="card-body">
+
+            <!-- ================================================= -->
+            <!-- INFORMACIÓN DEL CLIENTE -->
+            <!-- ================================================= -->
+            <div class="alert alert-info">
+                <strong>                    👤 Cliente:                </strong>                {{ cliente.nombre_completo }}                <br>
+                <strong>                    📞 Teléfono:                </strong>                {{ cliente.telefono }}
+                <br>
+                <strong>                    👨‍💼 Asesor:                </strong>                {{ request.user.username }}
+            </div>
+            <!-- ================================================= -->
+            <!-- FORMULARIO -->
+            <!-- ================================================= -->
+            <form method="POST">
+                {% csrf_token %}
+                <!-- ERRORES GENERALES -->
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">                        {{ form.non_field_errors }}                    </div>
+                {% endif %}
+                <!-- ================================================= -->
+                <!-- NOMBRE -->
+                <!-- ================================================= -->
+                <div class="mb-3">
+                    <label class="form-label">                        💼 Nombre de la oportunidad                    </label>
+                    {{ form.nombre }}
+                    {% if form.nombre.errors %}
+                        <div class="text-danger">
+
+                            {{ form.nombre.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- ETAPA -->
+                <!-- ================================================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        📊 Etapa comercial
+
+                    </label>
+
+                    {{ form.etapa }}
+
+                    {% if form.etapa.errors %}
+
+                        <div class="text-danger">
+
+                            {{ form.etapa.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- PRIORIDAD -->
+                <!-- ================================================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        🔥 Prioridad
+
+                    </label>
+
+                    {{ form.prioridad }}
+
+                    {% if form.prioridad.errors %}
+
+                        <div class="text-danger">
+
+                            {{ form.prioridad.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- PRESUPUESTO -->
+                <!-- ================================================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        💰 Presupuesto estimado
+
+                    </label>
+
+                    {{ form.presupuesto }}
+
+                    {% if form.presupuesto.errors %}
+
+                        <div class="text-danger">
+
+                            {{ form.presupuesto.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- FECHA ESTIMADA -->
+                <!-- ================================================= -->
+                <div class="mb-3">
+                    <label class="form-label">                        📅 Fecha estimada de compra                    </label>
+                    {{ form.fecha_estimada_compra }}
+                    {% if form.fecha_estimada_compra.errors %}
+                        <div class="text-danger">                            {{ form.fecha_estimada_compra.errors }}                        </div>
+                    {% endif %}
+                </div>
+                <!-- ================================================= -->
+                <!-- OBSERVACIONES -->
+                <!-- ================================================= -->
+                <div class="mb-3">
+                    <label class="form-label">                        📝 Observaciones                    </label>                    {{ form.observaciones }}
+                    {% if form.observaciones.errors %}
+                        <div class="text-danger">                            {{ form.observaciones.errors }}                        </div>
+                    {% endif %}
+                </div>
+                <!-- ================================================= -->
+                <!-- BOTONES -->
+                <!-- ================================================= -->
+                <div class="d-flex gap-2">
+                    <a href="{% url 'oportunidades:oportunidad_lista' %}" class="btn btn-secondary"> ← Cancelar   </a>
+                    <button type="submit" class="btn btn-success">💾 Guardar oportunidad </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

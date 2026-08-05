@@ -1,0 +1,553 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"          content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Cliente</title>
+	<!-- Bootstrap 5.3 -->
+    <link    href="{% static 'bootstrap/css/bootstrap.min.css' %}"    rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+        <a         class="navbar-brand"           href="{% url 'dashboard' %}"        >
+            🏡 Sistema Inmobiliario
+        </a>
+        <span class="text-white">
+            Usuario:
+            {{ request.user.username }}
+        </span>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <!-- MENSAJES -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <!-- CABECERA -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>               👤 Detalle del Cliente            </h1>
+            <p class="text-muted">                Información completa del cliente            </p>
+			<a    href="{% url 'gestion_seguimientos:seguimiento_lista' cliente.id %}"    class="btn btn-primary">    📞 Ver Seguimientos</a>
+			<a  href="{% url 'oportunidades:oportunidad_crear' cliente.id %}"    class="btn btn-success">    💼 Nueva Oportunidad		</a>
+        </div>
+		
+		<!-- ================================================= -->
+<!-- OPORTUNIDADES COMERCIALES -->
+<!-- ================================================= -->
+
+<div class="card shadow-sm mt-4">
+
+    <!-- ================================================= -->
+    <!-- CABECERA -->
+    <!-- ================================================= -->
+
+    <div class="card-header bg-success text-white">
+
+        <strong>
+            💼 Oportunidades comerciales
+        </strong>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- CONTENIDO -->
+    <!-- ================================================= -->
+
+    <div class="card-body">
+
+
+        {% if oportunidades %}
+
+
+            <!-- ========================================= -->
+            <!-- TABLA DE OPORTUNIDADES -->
+            <!-- ========================================= -->
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+
+                    <!-- ================================= -->
+                    <!-- CABECERA DE TABLA -->
+                    <!-- ================================= -->
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Etapa
+                            </th>
+
+                            <th>
+                                Prioridad
+                            </th>
+
+                            <th>
+                                Próxima gestión
+                            </th>
+
+                            <th>
+                                Asesor
+                            </th>
+
+                            <th>
+                                Acciones
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <!-- ================================= -->
+                    <!-- DATOS -->
+                    <!-- ================================= -->
+
+                    <tbody>
+
+
+                    {% for oportunidad in oportunidades %}
+
+
+                        <tr>
+
+
+                            <!-- ========================= -->
+                            <!-- ETAPA -->
+                            <!-- ========================= -->
+
+                            <td>
+
+                                <span class="badge bg-primary">
+
+                                    {{ oportunidad.get_etapa_display }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- ========================= -->
+                            <!-- PRIORIDAD -->
+                            <!-- ========================= -->
+
+                            <td>
+
+                                {{ oportunidad.get_prioridad_display }}
+
+                            </td>
+
+
+                            <!-- ========================= -->
+                            <!-- PRÓXIMA GESTIÓN -->
+                            <!-- ========================= -->
+
+                            <td>
+
+                                {% if oportunidad.proxima_gestion %}
+
+                                    {{ oportunidad.proxima_gestion|date:"d/m/Y H:i" }}
+
+                                {% else %}
+
+                                    <span class="text-muted">
+
+                                        Sin fecha
+
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ========================= -->
+                            <!-- ASESOR -->
+                            <!-- ========================= -->
+
+                            <td>
+
+                                {{ oportunidad.asesor.username }}
+
+                            </td>
+
+
+                            <!-- ========================= -->
+                            <!-- ACCIONES -->
+                            <!-- ========================= -->
+
+                            <td>
+
+                                <div class="btn-group">
+
+
+                                    <!-- ================= -->
+                                    <!-- VER -->
+                                    <!-- ================= -->
+
+                                    <a
+                                        href="{% url 'oportunidades:oportunidad_detalle' oportunidad.id %}"
+                                        class="btn btn-sm btn-primary"
+                                        title="Ver oportunidad"
+                                    >
+
+                                        👁️
+
+                                    </a>
+
+
+                                    <!-- ================= -->
+                                    <!-- EDITAR -->
+                                    <!-- ================= -->
+
+                                    <a
+                                        href="{% url 'oportunidades:oportunidad_editar' oportunidad.id %}"
+                                        class="btn btn-sm btn-warning"
+                                        title="Editar oportunidad"
+                                    >
+
+                                        ✏️
+
+                                    </a>
+
+
+                                </div>
+
+                            </td>
+
+
+                        </tr>
+
+
+                    {% endfor %}
+
+
+                    </tbody>
+
+
+                </table>
+
+            </div>
+
+
+        {% else %}
+
+
+            <!-- ========================================= -->
+            <!-- SIN OPORTUNIDADES -->
+            <!-- ========================================= -->
+
+            <div class="alert alert-info mb-0">
+
+                Este cliente todavía no tiene oportunidades comerciales registradas.
+
+            </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+		
+        <div>
+           <a       href="{% url 'clientes:cliente_lista' %}"             class="btn btn-secondary"            >
+                ← Volver            </a>
+        </div>
+    </div>
+
+
+    <!-- DATOS DEL CLIENTE -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-dark text-white">
+
+            <h4 class="mb-0">
+
+                {{ cliente.nombre_completo }}
+
+            </h4>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="row">
+
+
+                <!-- NOMBRE -->
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>
+                        Nombre completo
+                    </strong>
+
+                    <p class="form-control bg-light">
+
+                        {{ cliente.nombre_completo }}
+
+                    </p>
+
+                </div>
+
+
+                <!-- TELÉFONO -->
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>
+                        Teléfono
+                    </strong>
+
+                    <p class="form-control bg-light">
+
+                        {{ cliente.telefono }}
+
+                    </p>
+
+                </div>
+
+
+                <!-- WHATSAPP -->
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>
+                        WhatsApp
+                    </strong>
+
+                    <p class="form-control bg-light">
+
+                        {{ cliente.whatsapp|default:"No registrado" }}
+
+                    </p>
+
+                </div>
+
+
+                <!-- CORREO -->
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>
+                        Correo electrónico
+                    </strong>
+
+                    <p class="form-control bg-light">
+
+                        {{ cliente.correo|default:"No registrado" }}
+
+                    </p>
+
+                </div>
+
+
+                <!-- DIRECCIÓN -->
+
+                <div class="col-md-12 mb-3">
+
+                    <strong>
+                        Dirección
+                    </strong>
+
+                    <p class="form-control bg-light">
+
+                        {{ cliente.direccion|default:"No registrada" }}
+
+                    </p>
+
+                </div>
+
+
+                <!-- CAPACIDAD DE PAGO -->
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>
+                        Capacidad de pago mensual
+                    </strong>
+
+                    <p class="form-control bg-light">
+
+                        {% if cliente.capacidad_pago_mensual %}
+
+                            $ {{ cliente.capacidad_pago_mensual }}
+
+                        {% else %}
+
+                            No registrada
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+
+                <!-- ESTADO -->
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>
+                        Estado
+                    </strong>
+
+                    <p>
+
+                        {% if cliente.estado == 'NUEVO' %}
+
+                            <span class="badge bg-primary fs-6">
+                                Nuevo
+                            </span>
+
+                        {% elif cliente.estado == 'CONTACTADO' %}
+
+                            <span class="badge bg-info fs-6">
+                                Contactado
+                            </span>
+
+                        {% elif cliente.estado == 'INTERESADO' %}
+
+                            <span class="badge bg-warning text-dark fs-6">
+                                Interesado
+                            </span>
+
+                        {% elif cliente.estado == 'ACTIVO' %}
+
+                            <span class="badge bg-success fs-6">
+                                Activo
+                            </span>
+
+                        {% elif cliente.estado == 'INACTIVO' %}
+
+                            <span class="badge bg-secondary fs-6">
+                                Inactivo
+                            </span>
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+
+                <!-- ASESOR -->
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>
+                        Asesor responsable
+                    </strong>
+
+                    <p class="form-control bg-light">
+
+                        {{ cliente.asesor.username }}
+
+                    </p>
+
+                </div>
+
+
+                <!-- FECHA REGISTRO -->
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>
+                        Fecha de registro
+                    </strong>
+
+                    <p class="form-control bg-light">
+
+                        {{ cliente.fecha_registro|date:"d/m/Y H:i" }}
+
+                    </p>
+
+                </div>
+
+
+                <!-- FECHA ACTUALIZACIÓN -->
+
+                <div class="col-md-6 mb-3">
+
+                    <strong>
+                        Última actualización
+                    </strong>
+
+                    <p class="form-control bg-light">
+
+                        {{ cliente.fecha_actualizacion|date:"d/m/Y H:i" }}
+
+                    </p>
+
+                </div>
+
+
+                <!-- OBSERVACIONES -->
+
+                <div class="col-md-12 mb-3">
+
+                    <strong>
+                        Observaciones
+                    </strong>
+
+                    <div class="form-control bg-light"
+                         style="min-height: 100px;">
+
+                        {{ cliente.observaciones|default:"Sin observaciones" }}
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- BOTONES -->
+
+        <div class="card-footer">
+
+            <a
+                href="{% url 'clientes:cliente_lista' %}"
+                class="btn btn-secondary"
+            >
+                ← Volver a Clientes
+            </a>
+
+
+            <a                href="{% url 'clientes:cliente_editar' cliente.id %}"                class="btn btn-warning"            >
+                ✏️ Editar Cliente            </a>
+
+            {% if es_master %}
+                <a                    href="{% url 'clientes:cliente_eliminar' cliente.id %}"                    class="btn btn-danger"                >
+                    🗑️ Eliminar
+                </a>
+				
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+
+</html>

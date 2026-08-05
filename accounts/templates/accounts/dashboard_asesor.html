@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        Dashboard Asesor    </title>
+	<!-- Bootstrap 5.3 -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+
+
+<body>
+    <h1>        🏡 Sistema de Gestión Inmobiliaria    </h1>
+    <hr>
+    <!-- INFORMACIÓN DEL USUARIO -->
+    <h2>        Bienvenido, {{ usuario.username }}    </h2>
+    <p>        Rol actual:        <strong>            {{ rol }}
+        </strong>
+    </p>
+    <hr>
+    <!-- PANEL DEL ASESOR -->
+    <h2>        👨‍💼 Panel del Asesor    </h2>
+    <p>        Desde este panel puedes gestionar tus actividades
+        comerciales y realizar seguimiento a tus clientes.    </p>
+    <hr>
+    <!-- MÓDULOS DEL ASESOR -->
+    <h3>        📊 Gestión Comercial   </h3>
+    <ul>
+         <li>👥 <a href="{% url 'clientes:cliente_lista' %}">Gestion de Clientes  </a></li>
+        <li>          🏡           <strong>               Consultar Lotes        </strong>        </li>
+        <li> 📞   <a href="{% url 'gestion_seguimientos:inicio_seguimientos' %}">   Seguimientos    </a></li>
+        <li>📊   <a    href="{% url 'gestion_seguimientos:dashboard_comercial' %}" class="btn btn-primary">        Dashboard Comercial      </a>      </li>
+		<li>📅   <a    href="{% url 'gestion_seguimientos:agenda_seguimientos' %}" class="btn btn-primary">        Agenda de Seguimientos  </a></li>
+        <li>          🔔           <strong>               Mis Recordatorios      </strong>        </li>
+        <li>          🗺️           <strong>               Mapa de Lotes          </strong>        </li>
+        <li>💼 <a    href="{% url 'oportunidades:oportunidad_lista' %}" class="btn btn-primary">         Oportunidades Comerciales  </a>      </li>
+    </ul>
+    <hr>
+    <!-- ACCIONES -->
+    <h3>       ⚡ Acciones rápidas    </h3>
+    <ul>
+        <li>            ➕ Registrar nuevo cliente        </li>
+        <li>            📅 Programar visita        </li>
+        <li>            📞 Registrar seguimiento        </li>
+        <li>            🔔 Crear recordatorio        </li>
+        <li>            💼 Registrar oportunidad        </li>
+    </ul>
+    <hr>
+    <!-- CERRAR SESIÓN -->
+    <form        method="post"        action="{% url 'logout' %}"    >
+        {% csrf_token %}
+        <button type="submit">
+            🚪 Cerrar sesión
+        </button>
+    </form>
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

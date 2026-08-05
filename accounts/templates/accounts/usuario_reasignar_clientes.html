@@ -1,0 +1,274 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>        Reasignar clientes    </title>
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+<body class="bg-light">
+<!-- ====================================================== -->
+<!-- NAVBAR -->
+<!-- ====================================================== -->
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'dashboard_master' %}">🏡 Sistema Inmobiliario</a>
+        <span class="text-white">            Usuario:           {{ request.user.username }}        </span>
+    </div>
+</nav>
+<!-- ====================================================== -->
+<!-- CONTENIDO -->
+<!-- ====================================================== -->
+<div class="container mt-4">
+    <!-- MENSAJES -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert
+                {% if message.tags == 'error' %}
+                    alert-danger
+                {% else %}
+                    alert-{{ message.tags }}
+                {% endif %}
+                alert-dismissible fade show"
+                role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <!-- CABECERA -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>🔄 Reasignar clientes        </h1>
+            <p class="text-muted">
+                Selecciona uno o varios clientes y asígnalos a otro asesor.
+            </p>
+        </div>
+        <a href="{% url 'usuario_clientes' asesor_actual.id %}"  class="btn btn-secondary">← Volver</a>
+    </div>
+    <!-- ASESOR ACTUAL -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5> 👤 Asesor actual         </h5>
+            <div class="row">
+                <div class="col-md-4">
+                    <strong> Usuario: </strong>
+                    {{ asesor_actual.username }}
+                </div>
+                <div class="col-md-4">
+                    <strong> Nombre:   </strong>
+                    {{ asesor_actual.first_name }}
+                    {{ asesor_actual.last_name }}
+                </div>
+                <div class="col-md-4">
+                    <strong> Estado:   </strong>
+                    {% if asesor_actual.is_active %}
+                        <span class="badge bg-success">  🟢 Activo         </span>
+                    {% else %}
+                        <span class="badge bg-secondary">⚪ Inactivo      </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- FORMULARIO -->
+    <form method="POST">
+        {% csrf_token %}
+        <!-- NUEVO ASESOR -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="mb-3"> 👤 Nuevo asesor responsable   </h5>
+                <select name="nuevo_asesor"  class="form-select" required>
+                    <option value="">-- Seleccione un asesor --</option>
+                    {% for asesor in asesores %}
+                        <option value="{{ asesor.id }}">
+                            {{ asesor.username }}
+                            {% if asesor.first_name %}
+                                -
+                                {{ asesor.first_name }}
+                                {{ asesor.last_name }}
+                            {% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+                {% if not asesores %}
+                    <div class="alert alert-warning mt-3 mb-0">
+                        ⚠️ No existen otros asesores activos disponibles para realizar la reasignación.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- CLIENTES -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>  👥 Clientes disponibles  </span>
+                    <span>  {{ clientes|length }}    cliente(s)   </span>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if clientes %}
+                    <!-- SELECCIONAR TODOS -->
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="seleccionarTodos">
+                        <label class="form-check-label fw-bold" for="seleccionarTodos">
+                            Seleccionar todos
+                        </label>
+                    </div>
+                    <hr>
+                    <!-- LISTA DE CLIENTES -->
+                    {% for cliente in clientes %}
+                        <div class="form-check border rounded p-3 mb-2">
+                            <input type="checkbox" name="clientes" value="{{ cliente.id }}" class="form-check-input cliente-check" id="cliente{{ cliente.id }}">
+                            <label class="form-check-label w-100"  for="cliente{{ cliente.id }}">
+                                <strong> {{ cliente.nombre_completo }}                 </strong>
+                                <br>
+                                <small class="text-muted">📱 {{ cliente.telefono }}      {% if cliente.whatsapp %}           |
+                                        WhatsApp:
+                                        {{ cliente.whatsapp }}
+                                    {% endif %}
+                                </small>
+                                <br>
+                                <small>Estado: {% if cliente.estado == 'NUEVO' %}
+                                        <span class="badge bg-primary"> Nuevo</span>
+                                    {% elif cliente.estado == 'CONTACTADO' %}
+                                        <span class="badge bg-info"> Contactado  </span>
+
+
+                                    {% elif cliente.estado == 'INTERESADO' %}
+
+                                        <span class="badge bg-warning text-dark">
+
+                                            Interesado
+
+                                        </span>
+
+
+                                    {% elif cliente.estado == 'ACTIVO' %}
+
+                                        <span class="badge bg-success">
+
+                                            Activo
+
+                                        </span>
+
+
+                                    {% elif cliente.estado == 'INACTIVO' %}
+
+                                        <span class="badge bg-secondary">
+
+                                            Inactivo
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </small>
+
+
+                            </label>
+
+
+                        </div>
+
+
+                    {% endfor %}
+
+
+                    <!-- BOTONES -->
+
+
+                    <div class="d-flex
+                                justify-content-between
+                                mt-4"
+                    >
+
+
+                        <a
+                            href="{% url 'usuario_clientes' asesor_actual.id %}"
+                            class="btn btn-secondary"
+                        >
+
+                            Cancelar
+
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                            {% if not asesores %}
+                                disabled
+                            {% endif %}
+                        >
+
+                            🔄 Reasignar clientes seleccionados
+
+                        </button>
+
+
+                    </div>
+
+
+                {% else %}
+
+
+                    <div class="text-center py-5">
+
+
+                        <h4>
+
+                            👥 No hay clientes para reasignar
+
+                        </h4>
+
+
+                        <p class="text-muted">
+
+                            Este asesor no tiene clientes activos
+                            asignados actualmente.
+
+                        </p>
+
+
+                    </div>
+
+
+                {% endif %}
+
+
+            </div>
+
+        </div>
+
+    </form>
+</div>
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script>
+    document
+        .getElementById('seleccionarTodos')
+        ?.addEventListener(
+            'change',
+            function () {
+
+                const checkboxes =
+                    document.querySelectorAll(
+                        '.cliente-check'
+                    );
+
+                checkboxes.forEach(
+                    function (checkbox) {
+
+                        checkbox.checked =
+                            this.checked;
+
+                    },
+                    this
+                );
+
+            }
+        );
+</script>
+</body>
+</html>

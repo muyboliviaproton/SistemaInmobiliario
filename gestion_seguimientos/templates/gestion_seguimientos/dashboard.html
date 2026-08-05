@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        Dashboard Comercial    </title>
+    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+</head>
+<body class="bg-light">
+<div class="container-fluid mt-4 mb-5">
+    <!-- ================================================= -->
+    <!-- CABECERA -->
+    <!-- ================================================= -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">                📊 Dashboard Comercial            </h2>
+            <p class="text-muted mb-0">                Resumen general de gestión comercial            </p>
+        </div>
+        <div>
+            <a href="{% url 'gestion_seguimientos:inicio_seguimientos' %}" class="btn btn-secondary">
+                ← Seguimientos
+            </a>
+        </div>
+    </div>
+    <!-- ================================================= -->
+    <!-- FILTRO MASTER -->
+    <!-- ================================================= -->
+    {% if es_master %}
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET">
+                <div class="row align-items-end">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold">                            👤 Filtrar por asesor                        </label>
+                        <select name="asesor" class="form-select">
+                            <option value="">                                Todos los asesores                            </option>
+                            {% for asesor in asesores %}
+                            <option value="{{ asesor.id }}" {% if asesor_seleccionado and asesor.id == asesor_seleccionado.id %} selected {% endif %}>
+                                {% if asesor.get_full_name %}
+                                    {{ asesor.get_full_name }}
+                                {% else %}
+                                    {{ asesor.username }}
+                                {% endif %}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <button                           type="submit"                           class="btn btn-primary w-100"              >
+                            🔍 Filtrar Dashboard
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- ================================================= -->
+    <!-- ASESOR SELECCIONADO -->
+    <!-- ================================================= -->
+
+    {% if asesor_seleccionado %}
+
+    <div class="alert alert-info">
+
+        📌 Mostrando información de:
+
+        <strong>
+
+            {{ asesor_seleccionado.get_full_name|default:asesor_seleccionado.username }}
+
+        </strong>
+
+    </div>
+
+    {% elif es_master %}
+
+    <div class="alert alert-success">
+
+        👑 Mostrando información de
+
+        <strong>
+
+            todos los asesores
+
+        </strong>
+    </div>
+    {% endif %}
+    <!-- ================================================= -->
+    <!-- TARJETAS PRINCIPALES -->
+    <!-- ================================================= -->
+    <div class="row g-4 mb-4">
+        <!-- TOTAL CLIENTES -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">                        👥 Total Clientes                 </h6>
+                    <h2 class="fw-bold">                        {{ total_clientes }}                 </h2>
+                </div>
+            </div>
+        </div>
+        <!-- CON SEGUIMIENTO -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">                       📞 Con Seguimiento                    </h6>
+                    <h2 class="fw-bold text-success">                        {{ clientes_con_seguimiento }}                    </h2>
+                </div>
+            </div>
+        </div>
+        <!-- SIN SEGUIMIENTO -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">                       ⚠️ Sin Seguimiento                    </h6>
+                    <h2 class="fw-bold text-danger">                        {{ clientes_sin_seguimiento }}                    </h2>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL SEGUIMIENTOS -->
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+
+                        📊 Total Seguimientos
+
+                    </h6>
+
+                    <h2 class="fw-bold text-primary">
+
+                        {{ total_seguimientos }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ================================================= -->
+    <!-- ESTADÍSTICAS COMERCIALES -->
+    <!-- ================================================= -->
+    <div class="row g-4">
+        <!-- INTERESADOS -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">                        ⭐ Clientes Interesados                    </h6>
+                    <h2 class="fw-bold">                        {{ clientes_interesados }}                    </h2>
+                </div>
+            </div>
+        </div>
+        <!-- NEGOCIACIÓN -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">                       🤝 En Negociación                    </h6>
+                    <h2 class="fw-bold">                        {{ clientes_negociacion }}                    </h2>
+                </div>
+            </div>
+        </div>
+        <!-- VISITAS -->
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+
+                        📅 Visitas Agendadas
+
+                    </h6>
+
+                    <h2 class="fw-bold">
+
+                        {{ visitas_agendadas }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- VENTAS -->
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">                       💰 Ventas Realizadas                    </h6>
+                    <h2 class="fw-bold text-success">                        {{ ventas_realizadas }}                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

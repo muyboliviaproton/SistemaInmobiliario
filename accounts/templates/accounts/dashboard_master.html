@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>Panel MASTER</title>
+	<!-- Bootstrap 5.3 -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+
+<body>
+
+    <h1>
+        Sistema de Gestion Inmobiliaria
+    </h1>
+
+    <hr>
+
+    <h2>
+        Panel MASTER
+    </h2>
+
+    <p>
+        Usuario:
+        <strong>
+            {{ usuario.username }}
+        </strong>
+    </p>
+
+    <p>
+        Rol:
+        <strong>
+            MASTER
+        </strong>
+    </p>
+
+    <hr>
+
+    <h3>
+        Administracion General
+    </h3>
+
+    <ul>
+        <li>👥 <a href="{% url 'usuarios_lista' %}" class="btn btn-primary">        Gestión de Asesores   </a></li>
+        <li>👥 <a href="{% url 'clientes:cliente_lista' %}" class="btn btn-primary">Gestion de Clientes  </a></li>
+        <li>🏡            Gestion de Lotes        </li>
+        <li> 📞   <a href="{% url 'gestion_seguimientos:inicio_seguimientos' %}" class="btn btn-primary">  Seguimientos    </a></li>
+        <li>📊    <a    href="{% url 'gestion_seguimientos:dashboard_comercial' %}" class="btn btn-primary">        Dashboard Comercial         </a></li>
+		<li>📅    <a    href="{% url 'gestion_seguimientos:agenda_seguimientos' %}" class="btn btn-primary">        Agenda de Seguimientos      </a></li>
+        <li>🔔            Recordatorios        </li>
+        <li>🗺️            Mapa General        </li>
+        <li>💼 <a    href="{% url 'oportunidades:oportunidad_lista' %}" class="btn btn-primary">         Oportunidades Comerciales  </a>      </li>
+		<a   href="{% url 'clientes:papelera_clientes' %}"    class="btn btn-outline-danger">    🗑️ Papelera</a>
+    </ul>
+
+    <hr>
+
+    <a href="{% url 'dashboard' %}">        Volver al Dashboard    </a>
+
+    <br><br>
+
+    <form
+        method="post"
+        action="{% url 'logout' %}"
+    >
+
+        {% csrf_token %}
+
+        <button type="submit">
+            Cerrar sesion
+        </button>
+
+    </form>
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

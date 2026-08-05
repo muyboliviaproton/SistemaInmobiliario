@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        Cliente no disponible    </title>
+    <!-- Bootstrap local -->
+    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+</head>
+<body class="bg-light">
+<div class="container">
+    <div        class="row justify-content-center align-items-center"        style="min-height: 80vh;"    >
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow border-0">
+                <div class="card-body text-center p-5">
+                    <!-- ICONO -->
+                    <div class="mb-4">
+                        <span                            class="display-1"                        >                            ⚠️                        </span>
+                    </div>
+                    <!-- TITULO -->
+                    <h1 class="h3 fw-bold text-danger mb-3">                        Cliente no disponible
+                    </h1>
+                    <!-- MENSAJE -->
+                    <p class="lead text-muted">
+                        El cliente que intentas consultar                   no está disponible.
+                    </p>
+
+                    <div class="alert alert-warning text-start">
+                        <strong>                         Esto puede deberse a que:                        </strong>
+                        <ul class="mb-0 mt-2">
+                            <li>                                No tienes permisos para acceder      a este cliente.                            </li>
+                            <li>                             El cliente pertenece a otro asesor.                            </li>
+                            <li>                                El cliente fue enviado a la papelera.                            </li>
+                            <li>                                El cliente ya no existe.                            </li>
+                        </ul>
+                    </div>
+                    <!-- BOTÓN -->
+                    <div class="mt-4">
+                        <a                            href="{% url 'clientes:cliente_lista' %}"                            class="btn btn-primary px-4"                        >
+                            ← Volver al listado de mis clientes                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Bootstrap JS -->
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

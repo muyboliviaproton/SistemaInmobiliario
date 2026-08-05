@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        Confirmar eliminación    </title>
+	<!-- Bootstrap 5.3 -->
+    <link    href="{% static 'bootstrap/css/bootstrap.min.css' %}"    rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+               <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">                        ⚠️ Confirmar acción                    </h4>
+                </div>
+
+                <div class="card-body text-center">
+                    <h5>                        ¿Está seguro de enviar este cliente
+                        a la papelera?
+
+                    </h5>
+
+
+                    <div class="alert alert-warning mt-4">
+
+                        <strong>
+
+                            {{ cliente.nombre_completo }}
+
+                        </strong>
+
+                        <br>
+
+                        Teléfono:
+
+                        {{ cliente.telefono }}
+
+                        <br>
+
+                        Estado:
+
+                        {{ cliente.get_estado_display }}
+
+                    </div>
+
+
+                    <p class="text-muted">
+
+                        El cliente no será eliminado
+                        definitivamente.
+
+                        Podrá ser restaurado posteriormente
+                        desde la papelera.
+
+                    </p>
+
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger"
+                        >
+
+                            Sí, enviar a papelera
+
+                        </button>
+
+
+                        <a
+                            href="{% url 'clientes:cliente_lista' %}"
+                            class="btn btn-secondary"                        >
+                            Cancelar
+                        </a>
+                    </form>
+                </div>
+           </div>
+        </div>
+    </div>
+</div>
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

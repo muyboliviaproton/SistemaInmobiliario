@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"          content="width=device-width, initial-scale=1.0">
+    <title>        Visitas Programadas    </title>
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}"          rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-4">
+    <!-- =============================================== -->
+    <!-- CABECERA -->
+    <!-- =============================================== -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>                📅 Visitas Programadas            </h2>
+            <p class="text-muted mb-0">                Administración de visitas comerciales.            </p>
+        </div>
+    </div>
+    <!-- =============================================== -->
+    <!-- TABLA -->
+    <!-- =============================================== -->
+    <div class="card shadow">
+        <div class="card-header">
+            <strong>                Lista de visitas            </strong>
+        </div>
+        <div class="card-body">
+            {% if visitas %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Asesor</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Estado</th>
+                        <th>Prioridad</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for visita in visitas %}
+                    <tr>
+                        <td>
+						<strong>                                {{ visita.cliente.nombre_completo }}                            </strong>
+                            <br>
+                            <small class="text-muted">                                {{ visita.lugar }}                            </small>
+                        </td>
+                        <td>                            {{ visita.asesor.username }}                        </td>
+                        <td>                            {{ visita.fecha|date:"d/m/Y" }}                        </td>
+                        <td>                            {{ visita.hora }}                        </td>
+                        <td>                            {% if visita.estado == 'PENDIENTE' %}
+
+                                <span class="badge bg-warning text-dark">                                    Pendiente                                </span>
+                            {% elif visita.estado == 'CONFIRMADA' %}
+                                <span class="badge bg-primary">                                   Confirmada                                </span>
+                            {% elif visita.estado == 'REALIZADA' %}
+                                <span class="badge bg-success">                                    Realizada                                </span>
+                            {% else %}
+                                <span class="badge bg-danger">                                    Cancelada                                </span>
+                            {% endif %}
+                        </td>
+                        <td>                            {% if visita.prioridad == 'ALTA' %}                                🔴 Alta
+                            {% elif visita.prioridad == 'MEDIA' %}                                🟡 Media
+                            {% else %}                               🟢 Baja
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="btn-group">
+                                <a href="{% url 'visitas:visita_detalle' visita.id %}" class="btn btn-sm btn-primary">
+                                    👁️                                </a>
+                                <a href="{% url 'visitas:visita_editar' visita.id %}"                                   class="btn btn-sm btn-warning">
+                                    ✏️                                </a>
+                                <a href="{% url 'visitas:visita_eliminar' visita.id %}"                                 class="btn btn-sm btn-danger">
+                                    🗑️                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="alert alert-info">
+
+                No existen visitas registradas.
+
+            </div>
+
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

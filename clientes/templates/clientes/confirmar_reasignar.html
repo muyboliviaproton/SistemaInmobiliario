@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta       name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        Reasignar cliente    </title>
+    <!-- Bootstrap local -->
+    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+</head>
+<body class="bg-light">
+<div class="container min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="row justify-content-center w-100">
+        <div class="col-12 col-md-8 col-lg-6">
+            <!-- TARJETA -->
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4 p-md-5">
+                    <!-- ICONO -->
+                    <div class="text-center fs-1 mb-3">
+                        🔄                    </div>
+                    <!-- TITULO -->
+                    <h1 class="h3 fw-bold text-center mb-4">                        Reasignar cliente                    </h1>
+                    <!-- INFORMACIÓN -->
+                    <div class="alert alert-warning">
+                        <strong>                            Atención:                        </strong>
+                        Este cliente se encuentra actualmente                       en la papelera.
+                    </div>
+                    <!-- CLIENTE -->
+                    <div class="alert alert-light border">
+                        <div class="mb-2">
+                           <strong>                                Cliente:                            </strong>
+                            {{ cliente.nombre_completo }}
+                        </div>
+                        <div>
+                            <strong>                             Teléfono:                           </strong>
+                            {{ cliente.telefono }}
+                        </div>
+                   </div>
+
+
+                    <!-- EXPLICACIÓN -->
+                    <p class="text-secondary">                        Al reasignar este cliente:                    </p>
+                    <ul class="text-secondary">
+                        <li>                            Saldrá de la papelera.                        </li>
+                        <li>                            Será asignado al nuevo asesor.                        </li>
+                        <li>                            Su estado será establecido como                         <strong>INACTIVO</strong>.
+                        </li>
+
+                    </ul>
+                    <!-- FORMULARIO -->
+                    <form                        method="POST"                    >                        {% csrf_token %}
+
+                        <!-- ASESOR -->
+                        <div class="mb-4">
+                            <label                                for="asesor"                                class="form-label fw-bold"                            >
+                                Nuevo asesor responsable                            </label>
+                            <select name="asesor" id="asesor"                           class="form-select"                                required                            >
+
+                                <option  value=""                                   selected                                  disabled                               >
+                                    Seleccione un asesor
+                                </option>
+
+                                {% for asesor in asesores %}
+                                    <option                                    value="{{ asesor.id }}"                                   >
+                                        {{ asesor.get_full_name|default:asesor.username }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- BOTONES -->
+                        <div class="d-flex flex-column flex-sm-row justify-content-center gap-2">
+                            <!-- CANCELAR -->
+                            <a         href="{% url 'clientes:papelera_clientes' %}"          class="btn btn-secondary btn-lg"                            >
+                                Cancelar
+                            </a>
+                            <!-- CONFIRMAR -->
+                            <button                 type="submit"            class="btn btn-warning btn-lg"                     >
+                                🔄 Confirmar reasignación
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Bootstrap JS -->
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+	</html>

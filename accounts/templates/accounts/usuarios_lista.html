@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        Gestión de Usuarios    </title>
+    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+</head>
+<body class="bg-light">
+<!-- ====================================================== -->
+<!-- NAVBAR -->
+<!-- ====================================================== -->
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+        <a            class="navbar-brand"            href="{% url 'dashboard_master' %}"        >
+            🏡 Sistema Inmobiliario        </a>
+
+        <span class="text-white">
+            Usuario:            {{ request.user.username }}
+        </span>
+    </div>
+</nav>
+
+<!-- ====================================================== -->
+<!-- CONTENIDO -->
+<!-- ====================================================== -->
+
+<div class="container mt-4">
+    <!-- CABECERA -->
+    <div        class="d-flex justify-content-between align-items-center mb-4"    >
+        <div>
+            <h1>                👥 Gestión de Usuarios            </h1>
+            <p class="text-muted">                Administración de asesores del sistema
+            </p>
+        </div>
+        <div>
+
+    <a     href="{% url 'usuario_crear' %}"       class="btn btn-success"    >
+        + Nuevo Asesor    </a>
+    <a      href="{% url 'dashboard_master' %}"      class="btn btn-secondary"    >
+        ← Volver    </a>
+
+</div>
+    </div>
+    <!-- INFORMACIÓN -->
+    <div class="alert alert-info">
+
+        <strong>            Rol:        </strong>
+        MASTER        <br>
+        Desde aquí puedes administrar los asesores
+        registrados en el sistema.
+    </div>
+    <!-- TABLA -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table                    class="table table-hover align-middle"                >
+                    <thead class="table-dark">
+                        <tr>
+                            <th>                                Usuario                            </th>
+                            <th>                                Nombre                            </th>
+                            <th>                                Correo                            </th>
+                            <th>                                Estado                            </th>
+                            <th class="text-center">                                Acciones                            </th>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        {% for usuario in usuarios %}
+                            <tr>
+                                <td>
+                                    <strong>                                       {{ usuario.username }}                                    </strong>
+                                </td>
+                                <td>                                    {{ usuario.first_name }}                                   {{ usuario.last_name }}                                </td>
+                                <td>                                    {{ usuario.email|default:"-" }}                               </td>
+                                <td>                                    {% if usuario.is_active %}
+                                        <span class="badge bg-success"                 >                                            Activo
+                                        </span>
+                                    {% else %}
+                                        <span   class="badge bg-secondary"                         >
+                                            Inactivo
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td class="text-center">
+                                    <a href="{% url 'usuario_editar' usuario.id %}" class="btn btn-sm btn-warning">    ✏️ Editar</a>
+									<a href="{% url 'usuario_cambiar_password' usuario.id %}" class="btn btn-sm btn-dark">    🔑 Contraseña</a>
+									<a href="{% url 'usuario_clientes' usuario.id %}" class="btn btn-sm btn-primary">  👥 Clientes</a>
+                                    <a href="{% url 'usuario_cambiar_estado' usuario.id %}" class="btn btn-sm {% if usuario.is_active %} btn-danger {% else %} btn-success {% endif %}">
+									{% if usuario.is_active %}
+									🔒 Desactivar
+									{% else %}
+									🔓 Activar
+									{% endif %}
+									</a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td  colspan="5" class="text-center py-5" >
+                                    <h4>                                        No hay asesores registrados                                    </h4>
+                                    <p class="text-muted"> Todavía no existen usuarios    pertenecientes al grupo ASESOR.                                    </p>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- VOLVER -->
+    <div class="mt-4">
+        <a            href="{% url 'dashboard_master' %}"            class="btn btn-secondary"        >            ← Volver al Dashboard        </a>
+    </div>
+
+</div>
+
+
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        Seguimiento del Cliente    </title>
+    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+</head>
+<body class="bg-light">
+<div class="container mt-4">
+    <!-- ================================================== -->
+    <!-- CABECERA -->
+    <!-- ================================================== -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="mb-2">                        📋 Seguimiento del Cliente                    </h1>
+                    <h4 class="mb-1">                        {{ cliente.nombre_completo }}                    </h4>
+                    <p class="text-muted mb-0">                        📞 {{ cliente.telefono }}                        {% if cliente.whatsapp %}
+                            <br>
+                            💬 WhatsApp:                            {{ cliente.whatsapp }}
+                        {% endif %}
+                    </p>
+                </div>
+
+
+                <div class="text-end">
+
+                    <!-- NUEVO SEGUIMIENTO -->
+
+                    <a href="{% url 'gestion_seguimientos:seguimiento_crear' cliente.id %}" class="btn btn-success">➕ Nuevo Seguimiento</a>
+					<a  href="{% url 'oportunidades:oportunidad_crear' cliente.id %}"    class="btn btn-success">    💼 Nueva Oportunidad		</a>
+                    <!-- VOLVER AL CLIENTE -->
+                    <a href="{% url 'clientes:cliente_detalle' cliente.id %}" class="btn btn-secondary" >← Volver al Cliente               </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- HISTORIAL -->
+    <!-- ================================================== -->
+
+    <div class="card shadow-sm">
+
+
+        <div class="card-header bg-dark text-white">
+
+            <h5 class="mb-0">
+
+                📋 Historial de Seguimiento
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            {% for seguimiento in seguimientos %}
+
+
+                <!-- ================================================== -->
+                <!-- SEGUIMIENTO -->
+                <!-- ================================================== -->
+
+                <div class="card mb-3 border-start border-4 border-primary">
+
+
+                    <div class="card-body">
+
+
+                        <!-- CABECERA DEL SEGUIMIENTO -->
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+
+                            <div>
+
+                                <h5 class="mb-1">
+
+                                    📞
+                                    {{ seguimiento.get_tipo_contacto_display }}
+
+                                </h5>
+
+                            </div>
+
+
+                            <span class="badge bg-secondary">
+
+                                📅
+                                {{ seguimiento.fecha|date:"d/m/Y H:i" }}
+
+                            </span>
+
+
+                        </div>
+
+
+                        <!-- RESULTADO -->
+
+                        <p class="mb-2">
+
+                            <strong>
+                                📊 Resultado:
+                            </strong>
+
+                            <span class="badge bg-info text-dark">
+
+                                {{ seguimiento.get_resultado_display }}
+
+                            </span>
+
+                        </p>
+
+
+                        <!-- ASESOR -->
+
+                        <p class="mb-2">
+                            <strong>                                👤 Asesor:                            </strong>
+                            {{ seguimiento.asesor.username }}
+                        </p>
+
+                        <!-- OBSERVACIONES -->
+                        {% if seguimiento.observaciones %}
+                            <div class="alert alert-light border mt-3 mb-0">
+                                <strong>                                   📝 Observaciones:                                </strong>
+                                <p class="mb-0 mt-2">                                    {{ seguimiento.observaciones }}                                </p>
+                            </div>
+                        {% endif %}
+
+						<!-- ================================================= -->
+						<!-- ACCIONES DEL SEGUIMIENTO -->
+						<!-- ================================================= -->
+
+						<div class="mt-3">
+
+						{% if es_master or seguimiento.asesor == request.user %}
+
+							<a	href="{% url 'gestion_seguimientos:seguimiento_editar' seguimiento.id %}"	class="btn btn-sm btn-warning">	✏️ Editar		</a>
+							<a href="{% url 'gestion_seguimientos:seguimiento_eliminar' seguimiento.id %}"	class="btn btn-sm btn-danger">	🗑️ Eliminar		</a>
+						{% endif %}
+						</div>
+                    </div>
+
+                </div>
+            {% empty %}
+                <!-- ================================================== -->
+                <!-- SIN SEGUIMIENTOS -->
+                <!-- ================================================== -->
+                <div class="text-center py-5">
+                    <div class="display-1 mb-3">            📋                    </div>
+                    <h4>                        No hay seguimientos registrados                    </h4>
+                    <p class="text-muted">                        Este cliente todavía no tiene historial de seguimiento.                    </p>
+                    <a href="{% url 'gestion_seguimientos:seguimiento_crear' cliente.id %}" class="btn btn-success"> ➕ Registrar primer seguimiento                 </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- ================================================== -->
+    <!-- BOTONES INFERIORES -->
+    <!-- ================================================== -->
+    <div class="mt-4 mb-4">
+        <a           href="{% url 'clientes:cliente_detalle' cliente.id %}"            class="btn btn-secondary"        >            ← Volver al Cliente        </a>
+       <a   href="{% url 'clientes:cliente_lista' %}"          class="btn btn-outline-secondary"       >           👥 Lista de Clientes        </a>
+
+    </div>
+</div>
+<!-- ================================================== -->
+<!-- BOOTSTRAP JS -->
+<!-- ================================================== -->
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

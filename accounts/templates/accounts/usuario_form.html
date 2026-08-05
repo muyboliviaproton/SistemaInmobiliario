@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta       name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        Registrar Asesor    </title>
+    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+        <a            class="navbar-brand"            href="{% url 'dashboard_master' %}"        >            🏡 Sistema Inmobiliario        </a>
+        <span class="text-white">
+            Usuario:            {{ request.user.username }}
+        </span>
+    </div>
+</nav>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">                        👤 Registrar nuevo asesor                    </h4>
+                </div>
+
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div                                class="alert alert-danger"                            >                                {{ message }}                       </div>
+                        {% endfor %}
+                    {% endif %}
+                    <form                        method="POST"                    >
+                        {% csrf_token %}
+                        <!-- USUARIO -->
+                        <div class="mb-3">
+                            <label class="form-label">                                Nombre de usuario *                            </label>
+                            <input type="text" name="username" class="form-control" required                                autofocus                            >
+                        </div>
+                        <!-- NOMBRE -->
+                        <div class="mb-3">
+                            <label class="form-label">                                Nombre                            </label>
+                            <input type="text"                                name="first_name"                                class="form-control"                            >
+                        </div>
+                        <!-- APELLIDO -->
+                        <div class="mb-3">
+                            <label class="form-label">                                Apellido                            </label>
+                            <input type="text"                                name="last_name"                                class="form-control"                            >
+                        </div>
+                        <!-- CORREO -->
+                        <div class="mb-3">
+                            <label class="form-label">                         Correo electrónico                            </label>
+                            <input type="email"                                name="email"                                class="form-control"                            >
+                        </div>
+                        <!-- CONTRASEÑA -->
+                        <div class="mb-3">
+                            <label class="form-label">                               Contraseña *                            </label>
+                            <input type="password" name="password"                                class="form-control"                                required                            >
+                        </div>
+                        <!-- CONFIRMAR CONTRASEÑA -->
+                        <div class="mb-3">
+                            <label class="form-label">                                Confirmar contraseña *
+                            </label>
+                            <input type="password" name="password_confirmacion" class="form-control"      required      >
+                        </div>
+                        <!-- INFORMACIÓN -->
+                        <div class="alert alert-info">
+                            <strong>                                Información:                            </strong>
+                            Este usuario será registrado automáticamente                      como <strong>ASESOR</strong>.
+                        </div>
+                        <!-- BOTONES -->
+                        <div class="d-flex justify-content-between">
+                            <a                                href="{% url 'usuarios_lista' %}"                                class="btn btn-secondary"                            >
+                                ← Cancelar                            </a>
+                            <button         type="submit"                  class="btn btn-success"                            >
+                                💾 Registrar asesor
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

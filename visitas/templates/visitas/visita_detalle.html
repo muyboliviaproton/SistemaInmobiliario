@@ -1,0 +1,292 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        Detalle de Oportunidad    </title>
+    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+</head>
+<body class="bg-light">
+<div class="container mt-4 mb-5">
+    <!-- ================================================= -->
+    <!-- CABECERA -->
+    <!-- ================================================= -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>💼 Detalle de Oportunidad</h2>
+            <p class="text-muted mb-0">Información comercial del cliente.            </p>
+        </div>
+        <div>
+            <a href="{% url 'oportunidades:oportunidad_editar' oportunidad.id %}"                class="btn btn-warning"            > ✏️ Editar            </a>
+            <a href="{% url 'oportunidades:oportunidad_lista' %}"                class="btn btn-secondary"            >                ← Volver
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- INFORMACIÓN DEL CLIENTE -->
+    <!-- ================================================= -->
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header bg-primary text-white">
+
+            <h5 class="mb-0">
+                👤 Información del cliente
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <strong>
+                        Nombre:
+                    </strong>
+
+                    <p>
+                        {{ oportunidad.cliente.nombre_completo }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <strong>
+                        Teléfono:
+                    </strong>
+
+                    <p>
+                        {{ oportunidad.cliente.telefono }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <strong>
+                        Asesor responsable:
+                    </strong>
+
+                    <p>
+                        {{ oportunidad.asesor.username }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <strong>
+                        Fecha de creación:
+                    </strong>
+
+                    <p>
+                        {{ oportunidad.creado_en|date:"d/m/Y H:i" }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ESTADO COMERCIAL -->
+    <!-- ================================================= -->
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header bg-success text-white">
+
+            <h5 class="mb-0">
+                📊 Estado comercial
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-4">
+
+                    <strong>
+                        Etapa:
+                    </strong>
+
+                    <p>
+
+                        <span class="badge bg-primary">
+
+                            {{ oportunidad.get_etapa_display }}
+
+                        </span>
+
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <strong>
+                        Prioridad:
+                    </strong>
+
+                    <p>
+
+                        <span class="badge bg-warning text-dark">
+
+                            {{ oportunidad.get_prioridad_display }}
+
+                        </span>
+
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <strong>
+                        Próxima gestión:
+                    </strong>
+
+                    <p>
+
+                        {% if oportunidad.proxima_gestion %}
+
+                            {{ oportunidad.proxima_gestion|date:"d/m/Y H:i" }}
+
+                        {% else %}
+
+                            <span class="text-muted">
+                                No programada
+                            </span>
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- OBSERVACIONES -->
+    <!-- ================================================= -->
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+                📝 Observaciones
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            {% if oportunidad.observaciones %}
+
+                <p class="mb-0">
+
+                    {{ oportunidad.observaciones|linebreaks }}
+
+                </p>
+
+            {% else %}
+
+                <p class="text-muted mb-0">
+
+                    No existen observaciones registradas.
+
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ACCIONES -->
+    <!-- ================================================= -->
+
+    <div class="card shadow">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+                ⚡ Acciones
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="d-flex gap-2 flex-wrap">
+
+                <a
+                    href="https://wa.me/{{ oportunidad.cliente.telefono }}"
+                    target="_blank"
+                    class="btn btn-success"
+                >
+                    📱 WhatsApp
+                </a>
+
+
+                <a
+                    href="{% url 'oportunidades:oportunidad_editar' oportunidad.id %}"
+                    class="btn btn-warning"
+                >
+                    ✏️ Editar oportunidad
+                </a>
+
+
+                <a
+                    href="{% url 'oportunidades:oportunidad_eliminar' oportunidad.id %}"
+                    class="btn btn-danger"
+                >
+                    🗑️ Eliminar
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script
+    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"
+></script>
+
+</body>
+
+</html>

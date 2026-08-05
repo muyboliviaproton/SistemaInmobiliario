@@ -1,0 +1,257 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        Nuevo Seguimiento    </title>
+    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="card shadow">
+        <!-- ================================================= -->
+        <!-- CABECERA -->
+        <!-- ================================================= -->
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">                📞 Nuevo Seguimiento            </h4>
+        </div>
+        <!-- ================================================= -->
+        <!-- CONTENIDO -->
+        <!-- ================================================= -->
+        <div class="card-body">
+            <!-- ================================================= -->
+            <!-- INFORMACIÓN DEL CLIENTE -->
+            <!-- ================================================= -->
+            <div class="alert alert-info">
+                <strong>                    Cliente:                </strong>                {{ cliente.nombre_completo }}
+                <br>
+                <strong>                    Teléfono:                </strong>                {{ cliente.telefono }}
+            </div>
+            <!-- ================================================= -->
+            <!-- FORMULARIO -->
+            <!-- ================================================= -->
+            <form method="POST">
+                {% csrf_token %}
+                <!-- ================================================= -->
+                <!-- ERRORES GENERALES -->
+                <!-- ================================================= -->
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+
+                <!-- ================================================= -->
+                <!-- TIPO DE CONTACTO -->
+                <!-- ================================================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        📞 Tipo de contacto
+
+                    </label>
+
+                    {{ form.tipo_contacto }}
+
+                    {% if form.tipo_contacto.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.tipo_contacto.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- RESULTADO -->
+                <!-- ================================================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        📊 Resultado del contacto
+
+                    </label>
+
+                    {{ form.resultado }}
+
+                    {% if form.resultado.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.resultado.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- ESTADO COMERCIAL -->
+                <!-- ================================================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        🚦 Estado comercial
+
+                    </label>
+
+                    {{ form.estado_comercial }}
+
+                    {% if form.estado_comercial.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.estado_comercial.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- PRIORIDAD -->
+                <!-- ================================================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        🔥 Prioridad
+
+                    </label>
+
+                    {{ form.prioridad }}
+
+                    {% if form.prioridad.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.prioridad.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- PRÓXIMA GESTIÓN -->
+                <!-- ================================================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        📅 Próxima gestión
+
+                    </label>
+
+                    {{ form.proxima_gestion }}
+
+                    <div class="form-text">
+
+                        Seleccione la fecha y hora en la que debe volver a contactar al cliente.
+
+                    </div>
+
+                    {% if form.proxima_gestion.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.proxima_gestion.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- OBSERVACIONES -->
+                <!-- ================================================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        📝 Observaciones
+
+                    </label>
+
+                    {{ form.observaciones }}
+
+                    {% if form.observaciones.errors %}
+
+                        <div class="text-danger mt-1">
+
+                            {{ form.observaciones.errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- BOTONES -->
+                <!-- ================================================= -->
+
+                <div class="d-flex gap-2">
+
+
+                    <a
+                        href="{% url 'gestion_seguimientos:seguimiento_lista' cliente.id %}"
+                        class="btn btn-secondary"
+                    >
+
+                        ← Cancelar
+
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-success"
+                    >
+
+                        💾 Guardar Seguimiento
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+
+    </div>
+</div>
+<!-- ================================================= -->
+<!-- BOOTSTRAP JS -->
+<!-- ================================================= -->
+<script   src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

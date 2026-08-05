@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta      name="viewport"     content="width=device-width, initial-scale=1.0"   >
+    <title>        Restaurar Cliente    </title>
+	<!-- Bootstrap 5.3 -->
+    <link    href="{% static 'bootstrap/css/bootstrap.min.css' %}"    rel="stylesheet">
+</head>
+
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                   <h4>                        ♻️ Restaurar Cliente                    </h4>
+                </div>
+                <div class="card-body text-center">
+                    <h5>                       ¿Desea restaurar este cliente?                    </h5>
+                    <div class="alert alert-info mt-4">
+                        <strong>                            {{ cliente.nombre_completo }}                        </strong>
+                        <br>                        Teléfono:                        {{ cliente.telefono }}
+                    </div>
+                    <p>                      El cliente volverá a aparecer                      en el listado de clientes activos.
+                    </p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button         type="submit"                class="btn btn-success"               >
+                            ♻️ Sí, restaurar
+                        </button>
+                        <a                    href="{% url 'clientes:papelera_clientes' %}"                            class="btn btn-secondary"                        >
+                           Cancelar                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+
+</html>

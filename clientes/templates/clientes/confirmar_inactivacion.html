@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        Confirmar inactivación    </title>
+    <!-- Bootstrap 5.3 -->
+    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+</head>
+<body class="bg-light">
+    <!-- ================================================== -->
+    <!-- CONTENEDOR PRINCIPAL -->
+    <!-- ================================================== -->
+    <div class="container min-vh-100 d-flex align-items-center justify-content-center">
+
+        <div class="row justify-content-center w-100">
+
+            <div class="col-12 col-md-8 col-lg-6">
+
+
+                <!-- ================================================== -->
+                <!-- TARJETA DE CONFIRMACIÓN -->
+                <!-- ================================================== -->
+
+                <div class="card shadow-lg border-0">
+
+
+                    <div class="card-body p-4 p-md-5 text-center">
+
+
+                        <!-- ================================================== -->
+                        <!-- ICONO -->
+                        <!-- ================================================== -->
+
+                        <div class="fs-1 mb-3">
+
+                            ⚠️
+
+                        </div>
+
+
+                        <!-- ================================================== -->
+                        <!-- TÍTULO -->
+                        <!-- ================================================== -->
+
+                        <h1 class="h3 fw-bold text-dark mb-4">
+
+                            Confirmar cambio de estado
+
+                        </h1>
+
+
+                        <!-- ================================================== -->
+                        <!-- MENSAJE PRINCIPAL -->
+                        <!-- ================================================== -->
+
+                        <p class="text-secondary fs-5">
+
+                            ¿Está seguro de marcar como
+
+                            <strong class="text-danger">
+                                INACTIVO
+                            </strong>
+
+                            al siguiente cliente?
+
+                        </p>
+
+
+                        <!-- ================================================== -->
+                        <!-- NOMBRE DEL CLIENTE -->
+                        <!-- ================================================== -->
+
+                        <div class="alert alert-light border mb-4">
+
+                            <h4 class="fw-bold mb-0">
+
+                                {{ cliente.nombre_completo }}
+
+                            </h4>
+
+                        </div>
+
+
+                        <!-- ================================================== -->
+                        <!-- INFORMACIÓN -->
+                        <!-- ================================================== -->
+
+                        <p class="text-secondary">
+
+                            El cliente no será eliminado.
+
+                            Podrá volver a editar su información posteriormente.
+
+                        </p>
+
+
+                        <!-- ================================================== -->
+                        <!-- BOTONES -->
+                        <!-- ================================================== -->
+
+                        <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 mt-4">
+
+
+                            <!-- CANCELAR -->
+
+                            <a
+                                href="{% url 'clientes:cliente_lista' %}"
+                                class="btn btn-secondary btn-lg"
+                            >
+
+                                Cancelar
+
+                            </a>
+
+
+                            <!-- CONFIRMAR -->
+
+                            <form
+                                method="POST"
+                                class="d-inline"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-danger btn-lg"
+                                >
+
+                                    Sí, marcar como INACTIVO
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ================================================== -->
+    <!-- BOOTSTRAP JS -->
+    <!-- ================================================== -->
+
+    <script        src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"    ></script>
+
+
+</body>
+
+</html>
