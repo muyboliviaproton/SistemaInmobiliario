@@ -7,7 +7,13 @@ from django.contrib.auth.models import User, Group
 from clientes.models import Cliente
 from django.shortcuts import redirect, render
 
+from gestion_seguimientos.models import Seguimiento
+from oportunidades.models import Oportunidad
+from visitas.models import Visita
+from recordatorios.models import Recordatorio
+from lotes.models import Lote
 
+from django.utils import timezone
 # ============================================================
 # LOGIN
 # ============================================================
@@ -105,29 +111,58 @@ def asesor_required(view_func):
 @login_required
 def dashboard(request):
 
-    rol = obtener_rol_usuario(request.user)
+    hoy = timezone.localdate()
 
-    # Si es MASTER
-    if rol == 'MASTER':
+    # ==========================================
+    # CLIENTES
+    # ==========================================
 
-        return redirect('dashboard_master')
+    total_clientes = Cliente.objects.filter(
+        eliminado=False
+    ).count()
 
+    # ==========================================
+    # SEGUIMIENTOS
+    # ==========================================
 
-    # Si es ASESOR
-    elif rol == 'ASESOR':
+    total_seguimientos = Seguimiento.objects.count()
+    # ==========================================
+    # OPORTUNIDADES
+    # ==========================================
+    total_oportunidades = Oportunidad.objects.count()
+    # ==========================================
+    # VISITAS
+    # ==========================================
+    total_visitas = Visita.objects.count()
+    # ==========================================
+    # TEMPORAL
+    # ==========================================
+    #total_recordatorios = Recordatorio.objects.count()
+    total_recordatorios = 0
+    total_lotes = 0
+    agenda_semana = 0
+    pendientes_hoy = 0
 
-        return redirect('dashboard_asesor')
+    contexto = {
 
+        "total_clientes": total_clientes,
+        "total_seguimientos": total_seguimientos,
+        "total_oportunidades": total_oportunidades,
+        "total_visitas": total_visitas,
+        "total_recordatorios": total_recordatorios,
+        "total_lotes": total_lotes,
+        "agenda_semana": agenda_semana,
+        "pendientes_hoy": pendientes_hoy,
 
-    # Si no tiene ningún rol
+    }
+
     return render(
-        request,
-        'accounts/sin_rol.html',
-        {
-            'usuario': request.user,
-        }
-    )
 
+        request,
+        "dashboard/dashboard.html",
+        contexto
+
+    )
 # ============================================================
 # GESTIÓN DE USUARIOS / ASESORES
 # SOLO MASTER

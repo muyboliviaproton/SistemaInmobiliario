@@ -1,0 +1,44 @@
+{% load static %}
+<div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark vh-100 shadow"
+     style="width:280px;">
+    <!-- ============================================== -->
+    <!-- LOGO -->
+    <!-- ============================================== -->
+    <a href="/"       class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <span class="fs-4"><i class="bi bi-speedometer2"></i> Sistema Inmobiliario        </span>    </a>    <hr>
+    <!-- ============================================== -->
+    <!-- USUARIO -->
+    <!-- ============================================== -->
+    <div class="text-center mb-3">
+        <div class="fs-1"><i class="bi bi-person-badge-fill"></i></div>
+        <strong> {{ usuario.get_full_name|default:usuario.username }}       </strong>        <br>
+        {% if es_master %}
+            <span class="badge bg-warning text-dark">MASTER      </span>
+        {% else %}
+            <span class="badge bg-info">ASESOR   </span>
+        {% endif %}
+    </div>    <hr>
+    <!-- ============================================== -->
+    <!-- MENÚ -->
+    <!-- ============================================== -->
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">        <a href="{% url 'dashboard:inicio' %}" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard   </a>  </li>
+        <!-- SOLO MASTER -->
+        {% if es_master %}
+        <li><a href="{% url 'accounts:asesor_lista' %}" class="nav-link text-white"><i class="bi bi-person-badge-fill"></i>Asesores            </a>        </li>
+        {% endif %}
+        <li><a href="{% url 'clientes:cliente_lista' %}" class="nav-link text-white"><i class="bi bi-people-fill"></i> Clientes            </a>        </li>
+        <li><a href="#" class="nav-link text-white"><i class="bi bi-speedometer2"></i><i class="bi bi-house-fill"></i> Lotes            </a>        </li>
+        <li><a href="{% url 'gestion_seguimientos:agenda' %}" class="nav-link text-white"><i class="bi bi-telephone-fill"></i> Seguimientos            </a>        </li>
+        <li><a href="{% url 'gestion_seguimientos:agenda' %}" class="nav-link text-white"><i class="bi bi-calendar-check-fill"></i>Agenda            </a>        </li>
+        <li><a href="{% url 'oportunidades:oportunidad_lista' %}" class="nav-link text-white"><i class="bi bi-briefcase-fill"></i>Oportunidades            </a>        </li>
+        <li><a href="{% url 'visitas:visita_lista' %}" class="nav-link text-white"><i class="bi bi-car-front-fill"></i>Visitas            </a>        </li>
+        <li><a href="#" class="nav-link text-white"><i class="bi bi-alarm-fill"></i>Recordatorios            </a>        </li>
+        <li><a href="#" class="nav-link text-white"><i class="bi bi-geo-alt-fill"></i>Mapa            </a>        </li>
+        <hr>
+        <li><a href="#" class="nav-link text-secondary"><i class="bi bi-bar-chart-fill"></i>Reportes                <small>(Próximamente)</small>            </a>        </li>
+        {% if es_master %}
+        <li><a href="#" class="nav-link text-secondary"><i class="bi bi-gear-fill"></i>Configuración                <small>(Próximamente)</small>            </a>        </li>
+        {% endif %}    </ul>
+    <hr>    <a href="{% url 'accounts:logout' %}" class="btn btn-danger"><i class="bi bi-box-arrow-right"></i>Cerrar sesión    </a>
+</div>

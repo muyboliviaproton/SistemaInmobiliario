@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid">
+    {% include "components/titulo_pagina.html" with
+        titulo="Dashboard"
+        subtitulo="Bienvenido al Sistema Inmobiliario"
+        icono="bi bi-speedometer2"
+    %}
+
+    {% include "dashboard/dashboard_cards.html" %}
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            {% include "dashboard/agenda_semana.html" %}
+        </div>
+        <div class="col-lg-4">
+            {% include "dashboard/accesos_rapidos.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+<div class="row">
+    {% include "components/card_estadistica.html" with titulo="Clientes" cantidad=total_clientes icono="bi bi-people-fill" %}
+    {% include "components/card_estadistica.html" with titulo="Seguimientos" cantidad=total_seguimientos icono="bi bi-telephone-fill" %}
+    {% include "components/card_estadistica.html" with titulo="Oportunidades" cantidad=total_oportunidades icono="bi bi-briefcase-fill" %}
+    {% include "components/card_estadistica.html" with titulo="Visitas" cantidad=total_visitas icono="bi bi-car-front-fill" %}
+</div>
+
+<div class="row">
+    {% include "components/card_estadistica.html" with titulo="Recordatorios" cantidad=total_recordatorios icono="bi bi-bell-fill" %}
+    {% include "components/card_estadistica.html" with titulo="Lotes" cantidad=total_lotes icono="bi bi-house-fill" %}
+    {% include "components/card_estadistica.html" with titulo="Agenda Semanal" cantidad=agenda_semana icono="bi bi-calendar-week-fill" %}
+    {% include "components/card_estadistica.html" with titulo="Pendientes de Hoy" cantidad=pendientes_hoy icono="bi bi-clock-history" %}
+</div>

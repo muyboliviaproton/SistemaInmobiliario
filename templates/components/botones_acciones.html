@@ -1,0 +1,17 @@
+<div class="btn-group">
+    {% if ver %}
+    <a        href="{{ ver }}"        class="btn btn-outline-primary btn-sm"        title="Ver">        <i class="bi bi-eye-fill"></i>    </a>
+    {% endif %}
+    {% if editar %}
+    <a        href="{{ editar }}"        class="btn btn-outline-warning btn-sm"        title="Editar">        <i class="bi bi-pencil-fill"></i>    </a>
+    {% endif %}
+    {% if whatsapp %}
+    <a        href="{{ whatsapp }}"        class="btn btn-outline-success btn-sm"        target="_blank"        title="WhatsApp">        <i class="bi bi-whatsapp"></i>    </a>
+    {% endif %}
+    {% if llamada %}
+    <a       href="tel:{{ llamada }}"       class="btn btn-outline-info btn-sm"        title="Llamar">        <i class="bi bi-telephone-fill"></i>    </a>
+    {% endif %}
+    {% if eliminar %}
+    <a        href="{{ eliminar }}"        class="btn btn-outline-danger btn-sm"        title="Eliminar">        <i class="bi bi-trash-fill"></i>    </a>
+    {% endif %}
+</div>

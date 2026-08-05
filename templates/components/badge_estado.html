@@ -1,0 +1,13 @@
+{% if estado == "ACTIVO" %}
+<span class="badge bg-success">    Activo</span>
+{% elif estado == "INACTIVO" %}
+<span class="badge bg-secondary">    Inactivo</span>
+{% elif estado == "PENDIENTE" %}
+<span class="badge bg-warning text-dark">    Pendiente</span>
+{% elif estado == "COMPLETADO" %}
+<span class="badge bg-primary">    Completado</span>
+{% elif estado == "CANCELADO" %}
+<span class="badge bg-danger">    Cancelado</span>
+{% else %}
+<span class="badge bg-light text-dark">    {{ estado }}</span>
+{% endif %}

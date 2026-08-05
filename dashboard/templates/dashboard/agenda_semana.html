@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
+    <title>        Papelera de Clientes    </title>
+    <!-- Bootstrap 5.3 -->
+    <link    href="{% static 'bootstrap/css/bootstrap.min.css' %}"    rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <!-- CABECERA -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>
+                🗑️ Papelera de Clientes
+            </h1>
+            <p class="text-muted">
+                Clientes enviados a la papelera
+            </p>
+        </div>
+        <a href="{% url 'clientes:cliente_lista' %}"            class="btn btn-secondary">← Volver a clientes   </a>
+		<a href="{% url 'dashboard' %}" class="btn btn-secondary">        Volver al Dashboard    </a>
+    </div>
+    <!-- MENSAJES -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <!-- TABLA -->
+     <div class="card shadow">
+        <div class="card-body">
+            {% if clientes %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>                       Cliente                                </th>
+                                <th>           Teléfono                                </th>
+                                <th>              Asesor                                </th>
+                                <th>               Eliminado por                                </th>
+                                <th>          Fecha                                </th>
+                                <th>  Acciones                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>                            {% for cliente in clientes %}
+
+                                <tr>
+                                    <td>
+                                        <strong>                                            {{ cliente.nombre_completo }}                                        </strong>
+                                    </td>
+                                    <td>                                        {{ cliente.telefono }}                                    </td>
+                                    <td>                                        {{ cliente.asesor.username }}                                    </td>
+                                    <td>                                        {{ cliente.eliminado_por.username }}                                    </td>
+                                    <td>                                        {{ cliente.fecha_eliminacion|date:"d/m/Y H:i" }}                                    </td>
+                                    <td>
+                                        <!-- RESTAURAR -->
+                                    <a		href="{% url 'clientes:restaurar_cliente' cliente.id %}"		class="btn btn-sm btn-success"					>
+										♻️ Restaurar
+									</a>
+									<!-- REASIGNAR -->
+									<a	href="{% url 'clientes:reasignar_cliente' cliente.id %}"		class="btn btn-sm btn-warning"						>
+										🔄 Reasignar
+									</a>
+									<!-- ELIMINAR DEFINITIVAMENTE -->
+									<a	href="{% url 'clientes:eliminar_definitivamente' cliente.id %}"		class="btn btn-sm btn-danger"					>
+										🗑️ Eliminar definitivamente
+									</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <h3>                        🗑️ La papelera está vacía                    </h3>
+                    <p class="text-muted">                        No existen clientes eliminados.                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
