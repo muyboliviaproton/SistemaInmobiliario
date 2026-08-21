@@ -1,14 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 from clientes.models import Cliente
-
-
 class Seguimiento(models.Model):
-
     # ============================================================
     # TIPOS DE CONTACTO
     # ============================================================
-
     TIPOS_CONTACTO = [
         ('LLAMADA', 'Llamada telefónica'),
         ('WHATSAPP', 'WhatsApp'),
@@ -17,12 +13,9 @@ class Seguimiento(models.Model):
         ('CORREO', 'Correo electrónico'),
         ('OTRO', 'Otro'),
     ]
-
-
     # ============================================================
     # RESULTADOS DEL CONTACTO
     # ============================================================
-
     RESULTADOS = [
         ('SIN_RESPUESTA', 'Sin respuesta'),
         ('CONTACTADO', 'Contactado'),
@@ -33,8 +26,6 @@ class Seguimiento(models.Model):
         ('VENTA', 'Venta realizada'),
         ('NO_INTERESADO', 'No interesado'),
     ]
-
-
     # ============================================================
     # ESTADOS COMERCIALES
     # ============================================================
@@ -153,17 +144,12 @@ class Seguimiento(models.Model):
         blank=True,
         null=True
     )
-
-
     # ============================================================
     # FECHA DE ACTUALIZACION DEL REGISTRO
     # ============================================================
-
     actualizado_en = models.DateTimeField(
-        auto_now_add=True
+        auto_now=True
     )
-
-
     # ============================================================
     # REPRESENTACIÓN DEL OBJETO
     # ============================================================

@@ -1,99 +1,76 @@
-{% load static %}
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Editar Oportunidad
-    </title>
-
-    <link
-        href="{% static 'bootstrap/css/bootstrap.min.css' %}"
-        rel="stylesheet"
-    >
-
-</head>
+{% block titulo %}
+    Editar Visita | Sistema Inmobiliario
+{% endblock %}
 
 
-<body class="bg-light">
+{% block contenido %}
+
+<div class="container-fluid">
+
+    <!-- ================================================== -->
+    <!-- ENCABEZADO -->
+    <!-- ================================================== -->
+
+    <div class="mb-4">
+
+        <h2 class="fw-bold">
+
+            <i class="bi bi-pencil-square text-warning"></i>
+
+            Editar Visita
+
+        </h2>
+
+        <p class="text-muted">
+
+            Modifique los datos de la visita agendada.
+
+        </p>
+
+    </div>
 
 
-<div class="container mt-5">
+    <!-- ================================================== -->
+    <!-- CLIENTE -->
+    <!-- ================================================== -->
+
+    <div class="alert alert-success">
+
+        <i class="bi bi-person-fill"></i>
+
+        <strong>Cliente:</strong>
+
+        {{ cliente.nombre_completo }}
+
+    </div>
 
 
-    <div class="card shadow">
+    <!-- ================================================== -->
+    <!-- FORMULARIO -->
+    <!-- ================================================== -->
 
+    <form method="post">
 
-        <!-- ================================================= -->
-        <!-- CABECERA -->
-        <!-- ================================================= -->
+        {% csrf_token %}
 
-        <div class="card-header bg-warning">
+        <div class="card shadow-sm border-0">
 
-            <h4 class="mb-0">
+            <div class="card-header bg-warning">
 
-                ✏️ Editar Oportunidad Comercial
+                <h5 class="mb-0">
 
-            </h4>
+                    <i class="bi bi-calendar-event"></i>
 
-        </div>
+                    Datos de la visita
 
-
-        <!-- ================================================= -->
-        <!-- CONTENIDO -->
-        <!-- ================================================= -->
-
-        <div class="card-body">
-
-
-            <!-- ================================================= -->
-            <!-- INFORMACIÓN -->
-            <!-- ================================================= -->
-
-            <div class="alert alert-info">
-
-                <strong>
-                    👤 Cliente:
-                </strong>
-
-                {{ cliente.nombre_completo }}
-
-                <br>
-
-                <strong>
-                    📞 Teléfono:
-                </strong>
-
-                {{ cliente.telefono }}
-
-                <br>
-
-                <strong>
-                    👨‍💼 Asesor responsable:
-                </strong>
-
-                {{ oportunidad.asesor.username }}
+                </h5>
 
             </div>
 
 
-            <!-- ================================================= -->
-            <!-- FORMULARIO -->
-            <!-- ================================================= -->
-
-            <form method="POST">
-
-                {% csrf_token %}
-
+            <div class="card-body">
 
                 {% if form.non_field_errors %}
 
@@ -106,192 +83,175 @@
                 {% endif %}
 
 
-                <!-- NOMBRE -->
+                <div class="row g-3">
 
-                <div class="mb-3">
+                    <!-- FECHA -->
 
-                    <label class="form-label">
+                    <div class="col-md-6">
 
-                        💼 Nombre de la oportunidad
+                        <label class="form-label fw-bold">
 
-                    </label>
+                            Fecha
 
-                    {{ form.nombre }}
+                        </label>
 
-                    {% if form.nombre.errors %}
+                        {{ form.fecha }}
 
-                        <div class="text-danger">
+                        {% for error in form.fecha.errors %}
 
-                            {{ form.nombre.errors }}
+                            <div class="text-danger small">
+                                {{ error }}
+                            </div>
 
-                        </div>
+                        {% endfor %}
 
-                    {% endif %}
-
-                </div>
-
-
-                <!-- ETAPA -->
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-
-                        📊 Etapa comercial
-
-                    </label>
-
-                    {{ form.etapa }}
-
-                    {% if form.etapa.errors %}
-
-                        <div class="text-danger">
-
-                            {{ form.etapa.errors }}
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
+                    </div>
 
 
-                <!-- PRIORIDAD -->
+                    <!-- HORA -->
 
-                <div class="mb-3">
+                    <div class="col-md-6">
 
-                    <label class="form-label">
+                        <label class="form-label fw-bold">
 
-                        🔥 Prioridad
+                            Hora
 
-                    </label>
+                        </label>
 
-                    {{ form.prioridad }}
+                        {{ form.hora }}
 
-                    {% if form.prioridad.errors %}
+                        {% for error in form.hora.errors %}
 
-                        <div class="text-danger">
+                            <div class="text-danger small">
+                                {{ error }}
+                            </div>
 
-                            {{ form.prioridad.errors }}
+                        {% endfor %}
 
-                        </div>
-
-                    {% endif %}
-
-                </div>
+                    </div>
 
 
-                <!-- PRESUPUESTO -->
+                    <!-- LUGAR -->
 
-                <div class="mb-3">
+                    <div class="col-md-12">
 
-                    <label class="form-label">
+                        <label class="form-label fw-bold">
 
-                        💰 Presupuesto estimado
+                            Lugar
 
-                    </label>
+                        </label>
 
-                    {{ form.presupuesto }}
+                        {{ form.lugar }}
 
-                    {% if form.presupuesto.errors %}
-
-                        <div class="text-danger">
-
-                            {{ form.presupuesto.errors }}
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
+                    </div>
 
 
-                <!-- FECHA -->
+                    <!-- ESTADO -->
 
-                <div class="mb-3">
+                    <div class="col-md-6">
 
-                    <label class="form-label">
+                        <label class="form-label fw-bold">
 
-                        📅 Fecha estimada de compra
+                            Estado
 
-                    </label>
+                        </label>
 
-                    {{ form.fecha_estimada_compra }}
+                        {{ form.estado }}
 
-                    {% if form.fecha_estimada_compra.errors %}
+                    </div>
 
-                        <div class="text-danger">
 
-                            {{ form.fecha_estimada_compra.errors }}
+                    <!-- PRIORIDAD -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+
+                            Prioridad
+
+                        </label>
+
+                        {{ form.prioridad }}
+
+                    </div>
+
+
+                    <!-- RESULTADO -->
+
+                    <div class="col-md-12">
+
+                        <label class="form-label fw-bold">
+
+                            Resultado
+
+                        </label>
+
+                        {{ form.resultado }}
+
+                        <div class="form-text">
+
+                            Para registrar el resultado final recomendamos utilizar
+                            <strong>Realizar visita</strong>.
 
                         </div>
 
-                    {% endif %}
+                    </div>
+
+
+                    <!-- OBSERVACIONES -->
+
+                    <div class="col-md-12">
+
+                        <label class="form-label fw-bold">
+
+                            Observaciones
+
+                        </label>
+
+                        {{ form.observaciones }}
+
+                    </div>
 
                 </div>
 
-
-                <!-- OBSERVACIONES -->
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-
-                        📝 Observaciones
-
-                    </label>
-
-                    {{ form.observaciones }}
-
-                    {% if form.observaciones.errors %}
-
-                        <div class="text-danger">
-
-                            {{ form.observaciones.errors }}
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
+            </div>
 
 
-                <!-- BOTONES -->
+            <!-- ================================================== -->
+            <!-- BOTONES -->
+            <!-- ================================================== -->
 
-                <div class="d-flex gap-2">
+            <div class="card-footer bg-light d-flex justify-content-end gap-2">
+
+                <a
+                    href="{% url 'visitas:visita_detalle' visita.id %}"
+                    class="btn btn-secondary"
+                >
+
+                    <i class="bi bi-x-circle"></i>
+
+                    Cancelar
+
+                </a>
 
 
-                    <a
-                        href="{% url 'oportunidades:oportunidad_lista' %}"
-                        class="btn btn-secondary"
-                    >
+                <button
+                    type="submit"
+                    class="btn btn-warning"
+                >
 
-                        ← Cancelar
+                    <i class="bi bi-save"></i>
 
-                    </a>
+                    Guardar cambios
 
+                </button>
 
-                    <button      type="submit"                        class="btn btn-success"                    >                        💾 Guardar cambios               </button>
-                </div>
-
-
-            </form>
-
+            </div>
 
         </div>
 
-
-    </div>
-
+    </form>
 
 </div>
 
-
-<script
-    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"
-></script>
-
-
-</body>
-
-</html>
+{% endblock %}

@@ -1,179 +1,433 @@
+{% extends "base.html" %}
+
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta        name="viewport"       content="width=device-width, initial-scale=1.0"    >
-    <title>
-        {% if cliente %}
-            Editar Cliente
-        {% else %}
-            Nuevo Cliente
-        {% endif %}
-    </title>
-	<!-- Bootstrap 5.3 -->
-    <link    href="{% static 'bootstrap/css/bootstrap.min.css' %}"    rel="stylesheet">
-</head>
-<body class="bg-light">
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow">
-                <div class="card-header bg-dark text-white">
-                    <h3 class="mb-0">
-                        {% if cliente %}
-                            ✏️ Editar Cliente
-                        {% else %}
-                            ➕ Nuevo Cliente
-                        {% endif %}
-                    </h3>
+
+{% block titulo %}
+    {{ titulo }}
+{% endblock %}
+
+{% block contenido %}
+
+<div class="container-fluid py-4">
+
+    <!-- ===================================================== -->
+    <!-- ENCABEZADO -->
+    <!-- ===================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                <i class="bi bi-person-vcard-fill"></i>
+
+                {{ titulo }}
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                {% if cliente %}
+                    Modificar información del cliente
+                {% else %}
+                    Registrar un nuevo cliente
+                {% endif %}
+
+            </p>
+
+        </div>
+
+        <div>
+
+            <a href="{% url 'clientes:cliente_lista' %}"
+               class="btn btn-secondary">
+
+                <i class="bi bi-arrow-left"></i>
+
+                Volver
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- MENSAJES -->
+    <!-- ===================================================== -->
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+
+                {{ message }}
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- ===================================================== -->
+    <!-- ERRORES DEL FORMULARIO -->
+    <!-- ===================================================== -->
+
+    {% if form.non_field_errors %}
+
+        <div class="alert alert-danger">
+
+            {% for error in form.non_field_errors %}
+
+                <div>
+                    {{ error }}
                 </div>
 
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        <!-- NOMBRE -->
-                        <div class="mb-3">
+            {% endfor %}
 
-                            <label class="form-label">                     Nombre completo *                        </label>
+        </div>
 
-                            <input type="text"name="nombre_completo"  class="form-control" value="{{ cliente.nombre_completo|default:'' }}" required>
-                        </div>
+    {% endif %}
 
 
-                        <!-- TELÉFONO -->
-						<div class="mb-3">
+    <!-- ===================================================== -->
+    <!-- FORMULARIO -->
+    <!-- ===================================================== -->
 
-						<label class="form-label">       Teléfono *    </label>
-						<input    type="text"   name="telefono"  class="form-control {% if form.telefono.errors %}is-invalid{% endif %}"
-						value="{{ form.telefono.value|default:'' }}"        required>
-						{% if form.telefono.errors %}
-						<div class="invalid-feedback">
+    <div class="card shadow-sm">
 
-						{% for error in form.telefono.errors %}
-						⚠️ {{ error }}
-						{% endfor %}
+        <div class="card-header bg-primary text-white">
 
-						</div>
-						{% endif %}
-						</div>
+            <h5 class="mb-0">
 
+                <i class="bi bi-person-fill"></i>
 
-                        <!-- WHATSAPP -->
-                        <div class="mb-3">
-                            <label class="form-label">                                WhatsApp                            </label>
-                            <input                      type="text"                           name="whatsapp"                        class="form-control"
-                                value="{{ cliente.whatsapp|default:'' }}"                       >
-                        </div>
-                        <!-- CORREO -->
-                        <div class="mb-3">
-                            <label class="form-label">                            Correo electrónico                  </label>
-                            <input                       type="email"                    name="correo"                 class="form-control"                value="{{ cliente.correo|default:'' }}"                            >
-                        </div>
-                        <!-- DIRECCIÓN -->
-                        <div class="mb-3">
-                            <label class="form-label">                 Dirección           </label>
-                            <input                         type="text"                 name="direccion"         class="form-control"                 value="{{ cliente.direccion|default:'' }}"                        >
-                        </div>
-                        <!-- CAPACIDAD DE PAGO -->
-                        <div class="mb-3">
-                           <label class="form-label">                                Capacidad de pago mensual                            </label>
-                            <input          type="number"           step="0.01" name="capacidad_pago_mensual"                     class="form-control"                           value="{{ cliente.capacidad_pago_mensual|default:'' }}"                       >
-                        </div>
-                        <!-- ESTADO -->
-                        <div class="mb-3">
-                            <label class="form-label">     Estado               </label>
-						{{ form.estado }}
+                {% if cliente %}
+                    Datos del cliente
+                {% else %}
+                    Nuevo cliente
+                {% endif %}
 
-						{% if form.estado.errors %}
+            </h5>
 
-						<div class="text-danger">            {{ form.estado.errors }}        </div>
-						{% endif %}
-                        </div>
+        </div>
 
 
-                        <!-- ASESOR -->
-                        {% if rol == 'MASTER' %}
-                            <div class="mb-3">
-                                <label class="form-label">         Asesor responsable               </label>
-                                <select name="asesor"  class="form-select"    required  >
-                                    <option value="">            Seleccione un asesor                                    </option>
-                                    {% for asesor in asesores %}
-                                        <option               value="{{ asesor.id }}"                      {% if cliente.asesor.id == asesor.id %}
-                                                selected                                           {% endif %}                         >
-                                            {{ asesor.username }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
+        <div class="card-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <div class="row g-3">
+
+
+                    <!-- ================================================= -->
+                    <!-- ASESOR -->
+                    <!-- ================================================= -->
+
+                    {% if es_master %}
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+
+                            {{ form.asesor.label }}
+
+                        </label>
+
+                        {{ form.asesor }}
+
+                        {% if form.asesor.errors %}
+
+                            <div class="text-danger small mt-1">
+
+                                {{ form.asesor.errors }}
 
                             </div>
 
-                        {% else %}
-                            {% if es_master %}
-    <div class="mb-3">
-
-        <label class="form-label">      Asesor responsable      </label>
-        {{ form.asesor }}
-        {% if form.asesor.errors %}
-            <div class="text-danger mt-1">
-                {{ form.asesor.errors }}
-            </div>
-
-        {% endif %}
-
-    </div>
-
-{% else %}
-
-    <div class="alert alert-info">
-
-        <strong>            Asesor responsable:        </strong>
-        {{ request.user.get_full_name|default:request.user.username }}
-        <br>
-        Este cliente será asignado automáticamente a tu usuario.
-    </div>
-{% endif %}
                         {% endif %}
-                        <!-- OBSERVACIONES -->
-                        <div class="mb-3">
-                            <label class="form-label">                      Observaciones                          </label>
+
+                    </div>
+
+                    {% endif %}
 
 
-                            <textarea
-                                name="observaciones"
-                                class="form-control"
-                                rows="4"
-                            >{{ cliente.observaciones|default:'' }}</textarea>
+                    <!-- ================================================= -->
+                    <!-- NOMBRE COMPLETO -->
+                    <!-- ================================================= -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+
+                            {{ form.nombre_completo.label }}
+
+                        </label>
+
+                        {{ form.nombre_completo }}
+
+                        {% if form.nombre_completo.errors %}
+
+                            <div class="text-danger small mt-1">
+
+                                {{ form.nombre_completo.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- TELÉFONO -->
+                    <!-- ================================================= -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+
+                            {{ form.telefono.label }}
+
+                        </label>
+
+                        {{ form.telefono }}
+
+                        {% if form.telefono.errors %}
+
+                            <div class="text-danger small mt-1">
+
+                                {{ form.telefono.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- WHATSAPP -->
+                    <!-- ================================================= -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+
+                            {{ form.whatsapp.label }}
+
+                        </label>
+
+                        {{ form.whatsapp }}
+
+                        {% if form.whatsapp.errors %}
+
+                            <div class="text-danger small mt-1">
+
+                                {{ form.whatsapp.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- CORREO -->
+                    <!-- ================================================= -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+
+                            {{ form.correo.label }}
+
+                        </label>
+
+                        {{ form.correo }}
+
+                        {% if form.correo.errors %}
+
+                            <div class="text-danger small mt-1">
+
+                                {{ form.correo.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- DIRECCIÓN -->
+                    <!-- ================================================= -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+
+                            {{ form.direccion.label }}
+
+                        </label>
+
+                        {{ form.direccion }}
+
+                        {% if form.direccion.errors %}
+
+                            <div class="text-danger small mt-1">
+
+                                {{ form.direccion.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- CAPACIDAD DE PAGO -->
+                    <!-- ================================================= -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+
+                            {{ form.capacidad_pago_mensual.label }}
+
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                Bs.
+                            </span>
+
+                            {{ form.capacidad_pago_mensual }}
 
                         </div>
 
+                        {% if form.capacidad_pago_mensual.errors %}
 
-                        <!-- BOTONES -->
+                            <div class="text-danger small mt-1">
 
-                        <div class="d-flex gap-2">
+                                {{ form.capacidad_pago_mensual.errors }}
 
+                            </div>
 
-                            <button
-                                type="submit"
-                                class="btn btn-success"
-                            >
+                        {% endif %}
 
-                                Guardar Cliente
-
-                            </button>
+                    </div>
 
 
-                            <a                                href="{% url 'clientes:cliente_lista' %}"                                class="btn btn-secondary"                            >
-                                Cancelar
-                            </a>
-                        </div>
-                    </form>
+                    <!-- ================================================= -->
+                    <!-- ESTADO -->
+                    <!-- ================================================= -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+
+                            {{ form.estado.label }}
+
+                        </label>
+
+                        {{ form.estado }}
+
+                        {% if form.estado.errors %}
+
+                            <div class="text-danger small mt-1">
+
+                                {{ form.estado.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- OBSERVACIONES -->
+                    <!-- ================================================= -->
+
+                    <div class="col-12">
+
+                        <label class="form-label fw-bold">
+
+                            {{ form.observaciones.label }}
+
+                        </label>
+
+                        {{ form.observaciones }}
+
+                        {% if form.observaciones.errors %}
+
+                            <div class="text-danger small mt-1">
+
+                                {{ form.observaciones.errors }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
                 </div>
-           </div>
-        </div>
-    </div>
-</div>
-<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-</body>
 
-</html>
+
+                <!-- ================================================= -->
+                <!-- BOTONES -->
+                <!-- ================================================= -->
+
+                <hr class="my-4">
+
+                <div class="d-flex justify-content-between">
+
+                    <a href="{% url 'clientes:cliente_lista' %}"
+                       class="btn btn-secondary">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Cancelar
+
+                    </a>
+
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-save-fill"></i>
+
+                        {% if cliente %}
+                            Guardar cambios
+                        {% else %}
+                            Registrar cliente
+                        {% endif %}
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

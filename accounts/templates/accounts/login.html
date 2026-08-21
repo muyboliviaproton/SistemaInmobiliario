@@ -4,36 +4,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso al Sistema Inmobiliario</title>
-	<!-- Bootstrap 5.3 -->
+    <title> Grupo Parada & Paz - Trabajo Ronald Lopez V (75006884) </title>
+    <!-- Bootstrap 5.3 -->
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        /* Estilo para adaptar los inputs automáticos de Django a Bootstrap */
+        .django-form p {
+            margin-bottom: 1rem;
+        }
+        .django-form label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 0.3rem;
+            display: inline-block;
+        }
+        .django-form input {
+            display: block;
+            width: 100%;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            appearance: none;
+            border-radius: 0.375rem;
+            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
+        .django-form input:focus {
+            color: #212529;
+            background-color: #fff;
+            border-color: #86b7fe;
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+        }
+    </style>
 </head>
 
-<body>
+<body class="bg-light d-flex align-items-center justify-content-center vh-100">
 
-    <h1>Sistema de Gestión Inmobiliaria</h1>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-lg-4">
+                
+                <!-- Tarjeta de Inicio de Sesión -->
+                <div class="card shadow-sm border-0 rounded-4 p-4">
+                    <div class="card-body">
+                        
+                        <!-- Cabecera -->
+                        <div class="text-center mb-4">
+                            <h3 class="fw-bold text-primary">Grupo Parada & Paz</h3>
+                            <h5 class="fw-semibold mt-3">Iniciar Sesión para Asesores</h5>
+                        </div>
 
-    <h2>Iniciar Sesión</h2>
+                        <!-- Formulario de Login -->
+                        <form method="post" class="django-form">
+                            {% csrf_token %}
 
-    <form method="post">
+                            {{ form.as_p }}
 
-        {% csrf_token %}
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    Ingresar
+                                </button>
+                            </div>
+                        </form>
 
-        {{ form.as_p }}
+                        <!-- Formulario de Logout (Opcional según tu flujo) -->
+                        {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'accounts:logout' %}" class="mt-3">
+                            {% csrf_token %}
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    🚪 Cerrar sesión
+                                </button>
+                            </div>
+                        </form>
+                        {% endif %}
 
-        <button type="submit">
-            Ingresar
-        </button>
+                    </div><p align="center" class="text-muted small">Sistema de Gestión Inmobiliaria<br>Ronald Lopez Vaca - 75006884</p>
+                </div>
 
-    </form>
+            </div>
+        </div>
+    </div>
 
-<form method="post" action="{% url 'logout' %}">
-    {% csrf_token %}
-
-    <button type="submit">
-        🚪 Cerrar sesión
-    </button>
-</form>
-<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>

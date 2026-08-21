@@ -1,66 +1,12 @@
-{% load static %}
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="es">
+{% block titulo %}
+Gestión de Seguimientos
+{% endblock %}
 
-<head>
+{% block contenido %}
 
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Gestión de Seguimientos
-    </title>
-
-    <link
-        href="{% static 'bootstrap/css/bootstrap.min.css' %}"
-        rel="stylesheet"
-    >
-
-</head>
-
-
-<body class="bg-light">
-
-
-<!-- ====================================================== -->
-<!-- NAVBAR -->
-<!-- ====================================================== -->
-
-<nav class="navbar navbar-dark bg-dark">
-
-    <div class="container">
-
-        <a
-            class="navbar-brand"
-            href="{% url 'dashboard' %}"
-        >
-            🏡 Sistema Inmobiliario
-        </a>
-
-
-        <span class="text-white">
-
-            Usuario:
-            {{ request.user.username }}
-
-        </span>
-
-    </div>
-
-</nav>
-
-
-<!-- ====================================================== -->
-<!-- CONTENIDO PRINCIPAL -->
-<!-- ====================================================== -->
-
-<div class="container mt-4">
-
+<div class="container-fluid">
 
     <!-- ================================================== -->
     <!-- CABECERA -->
@@ -69,33 +15,24 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
-
-            <h1>
-
-                📞 Gestión de Seguimientos
-
+            <h1 class="fw-bold">
+                <i class="bi bi-telephone-forward"></i>
+                Gestión de Seguimientos
             </h1>
 
-            <p class="text-muted">
-
+            <p class="text-muted mb-0">
                 Control y gestión comercial de clientes
-
             </p>
-
         </div>
 
-
         <div>
-
             <a
                 href="{% url 'clientes:cliente_lista' %}"
                 class="btn btn-secondary"
             >
-
-                👥 Ver Clientes
-
+                <i class="bi bi-people"></i>
+                Ver Clientes
             </a>
-
         </div>
 
     </div>
@@ -109,66 +46,47 @@
 
     <div class="card shadow-sm mb-4">
 
-
         <div class="card-header bg-primary text-white">
 
             <h5 class="mb-0">
-
-                👤 Filtrar clientes por Asesor
-
+                <i class="bi bi-person-check"></i>
+                Filtrar clientes por asesor
             </h5>
 
         </div>
 
-
         <div class="card-body">
-
 
             <form
                 method="GET"
                 action="{% url 'gestion_seguimientos:inicio_seguimientos' %}"
             >
 
-
                 <div class="row align-items-end">
-
-
-                    <!-- SELECT ASESOR -->
 
                     <div class="col-md-8">
 
-
                         <label class="form-label">
-
                             Seleccione un asesor
-
                         </label>
-
 
                         <select
                             name="asesor"
                             class="form-select"
                         >
 
-
                             <option value="">
-
                                 -- Todos los asesores --
-
                             </option>
-
 
                             {% for asesor in asesores %}
 
-
                                 <option
                                     value="{{ asesor.id }}"
-
                                     {% if asesor_seleccionado and asesor.id == asesor_seleccionado.id %}
                                         selected
                                     {% endif %}
                                 >
-
 
                                     {% if asesor.first_name or asesor.last_name %}
 
@@ -183,67 +101,48 @@
 
                                     {% endif %}
 
-
                                 </option>
-
 
                             {% endfor %}
 
-
                         </select>
-
 
                     </div>
 
 
-                    <!-- BOTONES -->
-
                     <div class="col-md-4 mt-3 mt-md-0">
-
 
                         <button
                             type="submit"
                             class="btn btn-primary"
                         >
-
-                            🔍 Filtrar
-
+                            <i class="bi bi-search"></i>
+                            Filtrar
                         </button>
-
 
                         <a
                             href="{% url 'gestion_seguimientos:inicio_seguimientos' %}"
                             class="btn btn-secondary"
                         >
-
-                            🔄 Ver Todos
-
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            Ver Todos
                         </a>
-
 
                     </div>
 
-
                 </div>
-
 
             </form>
 
 
-            <!-- INFORMACIÓN DEL FILTRO -->
-
             {% if asesor_seleccionado %}
-
 
                 <div class="alert alert-info mt-3 mb-0">
 
-
                     <strong>
-
-                        👤 Asesor seleccionado:
-
+                        <i class="bi bi-person"></i>
+                        Asesor seleccionado:
                     </strong>
-
 
                     {% if asesor_seleccionado.first_name or asesor_seleccionado.last_name %}
 
@@ -256,28 +155,20 @@
 
                     {% endif %}
 
-
                     <br>
 
-
                     <strong>
-
-                        🚨 Clientes pendientes de gestión:
-
+                        <i class="bi bi-exclamation-circle"></i>
+                        Clientes pendientes de gestión:
                     </strong>
-
 
                     {{ total_sin_seguimiento }}
 
-
                 </div>
-
 
             {% endif %}
 
-
         </div>
-
 
     </div>
 
@@ -290,54 +181,37 @@
 
     <div class="row g-3 mb-4">
 
-
         <!-- TOTAL CLIENTES -->
 
         <div class="col-md-4">
 
-
-            <div class="card shadow-sm border-primary">
-
+            <div class="card shadow-sm border-primary h-100">
 
                 <div class="card-body">
 
-
                     <h5 class="card-title">
 
-                        👥
+                        <i class="bi bi-people"></i>
 
                         {% if es_master %}
-
                             Total Clientes
-
                         {% else %}
-
                             Mis Clientes
-
                         {% endif %}
 
                     </h5>
 
-
-                    <h2 class="text-primary">
-
+                    <h2 class="text-primary fw-bold">
                         {{ total_clientes }}
-
                     </h2>
 
-
                     <p class="text-muted mb-0">
-
                         Clientes activos
-
                     </p>
-
 
                 </div>
 
-
             </div>
-
 
         </div>
 
@@ -346,39 +220,28 @@
 
         <div class="col-md-4">
 
-
-            <div class="card shadow-sm border-success">
-
+            <div class="card shadow-sm border-success h-100">
 
                 <div class="card-body">
 
-
                     <h5 class="card-title">
 
-                        📞 Con Seguimiento
+                        <i class="bi bi-check-circle"></i>
+                        Con Seguimiento
 
                     </h5>
 
-
-                    <h2 class="text-success">
-
+                    <h2 class="text-success fw-bold">
                         {{ clientes_con_seguimiento }}
-
                     </h2>
 
-
                     <p class="text-muted mb-0">
-
                         Clientes gestionados
-
                     </p>
-
 
                 </div>
 
-
             </div>
-
 
         </div>
 
@@ -387,42 +250,30 @@
 
         <div class="col-md-4">
 
-
-            <div class="card shadow-sm border-danger">
-
+            <div class="card shadow-sm border-danger h-100">
 
                 <div class="card-body">
 
-
                     <h5 class="card-title">
 
-                        🚨 Sin Seguimiento
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Sin Seguimiento
 
                     </h5>
 
-
-                    <h2 class="text-danger">
-
+                    <h2 class="text-danger fw-bold">
                         {{ total_sin_seguimiento }}
-
                     </h2>
 
-
                     <p class="text-muted mb-0">
-
                         Requieren gestión
-
                     </p>
-
 
                 </div>
 
-
             </div>
 
-
         </div>
-
 
     </div>
 
@@ -433,16 +284,12 @@
 
     {% if total_sin_seguimiento > 0 %}
 
-
         <div class="alert alert-warning">
 
-
             <strong>
-
-                ⚠️ Atención:
-
+                <i class="bi bi-exclamation-triangle"></i>
+                Atención:
             </strong>
-
 
             {% if asesor_seleccionado %}
 
@@ -458,26 +305,22 @@
 
             {% endif %}
 
-
-            {{ total_sin_seguimiento }}
+            <strong>{{ total_sin_seguimiento }}</strong>
 
             cliente(s) que todavía no tienen ningún seguimiento.
 
-
             Se recomienda realizar contacto con ellos.
-
 
         </div>
 
-
     {% else %}
-
 
         <div class="alert alert-success">
 
-
-            ✅ Excelente.
-
+            <strong>
+                <i class="bi bi-check-circle"></i>
+                Excelente.
+            </strong>
 
             {% if asesor_seleccionado %}
 
@@ -489,9 +332,7 @@
 
             {% endif %}
 
-
         </div>
-
 
     {% endif %}
 
@@ -502,13 +343,13 @@
 
     <div class="card shadow-sm">
 
-
         <div class="card-header bg-danger text-white">
-
 
             <h5 class="mb-0">
 
-                🚨 Clientes sin seguimiento
+                <i class="bi bi-exclamation-triangle"></i>
+
+                Clientes sin seguimiento
 
                 {% if asesor_seleccionado %}
 
@@ -518,113 +359,67 @@
 
             </h5>
 
-
         </div>
 
 
         <div class="card-body">
 
-
             {% if clientes_sin_seguimiento %}
-
 
                 <div class="table-responsive">
 
-
                     <table class="table table-hover align-middle">
-
 
                         <thead class="table-dark">
 
-
                             <tr>
 
+                                <th>Cliente</th>
 
-                                <th>
-
-                                    Cliente
-
-                                </th>
-
-
-                                <th>
-
-                                    Teléfono
-
-                                </th>
-
+                                <th>Teléfono</th>
 
                                 {% if es_master %}
-
-
-                                    <th>
-
-                                        Asesor
-
-                                    </th>
-
-
+                                    <th>Asesor</th>
                                 {% endif %}
 
-
                                 <th class="text-center">
-
                                     Acción
-
                                 </th>
 
-
                             </tr>
-
 
                         </thead>
 
 
                         <tbody>
 
-
                             {% for cliente in clientes_sin_seguimiento %}
-
 
                                 <tr>
 
-
-                                    <!-- CLIENTE -->
-
                                     <td>
-
 
                                         <strong>
-
                                             {{ cliente.nombre_completo }}
-
                                         </strong>
-
 
                                     </td>
 
-
-                                    <!-- TELÉFONO -->
 
                                     <td>
 
+                                        <i class="bi bi-telephone"></i>
 
-                                        📞 {{ cliente.telefono }}
-
+                                        {{ cliente.telefono }}
 
                                     </td>
 
-
-                                    <!-- ASESOR -->
 
                                     {% if es_master %}
 
-
                                         <td>
 
-
                                             {% if cliente.asesor %}
-
 
                                                 {% if cliente.asesor.first_name or cliente.asesor.last_name %}
 
@@ -637,38 +432,27 @@
 
                                                 {% endif %}
 
-
                                             {% else %}
 
-
                                                 <span class="text-danger">
-
                                                     Sin asesor asignado
-
                                                 </span>
-
 
                                             {% endif %}
 
-
                                         </td>
-
 
                                     {% endif %}
 
 
-                                    <!-- ACCIONES -->
-
                                     <td class="text-center">
-
 
                                         <a
                                             href="{% url 'gestion_seguimientos:seguimiento_lista' cliente.id %}"
                                             class="btn btn-sm btn-primary"
                                         >
-
-                                            📋 Ver seguimiento
-
+                                            <i class="bi bi-clock-history"></i>
+                                            Ver seguimiento
                                         </a>
 
 
@@ -676,52 +460,35 @@
                                             href="{% url 'gestion_seguimientos:seguimiento_crear' cliente.id %}"
                                             class="btn btn-sm btn-success"
                                         >
-
-                                            📞 Gestionar
-
+                                            <i class="bi bi-plus-circle"></i>
+                                            Gestionar
                                         </a>
-
 
                                     </td>
 
-
                                 </tr>
-
 
                             {% endfor %}
 
-
                         </tbody>
-
 
                     </table>
 
-
                 </div>
-
 
             {% else %}
 
-
                 <div class="text-center py-5">
 
-
                     <div class="display-1 mb-3">
-
-                        🎉
-
+                        <i class="bi bi-check-circle text-success"></i>
                     </div>
 
-
                     <h4>
-
                         ¡Excelente trabajo!
-
                     </h4>
 
-
                     <p class="text-muted">
-
 
                         {% if asesor_seleccionado %}
 
@@ -733,54 +500,16 @@
 
                         {% endif %}
 
-
                     </p>
-
 
                 </div>
 
-
             {% endif %}
-
 
         </div>
 
-
     </div>
-
-
-    <!-- ================================================== -->
-    <!-- BOTÓN VOLVER -->
-    <!-- ================================================== -->
-
-    <div class="mt-4 mb-4">
-
-
-        <a
-            href="{% url 'dashboard' %}"
-            class="btn btn-secondary"
-        >
-
-            ← Volver al Dashboard
-
-        </a>
-
-
-    </div>
-
 
 </div>
 
-
-<!-- ====================================================== -->
-<!-- BOOTSTRAP JS -->
-<!-- ====================================================== -->
-
-<script
-    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"
-></script>
-
-
-</body>
-
-</html>
+{% endblock %}

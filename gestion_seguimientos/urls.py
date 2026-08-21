@@ -4,34 +4,44 @@ from . import views
 app_name = 'gestion_seguimientos'
 
 urlpatterns = [
+
     # ============================================================
-    # INICIO DE SEGUIMIENTOS
+    # INICIO
     # ============================================================
-    path(
-        '',
-        views.inicio_seguimientos,
-        name='inicio_seguimientos'
-    ),
-        # ============================================================
+
+    path('',views.inicio_seguimientos,name='inicio_seguimientos'),
+    # ============================================================
     # DASHBOARD COMERCIAL
     # ============================================================
-        path(
+
+    path(
         'dashboard/',
         views.dashboard_comercial,
         name='dashboard_comercial'
     ),
+
     # ============================================================
-    # LISTA DE SEGUIMIENTOS DE UN CLIENTE
+    # AGENDA
     # ============================================================
+
+    path(
+        'agenda/',
+        views.agenda_seguimientos,
+        name='agenda_seguimientos'
+    ),
+
+    # ============================================================
+    # LISTA DE SEGUIMIENTOS
+    # ============================================================
+
     path(
         '<int:cliente_id>/',
         views.seguimiento_lista,
         name='seguimiento_lista'
     ),
 
-
     # ============================================================
-    # CREAR NUEVO SEGUIMIENTO
+    # NUEVO SEGUIMIENTO
     # ============================================================
 
     path(
@@ -40,9 +50,8 @@ urlpatterns = [
         name='seguimiento_crear'
     ),
 
-
     # ============================================================
-    # EDITAR SEGUIMIENTO
+    # EDITAR
     # ============================================================
 
     path(
@@ -51,23 +60,14 @@ urlpatterns = [
         name='seguimiento_editar'
     ),
 
-
     # ============================================================
-    # ELIMINAR SEGUIMIENTO
+    # ELIMINAR
     # ============================================================
 
     path(
         '<int:seguimiento_id>/eliminar/',
         views.seguimiento_eliminar,
         name='seguimiento_eliminar'
-    ),
-    # ============================================================
-    # AGENDA DE SEGUIMIENTOS
-    # ============================================================
-    path(
-        'agenda/',
-        views.agenda_seguimientos,
-        name='agenda_seguimientos'
     ),
 
 ]

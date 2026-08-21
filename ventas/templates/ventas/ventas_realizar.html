@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    Realizar Visita | Sistema Inmobiliario
+{% endblock %}
+
+
+{% block contenido %}
+
+<div class="container-fluid">
+
+    <!-- ================================================== -->
+    <!-- TÍTULO -->
+    <!-- ================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-check2-circle text-success"></i>
+                Realizar Visita
+            </h2>
+
+            <p class="text-muted mb-0">
+                Registrar el resultado de la visita realizada
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'visitas:visita_detalle' visita.id %}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Volver
+        </a>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- INFORMACIÓN DE LA VISITA -->
+    <!-- ================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-success text-white">
+
+            <h5 class="mb-0">
+                <i class="bi bi-calendar-check"></i>
+                Información de la visita
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <!-- CLIENTE -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label text-muted">
+                        Cliente
+                    </label>
+
+                    <div class="fw-bold fs-5">
+
+                        {{ cliente.nombre_completo }}
+
+                    </div>
+
+                </div>
+
+
+                <!-- ASESOR -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label text-muted">
+                        Asesor
+                    </label>
+
+                    <div>
+
+                        {{ visita.asesor.get_full_name|default:visita.asesor.username }}
+
+                    </div>
+
+                </div>
+
+
+                <!-- FECHA -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label text-muted">
+                        Fecha
+                    </label>
+
+                    <div>
+
+                        <i class="bi bi-calendar3"></i>
+
+                        {{ visita.fecha|date:"d/m/Y" }}
+
+                    </div>
+
+                </div>
+
+
+                <!-- HORA -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label text-muted">
+                        Hora
+                    </label>
+
+                    <div>
+
+                        <i class="bi bi-clock"></i>
+
+                        {{ visita.hora|time:"H:i" }}
+
+                    </div>
+
+                </div>
+
+
+                <!-- LUGAR -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label text-muted">
+                        Lugar
+                    </label>
+
+                    <div>
+
+                        <i class="bi bi-geo-alt"></i>
+
+                        {{ visita.lugar }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- FORMULARIO DEL RESULTADO -->
+    <!-- ================================================== -->
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <div class="card shadow-sm">
+
+            <div class="card-header bg-primary text-white">
+
+                <h5 class="mb-0">
+
+                    <i class="bi bi-clipboard-check"></i>
+
+                    Resultado de la visita
+
+                </h5>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <!-- RESULTADO -->
+
+                <div class="mb-4">
+
+                    <label
+                        for="resultado"
+                        class="form-label fw-bold"
+                    >
+                        ¿Cuál fue el resultado de la visita?
+                    </label>
+
+                    <textarea
+                        name="resultado"
+                        id="resultado"
+                        class="form-control"
+                        rows="5"
+                        placeholder="Ej.: El cliente mostró interés en el lote 10A y desea revisar las condiciones de pago."
+                        required
+                    >{{ visita.resultado }}</textarea>
+
+                </div>
+
+
+                <!-- OBSERVACIONES -->
+
+                <div class="mb-4">
+
+                    <label
+                        for="observaciones"
+                        class="form-label fw-bold"
+                    >
+                        Observaciones
+                    </label>
+
+                    <textarea
+                        name="observaciones"
+                        id="observaciones"
+                        class="form-control"
+                        rows="5"
+                        placeholder="Registre cualquier información importante de la visita..."
+                    >{{ visita.observaciones }}</textarea>
+
+                </div>
+
+
+                <!-- AVISO -->
+
+                <div class="alert alert-warning">
+
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+
+                    Al guardar, la visita cambiará automáticamente a
+                    <strong>REALIZADA</strong>.
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================== -->
+            <!-- BOTONES -->
+            <!-- ================================================== -->
+
+            <div class="card-footer bg-light d-flex justify-content-end gap-2">
+
+                <a
+                    href="{% url 'visitas:visita_detalle' visita.id %}"
+                    class="btn btn-secondary"
+                >
+
+                    <i class="bi bi-x-circle"></i>
+
+                    Cancelar
+
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-success"
+                >
+
+                    <i class="bi bi-check-circle"></i>
+
+                    Registrar visita realizada
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

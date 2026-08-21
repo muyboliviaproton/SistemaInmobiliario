@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    Eliminar definitivamente {{ lote.codigo }}
+{% endblock %}
+
+{% block contenido %}
+
+<div class="container py-5">
+
+    {% include 'includes/mensajes.html' %}
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-7">
+
+            <div class="card shadow border-danger">
+
+                <div class="card-header bg-danger text-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-trash"></i>
+
+                        Eliminación definitiva
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body text-center">
+
+                    <div class="display-4 text-danger mb-3">
+
+                        <i class="bi bi-exclamation-octagon"></i>
+
+                    </div>
+
+
+                    <h4>
+
+                        ¿Eliminar definitivamente
+                        <strong>{{ lote.codigo }}</strong>?
+
+                    </h4>
+
+
+                    <p class="text-danger fw-bold">
+
+                        ADVERTENCIA: esta acción no puede deshacerse.
+
+                    </p>
+
+
+                    <p class="text-muted">
+
+                        El lote será eliminado permanentemente
+                        de la base de datos junto con la información
+                        relacionada que permita la eliminación.
+
+                    </p>
+
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+
+                        <div class="d-flex justify-content-center gap-2">
+
+                            <a
+                                href="{% url 'lotes:lote_detalle' lote.id %}"
+                                class="btn btn-secondary"
+                            >
+                                Cancelar
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-danger"
+                            >
+                                <i class="bi bi-trash"></i>
+                                Eliminar definitivamente
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

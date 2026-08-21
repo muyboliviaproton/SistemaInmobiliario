@@ -1,83 +1,347 @@
-{% load static %}
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
-    <title>        Oportunidades Comerciales    </title>
-    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+{% block titulo %}
+    Oportunidades Comerciales | CRM Inmobiliario
+{% endblock %}
 
-</head>
+{% block contenido %}
 
-
-<body class="bg-light">
-
-
-<div class="container mt-5">
-
-
-    <!-- ================================================= -->
+<div class="container-fluid">
+    <!-- ================================================== -->
     <!-- CABECERA -->
-    <!-- ================================================= -->
-
-		<div class="d-flex justify-content-between align-items-center mb-4">
-
-			<div>
-
-				<h2>
-
-					💼 Oportunidades Comerciales
-
-				</h2>
-
-				<p class="text-muted mb-0">
-
-					Gestión y seguimiento de oportunidades de venta.
-
-				</p>
-
-			</div>
-
-		</div>
-
-
-    <!-- ================================================= -->
-    <!-- MENSAJE INFORMATIVO -->
-    <!-- ================================================= -->
-
+    <!-- ================================================== -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div><h2 class="fw-bold mb-1"><i class="bi bi-briefcase-fill text-primary"></i> Oportunidades Comerciales</h2>
+            <p class="text-muted mb-0">         Gestión y seguimiento de oportunidades de venta.       </p>
+        </div>
+    </div>
+    <!-- ================================================== -->
+    <!-- INFORMACIÓN -->
+    <!-- ================================================== -->
     <div class="alert alert-info">
-
-        <strong>
-            ℹ️ Información:
-        </strong>
-
+        <i class="bi bi-info-circle-fill"></i>
         {% if es_master %}
-
-            Como usuario MASTER puede visualizar
+            Como usuario <strong>MASTER</strong> puede visualizar
             todas las oportunidades comerciales.
-
         {% else %}
-
             Aquí se muestran las oportunidades comerciales
             asignadas a usted.
-
         {% endif %}
+    </div>
+    <!-- ================================================== -->
+    <!-- RESUMEN DE OPORTUNIDADES -->
+    <!-- ================================================== -->
+    <div class="row g-3 mb-4">
+        <!-- NUEVAS -->
+        <div class="col-md-3">
+            <a
+                href="{% url 'oportunidades:oportunidad_etapa' 'NUEVO' %}"
+                class="text-decoration-none"
+            >
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <small class="text-muted">
+                            Nuevas
+                        </small>
+
+                        <div class="d-flex justify-content-between">
+
+                            <h3 class="fw-bold text-secondary">
+                                {{ nuevas }}
+                            </h3>
+
+                            <i class="bi bi-stars fs-1 text-secondary"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- CONTACTADAS -->
+
+        <div class="col-md-3">
+
+            <a
+                href="{% url 'oportunidades:oportunidad_etapa' 'CONTACTADO' %}"
+                class="text-decoration-none"
+            >
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <small class="text-muted">
+                            Contactadas
+                        </small>
+
+                        <div class="d-flex justify-content-between">
+
+                            <h3 class="fw-bold text-info">
+                                {{ contactadas }}
+                            </h3>
+
+                            <i class="bi bi-telephone fs-1 text-info"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- INTERESADAS -->
+
+        <div class="col-md-3">
+
+            <a
+                href="{% url 'oportunidades:oportunidad_etapa' 'INTERESADO' %}"
+                class="text-decoration-none"
+            >
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <small class="text-muted">
+                            Interesadas
+                        </small>
+
+                        <div class="d-flex justify-content-between">
+
+                            <h3 class="fw-bold text-primary">
+                                {{ interesadas }}
+                            </h3>
+
+                            <i class="bi bi-heart fs-1 text-primary"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- VISITAS PENDIENTES -->
+
+        <div class="col-md-3">
+
+            <a
+                href="{% url 'oportunidades:oportunidad_etapa' 'VISITA_PENDIENTE' %}"
+                class="text-decoration-none"
+            >
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <small class="text-muted">
+                            Visitas pendientes
+                        </small>
+
+                        <div class="d-flex justify-content-between">
+
+                            <h3 class="fw-bold text-warning">
+                                {{ visitas_pendientes }}
+                            </h3>
+
+                            <i class="bi bi-calendar-event fs-1 text-warning"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
 
     </div>
 
 
-    <!-- ================================================= -->
-    <!-- TABLA -->
-    <!-- ================================================= -->
+    <!-- ================================================== -->
+    <!-- SEGUNDA FILA -->
+    <!-- ================================================== -->
 
-    <div class="card shadow">
+    <div class="row g-3 mb-4">
 
-        <div class="card-header bg-primary text-white">
+
+        <!-- NEGOCIACIÓN -->
+
+        <div class="col-md-3">
+
+            <a
+                href="{% url 'oportunidades:oportunidad_etapa' 'NEGOCIACION' %}"
+                class="text-decoration-none"
+            >
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <small class="text-muted">
+                            En negociación
+                        </small>
+
+                        <div class="d-flex justify-content-between">
+
+                            <h3 class="fw-bold text-warning">
+                                {{ negociaciones }}
+                            </h3>
+
+                            <i class="bi bi-chat-square-text fs-1 text-warning"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- RESERVAS -->
+
+        <div class="col-md-3">
+
+            <a
+                href="{% url 'oportunidades:oportunidad_etapa' 'RESERVA' %}"
+                class="text-decoration-none"
+            >
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <small class="text-muted">
+                            Reservas
+                        </small>
+
+                        <div class="d-flex justify-content-between">
+
+                            <h3 class="fw-bold text-dark">
+                                {{ reservas }}
+                            </h3>
+
+                            <i class="bi bi-file-earmark-check fs-1 text-dark"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- VENTAS -->
+
+        <div class="col-md-3">
+
+            <a
+                href="{% url 'oportunidades:oportunidad_etapa' 'VENTA_CERRADA' %}"
+                class="text-decoration-none"
+            >
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <small class="text-muted">
+                            Ventas cerradas
+                        </small>
+
+                        <div class="d-flex justify-content-between">
+
+                            <h3 class="fw-bold text-success">
+                                {{ ventas_cerradas }}
+                            </h3>
+
+                            <i class="bi bi-cash-coin fs-1 text-success"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- PERDIDAS -->
+
+        <div class="col-md-3">
+
+            <a
+                href="{% url 'oportunidades:oportunidad_etapa' 'PERDIDA' %}"
+                class="text-decoration-none"
+            >
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <small class="text-muted">
+                            Perdidas
+                        </small>
+
+                        <div class="d-flex justify-content-between">
+
+                            <h3 class="fw-bold text-danger">
+                                {{ perdidas }}
+                            </h3>
+
+                            <i class="bi bi-x-circle fs-1 text-danger"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- SECCIÓN DE VISITAS -->
+    <!-- ================================================== -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-dark text-white">
 
             <h5 class="mb-0">
 
-                📋 Lista de oportunidades
+                <i class="bi bi-calendar-check"></i>
+
+                Gestión de visitas
 
             </h5>
 
@@ -86,47 +350,165 @@
 
         <div class="card-body">
 
+            <div class="row g-3">
+
+
+                <!-- VISITAS PENDIENTES -->
+
+                <div class="col-md-6">
+
+                    <a
+                        href="{% url 'visitas:visita_lista' %}?estado=PENDIENTE"
+                        class="text-decoration-none"
+                    >
+
+                        <div class="card border-warning shadow-sm h-100">
+
+                            <div class="card-body">
+
+                                <div class="d-flex justify-content-between align-items-center">
+
+                                    <div>
+
+                                        <h5 class="fw-bold text-dark">
+
+                                            Visitas pendientes
+
+                                        </h5>
+
+                                        <p class="text-muted mb-0">
+
+                                            Visitas que requieren seguimiento.
+
+                                        </p>
+
+                                    </div>
+
+                                    <div>
+
+                                        <span class="display-6 fw-bold text-warning">
+
+                                            {{ visitas_pendientes_total }}
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- VISITAS REALIZADAS -->
+
+                <div class="col-md-6">
+
+                    <a
+                        href="{% url 'visitas:visita_lista' %}?estado=REALIZADA"
+                        class="text-decoration-none"
+                    >
+
+                        <div class="card border-success shadow-sm h-100">
+
+                            <div class="card-body">
+
+                                <div class="d-flex justify-content-between align-items-center">
+
+                                    <div>
+
+                                        <h5 class="fw-bold text-dark">
+
+                                            Visitas realizadas
+
+                                        </h5>
+
+                                        <p class="text-muted mb-0">
+
+                                            Historial de visitas realizadas.
+
+                                        </p>
+
+                                    </div>
+
+                                    <div>
+
+                                        <span class="display-6 fw-bold text-success">
+
+                                            {{ visitas_realizadas_total }}
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- TABLA PRINCIPAL -->
+    <!-- ================================================== -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-primary text-white">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-list-ul"></i>
+
+                Oportunidades que requieren atención
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
 
             {% if oportunidades %}
 
-
                 <div class="table-responsive">
 
-
-                    <table class="table table-hover align-middle">
-
+                    <table class="table table-hover align-middle mb-0">
 
                         <thead class="table-light">
 
                             <tr>
 
-                                <th>
-                                    Oportunidad
-                                </th>
+                                <th>Oportunidad</th>
 
-                                <th>
-                                    Cliente
-                                </th>
+                                <th>Cliente</th>
 
-                                <th>
-                                    Asesor
-                                </th>
+                                <th>Asesor</th>
 
-                                <th>
-                                    Etapa
-                                </th>
+                                <th>Etapa</th>
 
-                                <th>
-                                    Prioridad
-                                </th>
+                                <th>Prioridad</th>
 
-                                <th>
-                                    Presupuesto
-                                </th>
+                                <th>Presupuesto</th>
 
-                                <th>
-                                    Fecha
-                                </th>
+                                <th>Fecha</th>
 
                                 <th class="text-center">
                                     Acciones
@@ -139,134 +521,97 @@
 
                         <tbody>
 
-
                         {% for oportunidad in oportunidades %}
-
 
                             <tr>
 
-
-                                <!-- ================================= -->
-                                <!-- NOMBRE -->
-                                <!-- ================================= -->
+                                <!-- OPORTUNIDAD -->
 
                                 <td>
 
                                     <strong>
-
                                         {{ oportunidad.nombre }}
-
                                     </strong>
 
                                 </td>
 
 
-                                <!-- ================================= -->
                                 <!-- CLIENTE -->
-                                <!-- ================================= -->
 
                                 <td>
 
-                                    {{ oportunidad.cliente.nombre_completo }}
+                                    <strong>
+                                        {{ oportunidad.cliente.nombre_completo }}
+                                    </strong>
 
                                     <br>
 
                                     <small class="text-muted">
-
                                         {{ oportunidad.cliente.telefono }}
-
                                     </small>
 
                                 </td>
 
 
-                                <!-- ================================= -->
                                 <!-- ASESOR -->
-                                <!-- ================================= -->
 
                                 <td>
 
-                                    {{ oportunidad.asesor.username }}
+                                    {{ oportunidad.asesor.get_full_name|default:oportunidad.asesor.username }}
 
                                 </td>
 
 
-                                <!-- ================================= -->
                                 <!-- ETAPA -->
-                                <!-- ================================= -->
 
                                 <td>
 
                                     {% if oportunidad.etapa == 'NUEVO' %}
 
                                         <span class="badge bg-secondary">
-
                                             Nuevo
-
                                         </span>
 
                                     {% elif oportunidad.etapa == 'CONTACTADO' %}
 
                                         <span class="badge bg-info">
-
                                             Contactado
-
                                         </span>
 
                                     {% elif oportunidad.etapa == 'INTERESADO' %}
 
                                         <span class="badge bg-primary">
-
                                             Interesado
-
                                         </span>
 
                                     {% elif oportunidad.etapa == 'VISITA_PENDIENTE' %}
 
                                         <span class="badge bg-warning text-dark">
-
                                             Visita pendiente
-
-                                        </span>
-
-                                    {% elif oportunidad.etapa == 'VISITA_REALIZADA' %}
-
-                                        <span class="badge bg-success">
-
-                                            Visita realizada
-
                                         </span>
 
                                     {% elif oportunidad.etapa == 'NEGOCIACION' %}
 
                                         <span class="badge bg-warning text-dark">
-
                                             En negociación
-
                                         </span>
 
                                     {% elif oportunidad.etapa == 'RESERVA' %}
 
                                         <span class="badge bg-dark">
-
                                             Reserva
-
                                         </span>
 
                                     {% elif oportunidad.etapa == 'VENTA_CERRADA' %}
 
                                         <span class="badge bg-success">
-
                                             Venta cerrada
-
                                         </span>
 
                                     {% elif oportunidad.etapa == 'PERDIDA' %}
 
                                         <span class="badge bg-danger">
-
                                             Perdida
-
                                         </span>
 
                                     {% endif %}
@@ -274,42 +619,32 @@
                                 </td>
 
 
-                                <!-- ================================= -->
                                 <!-- PRIORIDAD -->
-                                <!-- ================================= -->
 
                                 <td>
 
                                     {% if oportunidad.prioridad == 'BAJA' %}
 
                                         <span class="badge bg-secondary">
-
                                             Baja
-
                                         </span>
 
                                     {% elif oportunidad.prioridad == 'MEDIA' %}
 
                                         <span class="badge bg-info">
-
                                             Media
-
                                         </span>
 
                                     {% elif oportunidad.prioridad == 'ALTA' %}
 
                                         <span class="badge bg-warning text-dark">
-
                                             Alta
-
                                         </span>
 
                                     {% elif oportunidad.prioridad == 'URGENTE' %}
 
                                         <span class="badge bg-danger">
-
                                             Urgente
-
                                         </span>
 
                                     {% endif %}
@@ -317,22 +652,18 @@
                                 </td>
 
 
-                                <!-- ================================= -->
                                 <!-- PRESUPUESTO -->
-                                <!-- ================================= -->
 
                                 <td>
 
                                     {% if oportunidad.presupuesto %}
 
-                                        $ {{ oportunidad.presupuesto }}
+                                        $ {{ oportunidad.presupuesto|floatformat:2 }}
 
                                     {% else %}
 
                                         <span class="text-muted">
-
                                             No definido
-
                                         </span>
 
                                     {% endif %}
@@ -340,9 +671,7 @@
                                 </td>
 
 
-                                <!-- ================================= -->
                                 <!-- FECHA -->
-                                <!-- ================================= -->
 
                                 <td>
 
@@ -351,109 +680,90 @@
                                 </td>
 
 
-                                <!-- ================================= -->
                                 <!-- ACCIONES -->
-                                <!-- ================================= -->
 
                                 <td class="text-center">
 
                                     <div class="btn-group">
 
+                                        <a
+                                            href="{% url 'oportunidades:oportunidad_detalle' oportunidad.id %}"
+                                            class="btn btn-sm btn-outline-primary"
+                                            title="Ver"
+                                        >
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
 
                                         <a
                                             href="{% url 'oportunidades:oportunidad_editar' oportunidad.id %}"
-                                            class="btn btn-sm btn-warning"
+                                            class="btn btn-sm btn-outline-warning"
                                             title="Editar"
                                         >
 
-                                            ✏️
+                                            <i class="bi bi-pencil"></i>
 
                                         </a>
 
 
                                         <a
                                             href="{% url 'oportunidades:oportunidad_eliminar' oportunidad.id %}"
-                                            class="btn btn-sm btn-danger"
+                                            class="btn btn-sm btn-outline-danger"
                                             title="Eliminar"
                                         >
 
-                                            🗑️
+                                            <i class="bi bi-trash"></i>
 
                                         </a>
-
 
                                     </div>
 
                                 </td>
 
-
                             </tr>
-
 
                         {% endfor %}
 
-
                         </tbody>
 
-
                     </table>
-
 
                 </div>
 
 
             {% else %}
 
-
                 <div class="text-center py-5">
 
+                    <div class="display-1 text-muted">
 
-                    <h4>                        📭 No existen oportunidades                    </h4>
+                        <i class="bi bi-inbox"></i>
 
+                    </div>
+
+                    <h5 class="mt-3">
+
+                        No hay oportunidades pendientes.
+
+                    </h5>
 
                     <p class="text-muted">
 
-                        Todavía no se han registrado
-                        oportunidades comerciales.
+                        Las oportunidades que requieren atención
+                        aparecerán aquí.
 
                     </p>
 
-
                 </div>
-
 
             {% endif %}
 
-
         </div>
-
-
- <!-- BOTONES -->
-
-        <div class="card-footer">
-
-            <a
-                href="{% url 'clientes:cliente_lista' %}"
-                class="btn btn-secondary"
-            >
-                ← Volver a Clientes
-            </a>
-
-        </div>
-
-
 
     </div>
 
-
 </div>
 
-
-<script
-    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"
-></script>
-
-
-</body>
-
-</html>
+{% endblock %}

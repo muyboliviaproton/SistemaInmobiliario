@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    Reservar {{ lote.codigo }} | CRM Inmobiliario
+{% endblock %}
+
+{% block contenido %}
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold">
+                <i class="bi bi-calendar-check"></i>
+                Reservar Lote {{ lote.codigo }}
+            </h2>
+
+            <p class="text-muted">
+                Registre la reserva del lote.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'lotes:lote_detalle' lote.id %}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Volver
+        </a>
+
+    </div>
+
+
+    {% include 'includes/mensajes.html' %}
+
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+
+            <!-- =================================================
+                 INFORMACIÓN DEL LOTE
+            ================================================== -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-success text-white">
+
+                    <h5 class="mb-0">
+                        Información del lote
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+
+                            <small class="text-muted">
+                                Código
+                            </small>
+
+                            <div class="fw-bold">
+                                {{ lote.codigo }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <small class="text-muted">
+                                Superficie
+                            </small>
+
+                            <div class="fw-bold">
+                                {{ lote.superficie_oficial }} m²
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <small class="text-muted">
+                                Precio
+                            </small>
+
+                            <div class="fw-bold text-success">
+                                {{ lote.precio_total|floatformat:2 }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FORMULARIO
+            ================================================== -->
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header">
+
+                    <h5 class="mb-0">
+                        Datos de la reserva
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+
+                        {% if form.non_field_errors %}
+
+                            <div class="alert alert-danger">
+
+                                {{ form.non_field_errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-bold">
+                                Tipo de reserva
+                            </label>
+
+                            {{ form.tipo }}
+
+                            {% for error in form.tipo.errors %}
+                                <div class="text-danger small">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-bold">
+                                Cliente
+                            </label>
+
+                            {{ form.cliente }}
+
+                            {% for error in form.cliente.errors %}
+                                <div class="text-danger small">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+                                Observación privada
+                            </label>
+
+                            {{ form.observacion }}
+
+                            <div class="form-text">
+                                Esta información es privada y solo será
+                                visible para el MASTER y el asesor
+                                responsable de la reserva.
+                            </div>
+
+                            {% for error in form.observacion.errors %}
+                                <div class="text-danger small">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+
+                        {% if not es_master %}
+
+                            <div class="alert alert-info">
+
+                                <i class="bi bi-info-circle"></i>
+
+                                <strong>Reserva normal:</strong>
+                                72 horas.
+
+                                <br>
+
+                                <strong>Reserva especial:</strong>
+                                120 horas.
+
+                                <br>
+
+                                La reserva excepcional de 10 días
+                                requiere autorización del MASTER.
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="d-flex justify-content-end gap-2">
+
+                            <a
+                                href="{% url 'lotes:lote_detalle' lote.id %}"
+                                class="btn btn-secondary"
+                            >
+                                Cancelar
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-success"
+                            >
+                                <i class="bi bi-check-circle"></i>
+                                Confirmar Reserva
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

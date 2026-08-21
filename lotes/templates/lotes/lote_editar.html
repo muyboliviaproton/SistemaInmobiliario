@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    Editar {{ lote.codigo }} | CRM Inmobiliario
+{% endblock %}
+
+{% block contenido %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold">
+                <i class="bi bi-pencil-square"></i>
+                Editar Lote {{ lote.codigo }}
+            </h2>
+
+            <p class="text-muted">
+                Modifique la información del lote.
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'lotes:lote_detalle' lote.id %}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Volver
+        </a>
+
+    </div>
+
+
+    {% include 'includes/mensajes.html' %}
+
+
+    <form
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        {% csrf_token %}
+
+
+        {% if form.non_field_errors %}
+
+            <div class="alert alert-danger">
+
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-primary text-white">
+
+                <h5 class="mb-0">
+                    Identificación
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            UV
+                        </label>
+
+                        {{ form.uv }}
+
+                        {{ form.uv.errors }}
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Manzano
+                        </label>
+
+                        {{ form.manzano }}
+
+                        {{ form.manzano.errors }}
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Lote
+                        </label>
+
+                        {{ form.lote }}
+
+                        {{ form.lote.errors }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header">
+                Dimensiones
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Superficie oficial (m²)
+                        </label>
+
+                        {{ form.superficie_oficial }}
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Frente (m)
+                        </label>
+
+                        {{ form.frente }}
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Fondo (m)
+                        </label>
+
+                        {{ form.fondo }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header">
+                Información comercial
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Precio total
+                        </label>
+
+                        {{ form.precio_total }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Estado
+                        </label>
+
+                        {{ form.estado }}
+
+                    </div>
+
+
+                    <div class="col-12">
+
+                        <label class="form-label">
+                            Descripción
+                        </label>
+
+                        {{ form.descripcion }}
+
+                    </div>
+
+
+                    <div class="col-12">
+
+                        <label class="form-label">
+                            Imagen principal
+                        </label>
+
+                        {{ form.imagen_principal }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header">
+                Geolocalización
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Latitud
+                        </label>
+
+                        {{ form.latitud_central }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Longitud
+                        </label>
+
+                        {{ form.longitud_central }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Tipo de geometría
+                        </label>
+
+                        {{ form.tipo_geometria }}
+
+                    </div>
+
+
+                    {{ form.coordenadas }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="d-flex justify-content-end gap-2">
+
+            <a
+                href="{% url 'lotes:lote_detalle' lote.id %}"
+                class="btn btn-secondary"
+            >
+                Cancelar
+            </a>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-save"></i>
+                Guardar Cambios
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

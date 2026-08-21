@@ -1,13 +1,29 @@
+<!-- clientes/templates/clientes/cliente_lista.html -->
+
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
-    <title>        Gestión de Clientes    </title>
-    <!-- Bootstrap 5.3 -->
-    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-	</head>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Gestión de Clientes
+    </title>
+
+    <link
+        href="{% static 'bootstrap/css/bootstrap.min.css' %}"
+        rel="stylesheet"
+    >
+
+</head>
 
 <body class="bg-light">
 
@@ -19,8 +35,12 @@
 
     <div class="container">
 
-        <a            class="navbar-brand"            href="{% url 'dashboard' %}"        >
-            🏡 Sistema Inmobiliario        </a>
+        <a
+            class="navbar-brand"
+            href="{% url 'dashboard:inicio' %}"
+        >
+            🏡 Sistema Inmobiliario
+        </a>
 
         <span class="text-white">
 
@@ -40,26 +60,17 @@
 
 <div class="container mt-4">
 
-
-    <!-- MENSAJES -->
+    {% include "components/titulo_pagina.html" with titulo="Clientes" subtitulo="Gestión de clientes" icono="bi bi-people-fill" %}
 
     {% if messages %}
 
         {% for message in messages %}
 
             <div
-                class="alert alert-success alert-dismissible fade show"
+                class="alert alert-{{ message.tags }}"
                 role="alert"
             >
-
                 {{ message }}
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"
-                ></button>
-
             </div>
 
         {% endfor %}
@@ -67,51 +78,30 @@
     {% endif %}
 
 
-    <!-- CABECERA -->
+    <!-- ================================================== -->
+    <!-- BOTONES -->
+    <!-- ================================================== -->
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
 
-        <div>
-            <h1>                👥 Gestión de Clientes            </h1>
-            <p class="text-muted">                Administración y seguimiento de clientes            </p>
+        <h4>
+            Lista de Clientes
+        </h4>
 
-        </div>
-		<div>	<a    href="{% url 'clientes:cliente_crear' %}"    class="btn btn-primary">    + Registrar cliente</a>
-				<a    href="{% url 'dashboard' %}"    class="btn btn-primary">    DashBoard</a>
-		</div>
-		{% if rol == 'MASTER' %}
-		<a    href="{% url 'clientes:papelera_clientes' %}"    class="btn btn-outline-danger">    🗑️ Papelera</a>
-		{% endif %}
-
-    </div>
-
-
-    <!-- INFORMACIÓN DEL ROL -->
-
-    <div class="alert alert-info">
-
-        <strong>
-            Rol:
-        </strong>
-
-        {{ rol }}
-
-        {% if rol == 'MASTER' %}
-
-            <br>
-
-            Puedes administrar todos los clientes.
-
-        {% else %}
-
-            <br>
-
-            Solo puedes gestionar tus propios clientes.
-
-        {% endif %}
+        <a
+            href="{% url 'clientes:cliente_crear' %}"
+            class="btn btn-primary"
+        >
+            <i class="bi bi-person-plus-fill"></i>
+            Nuevo Cliente
+        </a>
 
     </div>
+
+
+    <!-- ================================================== -->
     <!-- TABLA -->
+    <!-- ================================================== -->
 
     <div class="card shadow-sm">
 
@@ -137,16 +127,16 @@
                                 WhatsApp
                             </th>
 
-                            {% if rol == 'MASTER' %}
-
-                                <th>
-                                    Asesor
-                                </th>
-
-                            {% endif %}
+                            <th>
+                                Asesor
+                            </th>
 
                             <th>
                                 Estado
+                            </th>
+
+                            <th>
+                                Registro
                             </th>
 
                             <th class="text-center">
@@ -157,7 +147,6 @@
 
                     </thead>
 
-
                     <tbody>
 
                         {% for cliente in clientes %}
@@ -165,127 +154,110 @@
                             <tr>
 
                                 <td>
-
                                     <strong>
-
                                         {{ cliente.nombre_completo }}
-
                                     </strong>
-
                                 </td>
 
-
                                 <td>
-
                                     {{ cliente.telefono }}
-
                                 </td>
-
 
                                 <td>
-
                                     {{ cliente.whatsapp|default:"-" }}
-
                                 </td>
 
-
-                                {% if rol == 'MASTER' %}
-
-                                    <td>
-
-                                        {{ cliente.asesor.username }}
-
-                                    </td>
-
-                                {% endif %}
-
+                                <td>
+                                    {{ cliente.asesor.username }}
+                                </td>
 
                                 <td>
 
                                     {% if cliente.estado == 'NUEVO' %}
 
-                                        <span class="badge bg-primary fs-6">
-
+                                        <span class="badge bg-primary">
                                             Nuevo
-
                                         </span>
-
 
                                     {% elif cliente.estado == 'CONTACTADO' %}
 
-                                        <span class="badge bg-info fs-6">
-
+                                        <span class="badge bg-info">
                                             Contactado
-
                                         </span>
-
 
                                     {% elif cliente.estado == 'INTERESADO' %}
 
-                                        <span class="badge bg-warning text-dark fs-6">
-
+                                        <span class="badge bg-warning text-dark">
                                             Interesado
-
                                         </span>
-
 
                                     {% elif cliente.estado == 'ACTIVO' %}
 
-                                        <span class="badge bg-success fs-6">
-
+                                        <span class="badge bg-success">
                                             Activo
-
                                         </span>
-
 
                                     {% elif cliente.estado == 'INACTIVO' %}
 
-                                        <span class="badge bg-secondary fs-6">
-
+                                        <span class="badge bg-secondary">
                                             Inactivo
-
                                         </span>
 
                                     {% endif %}
 
                                 </td>
 
+                                <td>
+                                    {{ cliente.fecha_registro|date:"d/m/Y" }}
+                                </td>
 
                                 <td class="text-center">
 
-                                    <a        href="{% url 'clientes:cliente_detalle' cliente.id %}"                class="btn btn-sm btn-primary"                  >
-                                        Ver                                    </a>
+                                    <div class="btn-group">
 
-                                    <a    href="{% url 'clientes:cliente_editar' cliente.id %}"    class="btn btn-sm btn-warning">    Editar</a>
-									
-									{% if rol == 'MASTER' %}
-									<a   href="{% url 'clientes:cliente_eliminar' cliente.id %}"      class="btn btn-sm btn-danger"  >    🗑️ Eliminar  </a>
-									{% endif %}
+                                        <a
+                                            href="{% url 'clientes:cliente_detalle' cliente.pk %}"
+                                            class="btn btn-sm btn-outline-primary"
+                                            title="Ver cliente"
+                                        >
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+
+                                        <a
+                                            href="{% url 'clientes:cliente_editar' cliente.pk %}"
+                                            class="btn btn-sm btn-outline-warning"
+                                            title="Editar cliente"
+                                        >
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                    </div>
+
                                 </td>
 
                             </tr>
-
 
                         {% empty %}
 
                             <tr>
 
                                 <td
-                                    colspan="6"
-                                    class="text-center py-5"
+                                    colspan="7"
+                                    class="text-center py-4"
                                 >
 
-                                    <h4>
+                                    <div class="text-muted">
 
-                                        No hay clientes registrados
+                                        <i
+                                            class="bi bi-people"
+                                            style="font-size: 2rem;"
+                                        ></i>
 
-                                    </h4>
+                                        <p class="mt-2 mb-0">
+                                            No existen clientes registrados.
+                                        </p>
 
-                                    <p class="text-muted">
-
-                                        Comienza registrando tu primer cliente.
-
-                                    </p>
+                                    </div>
 
                                 </td>
 
@@ -294,16 +266,20 @@
                         {% endfor %}
 
                     </tbody>
+
                 </table>
+
             </div>
+
         </div>
+
     </div>
-    <!-- VOLVER -->
-    <div class="mt-4">
-        <a             href="{% url 'dashboard' %}"            class="btn btn-secondary"        >            ← Volver al Dashboard        </a>
-    </div>
+
 </div>
-<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
 </body>
 
 </html>

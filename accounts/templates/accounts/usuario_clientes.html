@@ -1,116 +1,427 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
-    <title>        Clientes del asesor    </title>
-    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Clientes del asesor
+    </title>
+
+    <link
+        href="{% static 'bootstrap/css/bootstrap.min.css' %}"
+        rel="stylesheet"
+    >
+
+    <link
+        href="{% static 'bootstrap-icons/font/bootstrap-icons.css' %}"
+        rel="stylesheet"
+    >
+
 </head>
+
 <body class="bg-light">
+
+
 <!-- ====================================================== -->
 <!-- NAVBAR -->
 <!-- ====================================================== -->
+
 <nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-        <a            class="navbar-brand"            href="{% url 'dashboard_master' %}"        >            🏡 Sistema Inmobiliario        </a>
-        <span class="text-white">            Usuario:            {{ request.user.username }}        </span>
+
+    <div class="container-fluid">
+
+        <a
+            class="navbar-brand"
+            href="{% url 'dashboard:inicio' %}"
+        >
+
+            <i class="bi bi-building"></i>
+
+            Sistema Inmobiliario
+
+        </a>
+
+
+        <span class="text-white">
+
+            <i class="bi bi-person-circle"></i>
+
+            {{ request.user.get_full_name|default:request.user.username }}
+
+        </span>
+
     </div>
+
 </nav>
+
+
 <!-- ====================================================== -->
 <!-- CONTENIDO -->
 <!-- ====================================================== -->
-<div class="container mt-4">
+
+<div class="container py-4">
+
+
+    <!-- ================================================== -->
     <!-- CABECERA -->
-    <div class="d-flex                justify-content-between                align-items-center                mb-4"    >
+    <!-- ================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
         <div>
-            <h1>👥 Clientes del asesor            </h1>
-            <p class="text-muted"> Clientes asignados actualmente a:<strong>                    {{ asesor.username }}                </strong>         </p>
-        </div>
-        <div>
-			<a href="{% url 'usuario_reasignar_clientes' asesor.id %}" class="btn btn-warning"> 🔄 Reasignar clientes</a>
-            <a href="{% url 'usuarios_lista' %}" class="btn btn-secondary">
-                ← Volver a usuarios
-            </a>
-        </div>
-    </div>
-    <!-- INFORMACIÓN DEL ASESOR -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-4">
-                    <strong>             Usuario:                    </strong>
+
+            <h2>
+
+                <i class="bi bi-people-fill"></i>
+
+                Clientes del asesor
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                Clientes asignados actualmente a:
+
+                <strong>
                     {{ asesor.username }}
-                </div>
-                <div class="col-md-4">
-                    <strong>                        Nombre:                    </strong>
-                    {{ asesor.first_name }}               {{ asesor.last_name }}
-                </div>
-                <div class="col-md-4">
-                    <strong>            Estado:                 </strong>
-                    {% if asesor.is_active %}
-                        <span class="badge bg-success">       🟢 Activo                        </span>
-                    {% else %}
-                        <span class="badge bg-secondary">     ⚪ Inactivo                        </span>
-                    {% endif %}
-                </div>
-            </div>
+                </strong>
+
+            </p>
+
         </div>
-    </div>
-    <!-- TABLA DE CLIENTES -->
-    <div class="card shadow-sm">
-        <div class="card-body">
-            {% if clientes %}
-                <div class="table-responsive">
-                    <table         class="table table-hover align-middle">
-                        <thead class="table-dark">
-                            <tr>
-                                <th> Cliente                         </th>
-                                <th> Teléfono                        </th>
-                                <th> Estado                          </th>
-                                <th> Fecha registro                  </th>
-                                <th class="text-center"> Acción      </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for cliente in clientes %}
-                                <tr>
-                                    <td>
-                                        <strong> {{ cliente.nombre_completo }}      </strong>
-                                    </td>
-                                    <td> {{ cliente.telefono }}        </td>
-                                    <td> {% if cliente.estado == 'NUEVO' %}
-									<span  class="badge bg-primary"> Nuevo </span>
-                                        {% elif cliente.estado == 'CONTACTADO' %}
-                                            <span class="badge bg-info">                               Contactado                   </span>
-                                        {% elif cliente.estado == 'INTERESADO' %}
-                                            <span class="badge bg-warning text-dark">                  Interesado                   </span>
-                                        {% elif cliente.estado == 'ACTIVO' %}
-                                            <span class="badge bg-success">                            Activo                       </span>
-                                        {% elif cliente.estado == 'INACTIVO' %}
-                                            <span class="badge bg-secondary">                          Inactivo                     </span>
-                                        {% endif %}
-                                    </td>
-                                    <td>    {{ cliente.fecha_registro|date:"d/m/Y" }}                      </td>
-                                    <td class="text-center">
-                                       <a   href="{% url 'clientes:cliente_detalle' cliente.id %}"     class="btn btn-sm btn-primary">
-                                            👁️ Ver                   </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <div class="text-center py-5">
-                    <h4>  👥 No hay clientes asignados        </h4>
-                    <p class="text-muted">   Este asesor no tiene clientes activos asignados actualmente.             </p>
-                </div>
-            {% endif %}
+
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="{% url 'accounts:usuario_reasignar_clientes' asesor.pk %}"
+                class="btn btn-warning"
+            >
+
+                <i class="bi bi-arrow-left-right"></i>
+
+                Reasignar clientes
+
+            </a>
+
+
+            <a
+                href="{% url 'accounts:usuarios_lista' %}"
+                class="btn btn-secondary"
+            >
+
+                <i class="bi bi-arrow-left"></i>
+
+                Volver
+
+            </a>
+
         </div>
+
     </div>
 
+
+    <!-- ================================================== -->
+    <!-- INFORMACIÓN DEL ASESOR -->
+    <!-- ================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-dark text-white">
+
+            <i class="bi bi-person-badge-fill"></i>
+
+            Información del asesor
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-4">
+
+                    <strong>
+                        Usuario:
+                    </strong>
+
+                    {{ asesor.username }}
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <strong>
+                        Nombre:
+                    </strong>
+
+                    {{ asesor.first_name }}
+                    {{ asesor.last_name }}
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <strong>
+                        Estado:
+                    </strong>
+
+                    {% if asesor.is_active %}
+
+                        <span class="badge bg-success">
+
+                            <i class="bi bi-check-circle-fill"></i>
+
+                            Activo
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-secondary">
+
+                            <i class="bi bi-x-circle-fill"></i>
+
+                            Inactivo
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- TABLA DE CLIENTES -->
+    <!-- ================================================== -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+
+            <i class="bi bi-people-fill"></i>
+
+            Clientes asignados
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            {% if clientes %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>
+                                    Cliente
+                                </th>
+
+                                <th>
+                                    Teléfono
+                                </th>
+
+                                <th>
+                                    Estado
+                                </th>
+
+                                <th>
+                                    Fecha registro
+                                </th>
+
+                                <th class="text-center">
+                                    Acción
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for cliente in clientes %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <strong>
+
+                                            <i class="bi bi-person"></i>
+
+                                            {{ cliente.nombre_completo }}
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ cliente.telefono }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if cliente.estado == 'NUEVO' %}
+
+                                            <span class="badge bg-primary">
+                                                Nuevo
+                                            </span>
+
+                                        {% elif cliente.estado == 'CONTACTADO' %}
+
+                                            <span class="badge bg-info text-dark">
+                                                Contactado
+                                            </span>
+
+                                        {% elif cliente.estado == 'INTERESADO' %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                Interesado
+                                            </span>
+
+                                        {% elif cliente.estado == 'ACTIVO' %}
+
+                                            <span class="badge bg-success">
+                                                Activo
+                                            </span>
+
+                                        {% elif cliente.estado == 'INACTIVO' %}
+
+                                            <span class="badge bg-secondary">
+                                                Inactivo
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                {{ cliente.estado }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ cliente.fecha_registro|date:"d/m/Y" }}
+
+                                    </td>
+
+
+                                    <td class="text-center">
+
+                                        <a
+                                            href="{% url 'clientes:cliente_detalle' cliente.pk %}"
+                                            class="btn btn-sm btn-primary"
+                                            title="Ver cliente"
+                                        >
+
+                                            <i class="bi bi-eye-fill"></i>
+
+                                            Ver
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="text-center py-5">
+
+                    <i
+                        class="bi bi-person-x"
+                        style="font-size: 3rem;"
+                    ></i>
+
+                    <h5 class="mt-3">
+
+                        No hay clientes asignados
+
+                    </h5>
+
+                    <p class="text-muted">
+
+                        Este asesor no tiene clientes activos
+                        asignados actualmente.
+
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- REGRESAR -->
+    <!-- ================================================== -->
+
+    <div class="mt-4">
+
+        <a
+            href="{% url 'accounts:usuarios_lista' %}"
+            class="btn btn-outline-secondary"
+        >
+
+            <i class="bi bi-arrow-left"></i>
+
+            Volver a Gestión de Asesores
+
+        </a>
+
+    </div>
+
+
 </div>
-<script  src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+
+<script
+    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"
+></script>
+
+
 </body>
+
 </html>

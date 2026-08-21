@@ -123,11 +123,8 @@ def cliente_crear(request):
     contexto = {
 
         'form': form,
-
         'titulo': 'Registrar nuevo cliente',
-
         'es_master': es_master,
-
     }
 
     return render(
@@ -141,83 +138,59 @@ def cliente_crear(request):
 
 @login_required
 def cliente_detalle(request, pk):
-
     # ========================================================
     # BUSCAR CLIENTE
     # ========================================================
-
     try:
-
         cliente = Cliente.objects.get(
             pk=pk
         )
 
     except Cliente.DoesNotExist:
-
         return render(
             request,
             'clientes/cliente_no_disponible.html',
             status=404
         )
-
 
     # ========================================================
     # VERIFICAR SI EL CLIENTE ESTÁ ELIMINADO
     # ========================================================
-
     if cliente.eliminado:
-
         return render(
             request,
             'clientes/cliente_no_disponible.html',
             status=404
         )
-
-
     # ========================================================
     # VERIFICAR SI EL USUARIO ES MASTER
     # ========================================================
-
     es_master = usuario_es_master(
         request.user
     )
-
-
     # ========================================================
     # MASTER
     # Puede ver cualquier cliente activo
     # ========================================================
-
     if es_master:
-
         puede_ver = True
-
-
     # ========================================================
     # ASESOR
     # Solo puede ver sus propios clientes
     # ========================================================
-
     else:
-
         puede_ver = (
             cliente.asesor == request.user
         )
-
-
     # ========================================================
     # SIN PERMISOS
     # ========================================================
-
     if not puede_ver:
-
         return render(
             request,
             'clientes/cliente_no_disponible.html',
             status=404
         )
-
-
     # ========================================================
     # OPORTUNIDADES COMERCIALES
     # ========================================================
@@ -238,109 +211,78 @@ def cliente_detalle(request, pk):
     ).order_by(
         '-id'
     )
-
-
     # ========================================================
     # MOSTRAR CLIENTE
     # ========================================================
-
     contexto = {
-
         # ----------------------------------------------------
         # DATOS DEL CLIENTE
         # ----------------------------------------------------
-
         'cliente':
             cliente,
-
-
         # ----------------------------------------------------
         # OPORTUNIDADES COMERCIALES
         # ----------------------------------------------------
-
         'oportunidades':
             oportunidades,
-
-
         # ----------------------------------------------------
         # PERMISOS MASTER
         # ----------------------------------------------------
-
         'es_master':
             es_master,
-
     }
-
-
     # ========================================================
     # MOSTRAR PÁGINA DE DETALLE
     # ========================================================
-
     return render(
         request,
         'clientes/cliente_detalle.html',
         contexto
     )
-
 # ============================================================
 # MARCAR CLIENTE COMO INACTIVO
 # MASTER Y ASESOR
 # ============================================================
-
 @login_required
 def cliente_inactivar(request, pk):
-
     # ========================================================
     # MASTER
     # Puede inactivar cualquier cliente
     # ========================================================
-
     if usuario_es_master(request.user):
-
         cliente = get_object_or_404(
             Cliente,
             pk=pk,
             eliminado=False
         )
-
     # ========================================================
     # ASESOR
     # Solo puede inactivar sus propios clientes
     # ========================================================
-
     else:
-
         cliente = get_object_or_404(
             Cliente,
             pk=pk,
             asesor=request.user,
             eliminado=False
         )
-
     # ========================================================
     # CONFIRMACIÓN
     # ========================================================
-
     if request.method == 'POST':
-
         cliente.estado = 'INACTIVO'
-
         cliente.save()
-
         messages.success(
             request,
             f'El cliente "{cliente.nombre_completo}" '
             'ha sido marcado como INACTIVO.'
         )
-
         return redirect(
             'clientes:cliente_lista'
         )
-
     contexto = {
         'cliente': cliente,
     }
-
     return render(
         request,
         'clientes/confirmar_inactivacion.html',

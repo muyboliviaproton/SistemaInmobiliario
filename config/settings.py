@@ -115,25 +115,11 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
 
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
-
-
 # ============================================================
 # INTERNACIONALIZACIÓN
 # ============================================================
@@ -148,16 +134,29 @@ USE_TZ = True
 # ============================================================
 
 STATIC_URL = 'static/'
+
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+
+# ============================================================
+# ARCHIVOS MULTIMEDIA / IMÁGENES SUBIDAS
+# ============================================================
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
 # ============================================================
 # CONFIGURACIÓN DE AUTENTICACIÓN
 # ============================================================
+
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+
 # ============================================================
 # CLAVE PRIMARIA POR DEFECTO
 # ============================================================

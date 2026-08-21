@@ -1,39 +1,128 @@
+{% extends "base.html" %}
+
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
-    <title>        Seguimiento del Cliente    </title>
-    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
-</head>
-<body class="bg-light">
-<div class="container mt-4">
-    <!-- ================================================== -->
+
+{% block titulo %}
+    Seguimiento - {{ cliente.nombre_completo }}
+{% endblock %}
+
+{% block contenido %}
+
+<div class="container-fluid py-4">
+
+    <!-- ===================================================== -->
     <!-- CABECERA -->
-    <!-- ================================================== -->
+    <!-- ===================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>            <h2 class="fw-bold mb-1">                <i class="bi bi-telephone-forward-fill"></i>                Seguimiento del Cliente            </h2>
+            <p class="text-muted mb-0">                Historial y gestión comercial            </p>
+       </div>
+        <div class="d-flex gap-2">
+            <a
+                href="{% url 'clientes:cliente_detalle' cliente.id %}"
+                class="btn btn-secondary"
+            >
+                <i class="bi bi-arrow-left"></i>                Volver al Cliente            </a>
+
+            <a
+                href="{% url 'gestion_seguimientos:seguimiento_crear' cliente.id %}"
+                class="btn btn-success"
+            >
+
+                <i class="bi bi-plus-circle-fill"></i>                Nuevo Seguimiento            </a>
+
+            <a
+                href="{% url 'oportunidades:oportunidad_crear' cliente.id %}"
+                class="btn btn-primary"
+            >
+
+                <i class="bi bi-briefcase-fill"></i>                Nueva Oportunidad            </a>
+
+        </div>
+
+    </div>
+    <!-- ===================================================== -->
+    <!-- INFORMACIÓN DEL CLIENTE -->
+    <!-- ===================================================== -->
+
     <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-primary text-white">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-person-fill"></i>
+
+                Información del cliente
+
+            </h5>
+
+        </div>
+
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="mb-2">                        📋 Seguimiento del Cliente                    </h1>
-                    <h4 class="mb-1">                        {{ cliente.nombre_completo }}                    </h4>
-                    <p class="text-muted mb-0">                        📞 {{ cliente.telefono }}                        {% if cliente.whatsapp %}
-                            <br>
-                            💬 WhatsApp:                            {{ cliente.whatsapp }}
-                        {% endif %}
-                    </p>
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+
+                    <small class="text-muted fw-bold">
+                        Cliente
+                    </small>
+
+                    <div class="fs-5">
+                        {{ cliente.nombre_completo }}
+                    </div>
+
                 </div>
 
+                <div class="col-md-4">
 
-                <div class="text-end">
+                    <small class="text-muted fw-bold">
+                        Teléfono
+                    </small>
 
-                    <!-- NUEVO SEGUIMIENTO -->
+                    <div class="fs-5">
 
-                    <a href="{% url 'gestion_seguimientos:seguimiento_crear' cliente.id %}" class="btn btn-success">➕ Nuevo Seguimiento</a>
-					<a  href="{% url 'oportunidades:oportunidad_crear' cliente.id %}"    class="btn btn-success">    💼 Nueva Oportunidad		</a>
-                    <!-- VOLVER AL CLIENTE -->
-                    <a href="{% url 'clientes:cliente_detalle' cliente.id %}" class="btn btn-secondary" >← Volver al Cliente               </a>
+                        {% if cliente.telefono %}
+
+                            <a
+                                href="tel:{{ cliente.telefono }}"
+                                class="text-decoration-none"
+                            >
+
+                                <i class="bi bi-telephone-fill"></i>
+
+                                {{ cliente.telefono }}
+
+                            </a>
+
+                        {% else %}
+
+                            <span class="text-muted">
+                                No registrado
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <small class="text-muted fw-bold">
+                        Asesor
+                    </small>
+
+                    <div class="fs-5">
+
+                        <i class="bi bi-person-badge-fill"></i>
+
+                        {{ cliente.asesor.get_full_name|default:cliente.asesor.username }}
+
+                    </div>
 
                 </div>
 
@@ -44,74 +133,71 @@
     </div>
 
 
-    <!-- ================================================== -->
+    <!-- ===================================================== -->
     <!-- HISTORIAL -->
-    <!-- ================================================== -->
+    <!-- ===================================================== -->
 
     <div class="card shadow-sm">
-
 
         <div class="card-header bg-dark text-white">
 
             <h5 class="mb-0">
 
-                📋 Historial de Seguimiento
+                <i class="bi bi-clock-history"></i>
+
+                Historial de Seguimiento
 
             </h5>
 
         </div>
-
 
         <div class="card-body">
 
 
             {% for seguimiento in seguimientos %}
 
-
-                <!-- ================================================== -->
-                <!-- SEGUIMIENTO -->
-                <!-- ================================================== -->
-
                 <div class="card mb-3 border-start border-4 border-primary">
-
 
                     <div class="card-body">
 
-
-                        <!-- CABECERA DEL SEGUIMIENTO -->
+                        <!-- ================================= -->
+                        <!-- CABECERA -->
+                        <!-- ================================= -->
 
                         <div class="d-flex justify-content-between align-items-center mb-3">
-
 
                             <div>
 
                                 <h5 class="mb-1">
 
-                                    📞
+                                    <i class="bi bi-telephone-fill"></i>
+
                                     {{ seguimiento.get_tipo_contacto_display }}
 
                                 </h5>
 
                             </div>
 
-
                             <span class="badge bg-secondary">
 
-                                📅
+                                <i class="bi bi-calendar3"></i>
+
                                 {{ seguimiento.fecha|date:"d/m/Y H:i" }}
 
                             </span>
 
-
                         </div>
 
 
+                        <!-- ================================= -->
                         <!-- RESULTADO -->
+                        <!-- ================================= -->
 
                         <p class="mb-2">
 
                             <strong>
-                                📊 Resultado:
+                                <i class="bi bi-bar-chart-fill"></i>
+                                Resultado:
                             </strong>
 
                             <span class="badge bg-info text-dark">
@@ -123,61 +209,226 @@
                         </p>
 
 
-                        <!-- ASESOR -->
+                        <!-- ================================= -->
+                        <!-- ESTADO COMERCIAL -->
+                        <!-- ================================= -->
+
+                        {% if seguimiento.estado_comercial %}
 
                         <p class="mb-2">
-                            <strong>                                👤 Asesor:                            </strong>
-                            {{ seguimiento.asesor.username }}
+
+                            <strong>
+                                <i class="bi bi-signpost-fill"></i>
+                                Estado comercial:
+                            </strong>
+
+                            {{ seguimiento.get_estado_comercial_display }}
+
                         </p>
 
-                        <!-- OBSERVACIONES -->
-                        {% if seguimiento.observaciones %}
-                            <div class="alert alert-light border mt-3 mb-0">
-                                <strong>                                   📝 Observaciones:                                </strong>
-                                <p class="mb-0 mt-2">                                    {{ seguimiento.observaciones }}                                </p>
-                            </div>
                         {% endif %}
 
-						<!-- ================================================= -->
-						<!-- ACCIONES DEL SEGUIMIENTO -->
-						<!-- ================================================= -->
 
-						<div class="mt-3">
+                        <!-- ================================= -->
+                        <!-- PRIORIDAD -->
+                        <!-- ================================= -->
 
-						{% if es_master or seguimiento.asesor == request.user %}
+                        {% if seguimiento.prioridad %}
 
-							<a	href="{% url 'gestion_seguimientos:seguimiento_editar' seguimiento.id %}"	class="btn btn-sm btn-warning">	✏️ Editar		</a>
-							<a href="{% url 'gestion_seguimientos:seguimiento_eliminar' seguimiento.id %}"	class="btn btn-sm btn-danger">	🗑️ Eliminar		</a>
-						{% endif %}
-						</div>
+                        <p class="mb-2">
+
+                            <strong>
+                                <i class="bi bi-fire"></i>
+                                Prioridad:
+                            </strong>
+
+                            {{ seguimiento.get_prioridad_display }}
+
+                        </p>
+
+                        {% endif %}
+
+
+                        <!-- ================================= -->
+                        <!-- ASESOR -->
+                        <!-- ================================= -->
+
+                        <p class="mb-2">
+
+                            <strong>
+
+                                <i class="bi bi-person-badge-fill"></i>
+
+                                Asesor:
+
+                            </strong>
+
+                            {{ seguimiento.asesor.get_full_name|default:seguimiento.asesor.username }}
+
+                        </p>
+
+
+                        <!-- ================================= -->
+                        <!-- PRÓXIMA GESTIÓN -->
+                        <!-- ================================= -->
+
+                        {% if seguimiento.proxima_gestion %}
+
+                        <p class="mb-2">
+
+                            <strong>
+
+                                <i class="bi bi-calendar-event"></i>
+
+                                Próxima gestión:
+
+                            </strong>
+
+                            {{ seguimiento.proxima_gestion|date:"d/m/Y H:i" }}
+
+                        </p>
+
+                        {% endif %}
+
+
+                        <!-- ================================= -->
+                        <!-- OBSERVACIONES -->
+                        <!-- ================================= -->
+
+                        {% if seguimiento.observaciones %}
+
+                            <div class="alert alert-light border mt-3 mb-0">
+
+                                <strong>
+
+                                    <i class="bi bi-pencil-square"></i>
+
+                                    Observaciones:
+
+                                </strong>
+
+                                <p class="mb-0 mt-2">
+
+                                    {{ seguimiento.observaciones|linebreaks }}
+
+                                </p>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- ================================= -->
+                        <!-- ACCIONES -->
+                        <!-- ================================= -->
+
+                        {% if es_master or seguimiento.asesor == request.user %}
+
+                        <div class="mt-3 pt-3 border-top">
+
+                            <a
+                                href="{% url 'gestion_seguimientos:seguimiento_editar' seguimiento.id %}"
+                                class="btn btn-sm btn-warning"
+                            >
+
+                                <i class="bi bi-pencil-fill"></i>
+
+                                Editar
+
+                            </a>
+
+                            <a
+                                href="{% url 'gestion_seguimientos:seguimiento_eliminar' seguimiento.id %}"
+                                class="btn btn-sm btn-danger"
+                            >
+
+                                <i class="bi bi-trash-fill"></i>
+
+                                Eliminar
+
+                            </a>
+
+                        </div>
+
+                        {% endif %}
+
                     </div>
 
                 </div>
+
+
             {% empty %}
-                <!-- ================================================== -->
+
+                <!-- ========================================= -->
                 <!-- SIN SEGUIMIENTOS -->
-                <!-- ================================================== -->
+                <!-- ========================================= -->
+
                 <div class="text-center py-5">
-                    <div class="display-1 mb-3">            📋                    </div>
-                    <h4>                        No hay seguimientos registrados                    </h4>
-                    <p class="text-muted">                        Este cliente todavía no tiene historial de seguimiento.                    </p>
-                    <a href="{% url 'gestion_seguimientos:seguimiento_crear' cliente.id %}" class="btn btn-success"> ➕ Registrar primer seguimiento                 </a>
+
+                    <i class="bi bi-clipboard-x display-1 text-muted"></i>
+
+                    <h4 class="mt-3">
+
+                        No hay seguimientos registrados
+
+                    </h4>
+
+                    <p class="text-muted">
+
+                        Este cliente todavía no tiene historial de seguimiento.
+
+                    </p>
+
+                    <a
+                        href="{% url 'gestion_seguimientos:seguimiento_crear' cliente.id %}"
+                        class="btn btn-success"
+                    >
+
+                        <i class="bi bi-plus-circle-fill"></i>
+
+                        Registrar primer seguimiento
+
+                    </a>
+
                 </div>
+
             {% endfor %}
+
         </div>
-    </div>
-    <!-- ================================================== -->
-    <!-- BOTONES INFERIORES -->
-    <!-- ================================================== -->
-    <div class="mt-4 mb-4">
-        <a           href="{% url 'clientes:cliente_detalle' cliente.id %}"            class="btn btn-secondary"        >            ← Volver al Cliente        </a>
-       <a   href="{% url 'clientes:cliente_lista' %}"          class="btn btn-outline-secondary"       >           👥 Lista de Clientes        </a>
 
     </div>
+
+
+    <!-- ===================================================== -->
+    <!-- BOTONES INFERIORES -->
+    <!-- ===================================================== -->
+
+    <div class="mt-4 mb-4">
+
+        <a
+            href="{% url 'clientes:cliente_detalle' cliente.id %}"
+            class="btn btn-secondary"
+        >
+
+            <i class="bi bi-arrow-left"></i>
+
+            Volver al Cliente
+
+        </a>
+
+        <a
+            href="{% url 'clientes:cliente_lista' %}"
+            class="btn btn-outline-secondary"
+        >
+
+            <i class="bi bi-people-fill"></i>
+
+            Lista de Clientes
+
+        </a>
+
+    </div>
+
 </div>
-<!-- ================================================== -->
-<!-- BOOTSTRAP JS -->
-<!-- ================================================== -->
-<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-</body>
-</html>
+
+{% endblock %}

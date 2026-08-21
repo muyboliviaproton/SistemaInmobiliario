@@ -1,90 +1,565 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"          content="width=device-width, initial-scale=1.0">
-    <title>Detalle del Cliente</title>
-	<!-- Bootstrap 5.3 -->
-    <link    href="{% static 'bootstrap/css/bootstrap.min.css' %}"    rel="stylesheet">
-</head>
-<body class="bg-light">
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-        <a         class="navbar-brand"           href="{% url 'dashboard' %}"        >
-            🏡 Sistema Inmobiliario
-        </a>
-        <span class="text-white">
-            Usuario:
-            {{ request.user.username }}
-        </span>
-    </div>
-</nav>
+{% extends "base.html" %}
 
-<div class="container mt-4">
-    <!-- MENSAJES -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-success">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-    <!-- CABECERA -->
+{% load static %}
+
+{% block titulo %}
+    Detalle del Cliente
+{% endblock %}
+
+{% block contenido %}
+<div class="container-fluid py-4">
+
+    <!-- ===================================================== -->
+    <!-- ENCABEZADO -->
+    <!-- ===================================================== -->
 
     <div class="d-flex justify-content-between align-items-center mb-4">
+
         <div>
-            <h1>               👤 Detalle del Cliente            </h1>
-            <p class="text-muted">                Información completa del cliente            </p>
-			<a    href="{% url 'gestion_seguimientos:seguimiento_lista' cliente.id %}"    class="btn btn-primary">    📞 Ver Seguimientos</a>
-			<a  href="{% url 'oportunidades:oportunidad_crear' cliente.id %}"    class="btn btn-success">    💼 Nueva Oportunidad		</a>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-person-vcard-fill"></i>
+                Detalle del Cliente
+            </h2>
+
+            <p class="text-muted mb-0">
+                Información y gestión comercial del cliente
+            </p>
         </div>
-		
-		<!-- ================================================= -->
-<!-- OPORTUNIDADES COMERCIALES -->
-<!-- ================================================= -->
 
-<div class="card shadow-sm mt-4">
+        <div>
 
-    <!-- ================================================= -->
-    <!-- CABECERA -->
-    <!-- ================================================= -->
+            <a href="{% url 'clientes:cliente_lista' %}"
+               class="btn btn-secondary">
 
-    <div class="card-header bg-success text-white">
+                <i class="bi bi-arrow-left"></i>
+                Volver a Clientes
 
-        <strong>
-            💼 Oportunidades comerciales
-        </strong>
+            </a>
+
+            <a href="{% url 'clientes:cliente_editar' cliente.pk %}"
+               class="btn btn-primary">
+
+                <i class="bi bi-pencil-fill"></i>
+                Editar
+
+            </a>
+
+        </div>
 
     </div>
 
 
-    <!-- ================================================= -->
-    <!-- CONTENIDO -->
-    <!-- ================================================= -->
+    <!-- ===================================================== -->
+    <!-- INFORMACIÓN PRINCIPAL -->
+    <!-- ===================================================== -->
 
-    <div class="card-body">
+    <div class="row g-4">
+
+        <!-- ================================================= -->
+        <!-- DATOS DEL CLIENTE -->
+        <!-- ================================================= -->
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-person-fill"></i>
+
+                        {{ cliente.nombre_completo }}
+
+                    </h5>
+
+                </div>
 
 
-        {% if oportunidades %}
+                <div class="card-body">
+
+                    <div class="row g-3">
 
 
-            <!-- ========================================= -->
-            <!-- TABLA DE OPORTUNIDADES -->
-            <!-- ========================================= -->
+                        <!-- NOMBRE -->
+
+                        <div class="col-md-6">
+
+                            <label class="fw-bold text-muted">
+                                Nombre completo
+                            </label>
+
+                            <div class="fs-5">
+                                {{ cliente.nombre_completo }}
+                            </div>
+
+                        </div>
+
+
+                        <!-- TELÉFONO -->
+
+                        <div class="col-md-6">
+
+                            <label class="fw-bold text-muted">
+                                Teléfono
+                            </label>
+
+                            <div class="fs-5">
+
+                                {% if cliente.telefono %}
+
+                                    <a href="tel:{{ cliente.telefono }}"
+                                       class="text-decoration-none">
+
+                                        <i class="bi bi-telephone-fill"></i>
+
+                                        {{ cliente.telefono }}
+
+                                    </a>
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        No registrado
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- WHATSAPP -->
+
+                        <div class="col-md-6">
+
+                            <label class="fw-bold text-muted">
+                                WhatsApp
+                            </label>
+
+                            <div class="fs-5">
+
+                                {% if cliente.whatsapp %}
+
+                                    <a href="https://wa.me/{{ cliente.whatsapp }}"
+                                       target="_blank"
+                                       class="text-success text-decoration-none">
+
+                                        <i class="bi bi-whatsapp"></i>
+
+                                        {{ cliente.whatsapp }}
+
+                                    </a>
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        No registrado
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CORREO -->
+
+                        <div class="col-md-6">
+
+                            <label class="fw-bold text-muted">
+                                Correo electrónico
+                            </label>
+
+                            <div>
+
+                                {% if cliente.correo %}
+
+                                    <a href="mailto:{{ cliente.correo }}"
+                                       class="text-decoration-none">
+
+                                        <i class="bi bi-envelope-fill"></i>
+
+                                        {{ cliente.correo }}
+
+                                    </a>
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        No registrado
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- DIRECCIÓN -->
+
+                        <div class="col-12">
+
+                            <label class="fw-bold text-muted">
+                                Dirección
+                            </label>
+
+                            <div>
+
+                                {% if cliente.direccion %}
+
+                                    {{ cliente.direccion }}
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        No registrada
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CAPACIDAD DE PAGO -->
+
+                        <div class="col-md-6">
+
+                            <label class="fw-bold text-muted">
+                                Capacidad de pago mensual
+                            </label>
+
+                            <div class="fs-5">
+
+                                {% if cliente.capacidad_pago_mensual %}
+
+                                    $ {{ cliente.capacidad_pago_mensual }}
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        No registrada
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ESTADO -->
+
+                        <div class="col-md-6">
+
+                            <label class="fw-bold text-muted">
+                                Estado
+                            </label>
+
+                            <div>
+
+                                {% if cliente.estado == "NUEVO" %}
+
+                                    <span class="badge bg-primary">
+                                        Nuevo
+                                    </span>
+
+                                {% elif cliente.estado == "CONTACTADO" %}
+
+                                    <span class="badge bg-info">
+                                        Contactado
+                                    </span>
+
+                                {% elif cliente.estado == "INTERESADO" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Interesado
+                                    </span>
+
+                                {% elif cliente.estado == "ACTIVO" %}
+
+                                    <span class="badge bg-success">
+                                        Activo
+                                    </span>
+
+                                {% elif cliente.estado == "INACTIVO" %}
+
+                                    <span class="badge bg-secondary">
+                                        Inactivo
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-dark">
+                                        {{ cliente.estado }}
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ASESOR -->
+
+                        <div class="col-md-6">
+
+                            <label class="fw-bold text-muted">
+                                Asesor responsable
+                            </label>
+
+                            <div class="fs-5">
+
+                                <i class="bi bi-person-badge-fill"></i>
+
+                                {{ cliente.asesor.get_full_name|default:cliente.asesor.username }}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- FECHA REGISTRO -->
+
+                        <div class="col-md-6">
+
+                            <label class="fw-bold text-muted">
+                                Fecha de registro
+                            </label>
+
+                            <div>
+
+                                {{ cliente.fecha_registro|date:"d/m/Y H:i" }}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ACTUALIZACIÓN -->
+
+                        <div class="col-md-6">
+
+                            <label class="fw-bold text-muted">
+                                Última actualización
+                            </label>
+
+                            <div>
+
+                                {{ cliente.fecha_actualizacion|date:"d/m/Y H:i" }}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- OBSERVACIONES -->
+
+                        <div class="col-12">
+
+                            <label class="fw-bold text-muted">
+                                Observaciones
+                            </label>
+
+                            <div class="border rounded p-3 bg-light">
+
+                                {% if cliente.observaciones %}
+
+                                    {{ cliente.observaciones|linebreaks }}
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        No existen observaciones.
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- PANEL DE ACCIONES -->
+        <!-- ================================================= -->
+
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header bg-dark text-white">
+
+                    <h5 class="mb-0">
+                        <i class="bi bi-gear-fill"></i>
+                        Acciones
+                    </h5>
+
+                </div>
+
+                <div class="card-body d-grid gap-2">
+
+
+                    <a href="{% url 'clientes:cliente_editar' cliente.pk %}"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-pencil-fill"></i>
+
+                        Editar cliente
+
+                    </a>
+
+
+                    <a href="{% url 'clientes:cliente_inactivar' cliente.pk %}"
+                       class="btn btn-warning">
+
+                        <i class="bi bi-person-x-fill"></i>
+
+                        Marcar como inactivo
+
+                    </a>
+
+
+                    {% if es_master %}
+
+                    <a href="{% url 'clientes:cliente_eliminar' cliente.pk %}"
+                       class="btn btn-danger">
+
+                        <i class="bi bi-trash-fill"></i>
+
+                        Enviar a papelera
+
+                    </a>
+
+                    {% endif %}
+
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- RESUMEN COMERCIAL -->
+            <!-- ================================================= -->
+
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-success text-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-briefcase-fill"></i>
+
+                        Resumen comercial
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <span>
+                            Oportunidades
+                        </span>
+
+                        <span class="badge bg-primary">
+
+                            {{ oportunidades|length }}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <span>
+                            Estado actual
+                        </span>
+
+                        <strong>
+                            {{ cliente.get_estado_display }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="d-flex justify-content-between">
+
+                        <span>
+                            Asesor
+                        </span>
+
+                        <strong>
+
+                            {{ cliente.asesor.username }}
+
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- OPORTUNIDADES -->
+    <!-- ===================================================== -->
+
+    <div class="card shadow-sm mt-4">
+
+        <div class="card-header bg-primary text-white">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-briefcase-fill"></i>
+
+                Oportunidades comerciales
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            {% if oportunidades %}
 
             <div class="table-responsive">
 
-                <table class="table table-hover align-middle">
+                <table class="table table-hover mb-0">
 
-
-                    <!-- ================================= -->
-                    <!-- CABECERA DE TABLA -->
-                    <!-- ================================= -->
-
-                    <thead>
+                    <thead class="table-light">
 
                         <tr>
+
+                            <th>
+                                Oportunidad
+                            </th>
 
                             <th>
                                 Etapa
@@ -95,15 +570,11 @@
                             </th>
 
                             <th>
-                                Próxima gestión
+                                Presupuesto
                             </th>
 
                             <th>
-                                Asesor
-                            </th>
-
-                            <th>
-                                Acciones
+                                Fecha
                             </th>
 
                         </tr>
@@ -111,26 +582,24 @@
                     </thead>
 
 
-                    <!-- ================================= -->
-                    <!-- DATOS -->
-                    <!-- ================================= -->
-
                     <tbody>
 
-
-                    {% for oportunidad in oportunidades %}
-
+                        {% for oportunidad in oportunidades %}
 
                         <tr>
 
+                            <td>
 
-                            <!-- ========================= -->
-                            <!-- ETAPA -->
-                            <!-- ========================= -->
+                                <strong>
+                                    {{ oportunidad.nombre }}
+                                </strong>
+
+                            </td>
+
 
                             <td>
 
-                                <span class="badge bg-primary">
+                                <span class="badge bg-info">
 
                                     {{ oportunidad.get_etapa_display }}
 
@@ -139,33 +608,30 @@
                             </td>
 
 
-                            <!-- ========================= -->
-                            <!-- PRIORIDAD -->
-                            <!-- ========================= -->
-
                             <td>
 
-                                {{ oportunidad.get_prioridad_display }}
+                                {% if oportunidad.prioridad == "URGENTE" %}
 
-                            </td>
+                                    <span class="badge bg-danger">
+                                        Urgente
+                                    </span>
 
+                                {% elif oportunidad.prioridad == "ALTA" %}
 
-                            <!-- ========================= -->
-                            <!-- PRÓXIMA GESTIÓN -->
-                            <!-- ========================= -->
+                                    <span class="badge bg-warning text-dark">
+                                        Alta
+                                    </span>
 
-                            <td>
+                                {% elif oportunidad.prioridad == "MEDIA" %}
 
-                                {% if oportunidad.proxima_gestion %}
-
-                                    {{ oportunidad.proxima_gestion|date:"d/m/Y H:i" }}
+                                    <span class="badge bg-primary">
+                                        Media
+                                    </span>
 
                                 {% else %}
 
-                                    <span class="text-muted">
-
-                                        Sin fecha
-
+                                    <span class="badge bg-secondary">
+                                        Baja
                                     </span>
 
                                 {% endif %}
@@ -173,381 +639,61 @@
                             </td>
 
 
-                            <!-- ========================= -->
-                            <!-- ASESOR -->
-                            <!-- ========================= -->
-
                             <td>
 
-                                {{ oportunidad.asesor.username }}
+                                {% if oportunidad.presupuesto %}
+
+                                    $ {{ oportunidad.presupuesto }}
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        —
+                                    </span>
+
+                                {% endif %}
 
                             </td>
 
 
-                            <!-- ========================= -->
-                            <!-- ACCIONES -->
-                            <!-- ========================= -->
-
                             <td>
 
-                                <div class="btn-group">
-
-
-                                    <!-- ================= -->
-                                    <!-- VER -->
-                                    <!-- ================= -->
-
-                                    <a
-                                        href="{% url 'oportunidades:oportunidad_detalle' oportunidad.id %}"
-                                        class="btn btn-sm btn-primary"
-                                        title="Ver oportunidad"
-                                    >
-
-                                        👁️
-
-                                    </a>
-
-
-                                    <!-- ================= -->
-                                    <!-- EDITAR -->
-                                    <!-- ================= -->
-
-                                    <a
-                                        href="{% url 'oportunidades:oportunidad_editar' oportunidad.id %}"
-                                        class="btn btn-sm btn-warning"
-                                        title="Editar oportunidad"
-                                    >
-
-                                        ✏️
-
-                                    </a>
-
-
-                                </div>
+                                {{ oportunidad.creado_en|date:"d/m/Y" }}
 
                             </td>
-
 
                         </tr>
 
-
-                    {% endfor %}
-
+                        {% endfor %}
 
                     </tbody>
-
 
                 </table>
 
             </div>
 
+            {% else %}
 
-        {% else %}
+            <div class="text-center p-5">
 
+                <i class="bi bi-briefcase display-4 text-muted"></i>
 
-            <!-- ========================================= -->
-            <!-- SIN OPORTUNIDADES -->
-            <!-- ========================================= -->
+                <h5 class="mt-3">
+                    No existen oportunidades
+                </h5>
 
-            <div class="alert alert-info mb-0">
-
-                Este cliente todavía no tiene oportunidades comerciales registradas.
+                <p class="text-muted">
+                    Este cliente todavía no tiene oportunidades comerciales registradas.
+                </p>
 
             </div>
 
-
-        {% endif %}
-
-
-    </div>
-
-</div>
-		
-        <div>
-           <a       href="{% url 'clientes:cliente_lista' %}"             class="btn btn-secondary"            >
-                ← Volver            </a>
-        </div>
-    </div>
-
-
-    <!-- DATOS DEL CLIENTE -->
-
-    <div class="card shadow-sm">
-
-        <div class="card-header bg-dark text-white">
-
-            <h4 class="mb-0">
-
-                {{ cliente.nombre_completo }}
-
-            </h4>
-
-        </div>
-
-
-        <div class="card-body">
-
-            <div class="row">
-
-
-                <!-- NOMBRE -->
-
-                <div class="col-md-6 mb-3">
-
-                    <strong>
-                        Nombre completo
-                    </strong>
-
-                    <p class="form-control bg-light">
-
-                        {{ cliente.nombre_completo }}
-
-                    </p>
-
-                </div>
-
-
-                <!-- TELÉFONO -->
-
-                <div class="col-md-6 mb-3">
-
-                    <strong>
-                        Teléfono
-                    </strong>
-
-                    <p class="form-control bg-light">
-
-                        {{ cliente.telefono }}
-
-                    </p>
-
-                </div>
-
-
-                <!-- WHATSAPP -->
-
-                <div class="col-md-6 mb-3">
-
-                    <strong>
-                        WhatsApp
-                    </strong>
-
-                    <p class="form-control bg-light">
-
-                        {{ cliente.whatsapp|default:"No registrado" }}
-
-                    </p>
-
-                </div>
-
-
-                <!-- CORREO -->
-
-                <div class="col-md-6 mb-3">
-
-                    <strong>
-                        Correo electrónico
-                    </strong>
-
-                    <p class="form-control bg-light">
-
-                        {{ cliente.correo|default:"No registrado" }}
-
-                    </p>
-
-                </div>
-
-
-                <!-- DIRECCIÓN -->
-
-                <div class="col-md-12 mb-3">
-
-                    <strong>
-                        Dirección
-                    </strong>
-
-                    <p class="form-control bg-light">
-
-                        {{ cliente.direccion|default:"No registrada" }}
-
-                    </p>
-
-                </div>
-
-
-                <!-- CAPACIDAD DE PAGO -->
-
-                <div class="col-md-6 mb-3">
-
-                    <strong>
-                        Capacidad de pago mensual
-                    </strong>
-
-                    <p class="form-control bg-light">
-
-                        {% if cliente.capacidad_pago_mensual %}
-
-                            $ {{ cliente.capacidad_pago_mensual }}
-
-                        {% else %}
-
-                            No registrada
-
-                        {% endif %}
-
-                    </p>
-
-                </div>
-
-
-                <!-- ESTADO -->
-
-                <div class="col-md-6 mb-3">
-
-                    <strong>
-                        Estado
-                    </strong>
-
-                    <p>
-
-                        {% if cliente.estado == 'NUEVO' %}
-
-                            <span class="badge bg-primary fs-6">
-                                Nuevo
-                            </span>
-
-                        {% elif cliente.estado == 'CONTACTADO' %}
-
-                            <span class="badge bg-info fs-6">
-                                Contactado
-                            </span>
-
-                        {% elif cliente.estado == 'INTERESADO' %}
-
-                            <span class="badge bg-warning text-dark fs-6">
-                                Interesado
-                            </span>
-
-                        {% elif cliente.estado == 'ACTIVO' %}
-
-                            <span class="badge bg-success fs-6">
-                                Activo
-                            </span>
-
-                        {% elif cliente.estado == 'INACTIVO' %}
-
-                            <span class="badge bg-secondary fs-6">
-                                Inactivo
-                            </span>
-
-                        {% endif %}
-
-                    </p>
-
-                </div>
-
-
-                <!-- ASESOR -->
-
-                <div class="col-md-6 mb-3">
-
-                    <strong>
-                        Asesor responsable
-                    </strong>
-
-                    <p class="form-control bg-light">
-
-                        {{ cliente.asesor.username }}
-
-                    </p>
-
-                </div>
-
-
-                <!-- FECHA REGISTRO -->
-
-                <div class="col-md-6 mb-3">
-
-                    <strong>
-                        Fecha de registro
-                    </strong>
-
-                    <p class="form-control bg-light">
-
-                        {{ cliente.fecha_registro|date:"d/m/Y H:i" }}
-
-                    </p>
-
-                </div>
-
-
-                <!-- FECHA ACTUALIZACIÓN -->
-
-                <div class="col-md-6 mb-3">
-
-                    <strong>
-                        Última actualización
-                    </strong>
-
-                    <p class="form-control bg-light">
-
-                        {{ cliente.fecha_actualizacion|date:"d/m/Y H:i" }}
-
-                    </p>
-
-                </div>
-
-
-                <!-- OBSERVACIONES -->
-
-                <div class="col-md-12 mb-3">
-
-                    <strong>
-                        Observaciones
-                    </strong>
-
-                    <div class="form-control bg-light"
-                         style="min-height: 100px;">
-
-                        {{ cliente.observaciones|default:"Sin observaciones" }}
-
-                    </div>
-
-                </div>
-
-
-            </div>
-
-        </div>
-
-
-        <!-- BOTONES -->
-
-        <div class="card-footer">
-
-            <a
-                href="{% url 'clientes:cliente_lista' %}"
-                class="btn btn-secondary"
-            >
-                ← Volver a Clientes
-            </a>
-
-
-            <a                href="{% url 'clientes:cliente_editar' cliente.id %}"                class="btn btn-warning"            >
-                ✏️ Editar Cliente            </a>
-
-            {% if es_master %}
-                <a                    href="{% url 'clientes:cliente_eliminar' cliente.id %}"                    class="btn btn-danger"                >
-                    🗑️ Eliminar
-                </a>
-				
             {% endif %}
 
         </div>
 
     </div>
-</div>
-<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-</body>
 
-</html>
+</div>
+
+{% endblock %}

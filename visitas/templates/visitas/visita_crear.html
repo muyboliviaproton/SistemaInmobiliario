@@ -1,173 +1,135 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
-    <title>        Nueva Oportunidad    </title>
-    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
-</head>
-<body class="bg-light">
-<div class="container mt-5">
-    <div class="card shadow">
+{% extends 'base.html' %}
+
+
+{% block titulo %}
+    Nueva Visita | CRM Inmobiliario
+{% endblock %}
+
+
+{% block contenido %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
         <!-- ================================================= -->
         <!-- CABECERA -->
         <!-- ================================================= -->
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">                ➕ Nueva Oportunidad Comercial            </h4>
+        <div class="mb-4">
+            <h2 class="fw-bold">               <i class="bi bi-calendar-plus text-success"></i>                Agendar Visita           </h2>
+            <p class="text-muted">                Registre una nueva visita comercial.            </p>
         </div>
         <!-- ================================================= -->
-        <!-- CONTENIDO -->
+        <!-- INFORMACIÓN DEL CLIENTE -->
         <!-- ================================================= -->
-        <div class="card-body">
-
-            <!-- ================================================= -->
-            <!-- INFORMACIÓN DEL CLIENTE -->
-            <!-- ================================================= -->
-            <div class="alert alert-info">
-                <strong>                    👤 Cliente:                </strong>                {{ cliente.nombre_completo }}                <br>
-                <strong>                    📞 Teléfono:                </strong>                {{ cliente.telefono }}
-                <br>
-                <strong>                    👨‍💼 Asesor:                </strong>                {{ request.user.username }}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">                    <i class="bi bi-person-fill"></i>                    Información del cliente                </h5>
             </div>
-            <!-- ================================================= -->
-            <!-- FORMULARIO -->
-            <!-- ================================================= -->
-            <form method="POST">
-                {% csrf_token %}
-                <!-- ERRORES GENERALES -->
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger">                        {{ form.non_field_errors }}                    </div>
-                {% endif %}
-                <!-- ================================================= -->
-                <!-- NOMBRE -->
-                <!-- ================================================= -->
-                <div class="mb-3">
-                    <label class="form-label">                        💼 Nombre de la oportunidad                    </label>
-                    {{ form.nombre }}
-                    {% if form.nombre.errors %}
-                        <div class="text-danger">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">                        <strong>Cliente:</strong>                        
+					<p>                         {{ cliente.nombre_completo }}                        </p>
+                    </div>
 
-                            {{ form.nombre.errors }}
-
-                        </div>
-
-                    {% endif %}
-
+                    <div class="col-md-6">
+                        <strong>Oportunidad:</strong>
+                        <p>                            #{{ oportunidad.id }}                        </p>
+                    </div>
                 </div>
-
-
-                <!-- ================================================= -->
-                <!-- ETAPA -->
-                <!-- ================================================= -->
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-
-                        📊 Etapa comercial
-
-                    </label>
-
-                    {{ form.etapa }}
-
-                    {% if form.etapa.errors %}
-
-                        <div class="text-danger">
-
-                            {{ form.etapa.errors }}
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- ================================================= -->
-                <!-- PRIORIDAD -->
-                <!-- ================================================= -->
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-
-                        🔥 Prioridad
-
-                    </label>
-
-                    {{ form.prioridad }}
-
-                    {% if form.prioridad.errors %}
-
-                        <div class="text-danger">
-
-                            {{ form.prioridad.errors }}
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- ================================================= -->
-                <!-- PRESUPUESTO -->
-                <!-- ================================================= -->
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-
-                        💰 Presupuesto estimado
-
-                    </label>
-
-                    {{ form.presupuesto }}
-
-                    {% if form.presupuesto.errors %}
-
-                        <div class="text-danger">
-
-                            {{ form.presupuesto.errors }}
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- ================================================= -->
-                <!-- FECHA ESTIMADA -->
-                <!-- ================================================= -->
-                <div class="mb-3">
-                    <label class="form-label">                        📅 Fecha estimada de compra                    </label>
-                    {{ form.fecha_estimada_compra }}
-                    {% if form.fecha_estimada_compra.errors %}
-                        <div class="text-danger">                            {{ form.fecha_estimada_compra.errors }}                        </div>
-                    {% endif %}
-                </div>
-                <!-- ================================================= -->
-                <!-- OBSERVACIONES -->
-                <!-- ================================================= -->
-                <div class="mb-3">
-                    <label class="form-label">                        📝 Observaciones                    </label>                    {{ form.observaciones }}
-                    {% if form.observaciones.errors %}
-                        <div class="text-danger">                            {{ form.observaciones.errors }}                        </div>
-                    {% endif %}
-                </div>
-                <!-- ================================================= -->
-                <!-- BOTONES -->
-                <!-- ================================================= -->
-                <div class="d-flex gap-2">
-                    <a href="{% url 'oportunidades:oportunidad_lista' %}" class="btn btn-secondary"> ← Cancelar   </a>
-                    <button type="submit" class="btn btn-success">💾 Guardar oportunidad </button>
-                </div>
-            </form>
+            </div>
         </div>
+        <!-- ================================================= -->
+        <!-- FORMULARIO -->
+        <!-- ================================================= -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">                    <i class="bi bi-calendar-check"></i>                    Datos de la visita                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger">
+
+                            {{ form.non_field_errors }}
+
+                        </div>
+
+                    {% endif %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">                                Fecha                            </label>
+                            {{ form.fecha }}
+                            {{ form.fecha.errors }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">                                Hora                            </label>
+                            {{ form.hora }}
+                            {{ form.hora.errors }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">                                Lugar                            </label>
+                            {{ form.lugar }}
+                            {{ form.lugar.errors }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">                                Estado                            </label>
+                            {{ form.estado }}
+                            {{ form.estado.errors }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">                                Prioridad                            </label>
+                            {{ form.prioridad }}
+                            {{ form.prioridad.errors }}
+                        </div>
+                        <div class="col-12">    <label class="form-label fw-bold">     Resultado    </label>
+                            {{ form.resultado }}
+                            {{ form.resultado.errors }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">                                Observaciones                            </label>
+                            {{ form.observaciones }}
+                            {{ form.observaciones.errors }}
+                        </div>
+                    </div>
+                    <!-- ===================================== -->
+                    <!-- BOTONES -->
+                    <!-- ===================================== -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a
+                            href="{% url 'visitas:visita_lista' %}"
+                            class="btn btn-secondary"
+                        >
+
+                            <i class="bi bi-arrow-left"></i>
+
+                            Cancelar
+
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-success"
+                        >
+
+                            <i class="bi bi-save"></i>
+
+                            Guardar Visita
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
     </div>
+
 </div>
-<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-</body>
-</html>
+
+{% endblock %}

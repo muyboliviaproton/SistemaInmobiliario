@@ -2,7 +2,9 @@ from django.urls import path
 
 from . import views
 
+
 app_name = 'visitas'
+
 
 urlpatterns = [
 
@@ -17,7 +19,17 @@ urlpatterns = [
     ),
 
     # ========================================================
-    # CREAR
+    # CREAR VISITA DESDE LA LISTA
+    # ========================================================
+
+    path(
+        'nueva/',
+        views.visita_nueva,
+        name='visita_nueva'
+    ),
+
+    # ========================================================
+    # CREAR VISITA DESDE UNA OPORTUNIDAD
     # ========================================================
 
     path(
@@ -34,6 +46,16 @@ urlpatterns = [
         '<int:visita_id>/',
         views.visita_detalle,
         name='visita_detalle'
+    ),
+
+    # ========================================================
+    # REALIZAR VISITA
+    # ========================================================
+
+    path(
+        '<int:visita_id>/realizar/',
+        views.visita_realizar,
+        name='visita_realizar'
     ),
 
     # ========================================================

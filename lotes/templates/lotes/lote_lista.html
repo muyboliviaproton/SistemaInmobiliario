@@ -1,0 +1,471 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    Lotes | CRM Inmobiliario
+{% endblock %}
+
+{% block contenido %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-buildings"></i>
+                Gestión de Lotes
+            </h2>
+
+            <p class="text-muted mb-0">
+                Administración y seguimiento de terrenos.
+            </p>
+        </div>
+
+        {% if user.is_authenticated %}
+            {% if es_master or user.groups.all %}
+
+                <a
+                    href="{% url 'lotes:lote_crear' %}"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-plus-circle"></i>
+                    Nuevo Lote
+                </a>
+
+            {% endif %}
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         MENSAJES
+    ====================================================== -->
+
+    {% include 'includes/mensajes.html' %}
+
+
+    <!-- =====================================================
+         ESTADÍSTICAS
+    ====================================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+                            <small class="text-muted">
+                                Total de lotes
+                            </small>
+
+                            <h3 class="fw-bold mb-0">
+                                {{ total_lotes }}
+                            </h3>
+                        </div>
+
+                        <div class="fs-2 text-primary">
+                            <i class="bi bi-buildings"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+                            <small class="text-muted">
+                                Disponibles
+                            </small>
+
+                            <h3 class="fw-bold text-success mb-0">
+                                {{ disponibles }}
+                            </h3>
+                        </div>
+
+                        <div class="fs-2 text-success">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+                            <small class="text-muted">
+                                Reservados
+                            </small>
+
+                            <h3 class="fw-bold text-warning mb-0">
+                                {{ reservados }}
+                            </h3>
+                        </div>
+
+                        <div class="fs-2 text-warning">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+                            <small class="text-muted">
+                                Vendidos
+                            </small>
+
+                            <h3 class="fw-bold text-danger mb-0">
+                                {{ vendidos }}
+                            </h3>
+                        </div>
+
+                        <div class="fs-2 text-danger">
+                            <i class="bi bi-house-check"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MIS LOTES
+    ====================================================== -->
+
+    {% if mis_lotes %}
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-primary text-white">
+
+                <h5 class="mb-0">
+                    <i class="bi bi-person-workspace"></i>
+                    Mis Lotes
+                </h5>
+
+            </div>
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+                                <th>Código</th>
+                                <th>UV</th>
+                                <th>Manzano</th>
+                                <th>Lote</th>
+                                <th>Superficie</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                                <th class="text-center">
+                                    Acciones
+                                </th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for lote in mis_lotes %}
+
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            {{ lote.codigo }}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        {{ lote.uv }}
+                                    </td>
+
+                                    <td>
+                                        {{ lote.manzano }}
+                                    </td>
+
+                                    <td>
+                                        {{ lote.lote }}
+                                    </td>
+
+                                    <td>
+                                        {{ lote.superficie_oficial }} m²
+                                    </td>
+
+                                    <td>
+                                        {{ lote.precio_total|floatformat:2 }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if lote.estado == 'DISPONIBLE' %}
+
+                                            <span class="badge bg-success">
+                                                Disponible
+                                            </span>
+
+                                        {% elif lote.estado == 'RESERVADO' %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                Reservado
+                                            </span>
+
+                                        {% elif lote.estado == 'VENDIDO' %}
+
+                                            <span class="badge bg-danger">
+                                                Vendido
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td class="text-center">
+
+                                        <a
+                                            href="{% url 'lotes:lote_detalle' lote.id %}"
+                                            class="btn btn-sm btn-outline-primary"
+                                            title="Ver detalle"
+                                        >
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+
+                                        <a
+                                            href="{% url 'lotes:lote_editar' lote.id %}"
+                                            class="btn btn-sm btn-outline-warning"
+                                            title="Editar"
+                                        >
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% empty %}
+
+                                <tr>
+                                    <td
+                                        colspan="8"
+                                        class="text-center text-muted py-4"
+                                    >
+                                        No tiene lotes registrados.
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         LOTES AUTORIZADOS
+    ====================================================== -->
+
+    {% if lotes_autorizados %}
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-info text-white">
+
+                <h5 class="mb-0">
+                    <i class="bi bi-person-check"></i>
+                    Lotes Autorizados
+                </h5>
+
+            </div>
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+                                <th>Código</th>
+                                <th>UV</th>
+                                <th>Manzano</th>
+                                <th>Lote</th>
+                                <th>Superficie</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                                <th class="text-center">
+                                    Acción
+                                </th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for lote in lotes_autorizados %}
+
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            {{ lote.codigo }}
+                                        </strong>
+                                    </td>
+
+                                    <td>{{ lote.uv }}</td>
+
+                                    <td>{{ lote.manzano }}</td>
+
+                                    <td>{{ lote.lote }}</td>
+
+                                    <td>
+                                        {{ lote.superficie_oficial }} m²
+                                    </td>
+
+                                    <td>
+                                        {{ lote.precio_total|floatformat:2 }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if lote.estado == 'DISPONIBLE' %}
+
+                                            <span class="badge bg-success">
+                                                Disponible
+                                            </span>
+
+                                        {% elif lote.estado == 'RESERVADO' %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                Reservado
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-danger">
+                                                Vendido
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td class="text-center">
+
+                                        <a
+                                            href="{% url 'lotes:lote_detalle' lote.id %}"
+                                            class="btn btn-sm btn-outline-primary"
+                                        >
+                                            <i class="bi bi-eye"></i>
+                                            Ver
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         MASTER
+    ====================================================== -->
+
+    {% if es_master %}
+
+        <div class="mt-4">
+
+            <div class="alert alert-info">
+
+                <i class="bi bi-shield-check"></i>
+
+                <strong>Usuario MASTER:</strong>
+
+                tiene acceso administrativo a todos los lotes.
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

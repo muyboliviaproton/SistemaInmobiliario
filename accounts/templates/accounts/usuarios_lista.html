@@ -1,123 +1,449 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
-    <title>        Gestión de Usuarios    </title>
-    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Gestión de Asesores | Sistema Inmobiliario
+    </title>
+
+    <link
+        href="{% static 'bootstrap/css/bootstrap.min.css' %}"
+        rel="stylesheet"
+    >
+
+    <link
+        href="{% static 'bootstrap-icons/font/bootstrap-icons.css' %}"
+        rel="stylesheet"
+    >
+
 </head>
+
+
 <body class="bg-light">
+
+
 <!-- ====================================================== -->
 <!-- NAVBAR -->
 <!-- ====================================================== -->
+
 <nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-        <a            class="navbar-brand"            href="{% url 'dashboard_master' %}"        >
-            🏡 Sistema Inmobiliario        </a>
+
+    <div class="container-fluid">
+
+        <!-- REGRESAR AL DASHBOARD -->
+
+        <a
+            class="navbar-brand"
+            href="{% url 'dashboard:inicio' %}"
+        >
+
+            <i class="bi bi-building"></i>
+
+            Sistema Inmobiliario
+
+        </a>
+
+
+        <!-- USUARIO CONECTADO -->
 
         <span class="text-white">
-            Usuario:            {{ request.user.username }}
+
+            <i class="bi bi-person-circle"></i>
+
+            {{ request.user.get_full_name|default:request.user.username }}
+
         </span>
+
     </div>
+
 </nav>
+
 
 <!-- ====================================================== -->
 <!-- CONTENIDO -->
 <!-- ====================================================== -->
 
-<div class="container mt-4">
-    <!-- CABECERA -->
-    <div        class="d-flex justify-content-between align-items-center mb-4"    >
+<div class="container py-4">
+
+
+    <!-- ================================================== -->
+    <!-- ENCABEZADO -->
+    <!-- ================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
         <div>
-            <h1>                👥 Gestión de Usuarios            </h1>
-            <p class="text-muted">                Administración de asesores del sistema
+
+            <h2>
+
+                <i class="bi bi-person-badge-fill"></i>
+
+                Gestión de Asesores
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                Administración de usuarios asesores del sistema.
+
             </p>
+
         </div>
-        <div>
 
-    <a     href="{% url 'usuario_crear' %}"       class="btn btn-success"    >
-        + Nuevo Asesor    </a>
-    <a      href="{% url 'dashboard_master' %}"      class="btn btn-secondary"    >
-        ← Volver    </a>
 
-</div>
+        <!-- NUEVO ASESOR -->
+
+        <a
+            href="{% url 'accounts:usuario_crear' %}"
+            class="btn btn-primary"
+        >
+
+            <i class="bi bi-person-plus-fill"></i>
+
+            Nuevo Asesor
+
+        </a>
+
     </div>
-    <!-- INFORMACIÓN -->
-    <div class="alert alert-info">
 
-        <strong>            Rol:        </strong>
-        MASTER        <br>
-        Desde aquí puedes administrar los asesores
-        registrados en el sistema.
-    </div>
-    <!-- TABLA -->
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table                    class="table table-hover align-middle"                >
-                    <thead class="table-dark">
-                        <tr>
-                            <th>                                Usuario                            </th>
-                            <th>                                Nombre                            </th>
-                            <th>                                Correo                            </th>
-                            <th>                                Estado                            </th>
-                            <th class="text-center">                                Acciones                            </th>
-                        </tr>
 
-                    </thead>
-                    <tbody>
-                        {% for usuario in usuarios %}
-                            <tr>
-                                <td>
-                                    <strong>                                       {{ usuario.username }}                                    </strong>
-                                </td>
-                                <td>                                    {{ usuario.first_name }}                                   {{ usuario.last_name }}                                </td>
-                                <td>                                    {{ usuario.email|default:"-" }}                               </td>
-                                <td>                                    {% if usuario.is_active %}
-                                        <span class="badge bg-success"                 >                                            Activo
-                                        </span>
-                                    {% else %}
-                                        <span   class="badge bg-secondary"                         >
-                                            Inactivo
-                                        </span>
-                                    {% endif %}
-                                </td>
+    <!-- ================================================== -->
+    <!-- MENSAJES -->
+    <!-- ================================================== -->
 
-                                <td class="text-center">
-                                    <a href="{% url 'usuario_editar' usuario.id %}" class="btn btn-sm btn-warning">    ✏️ Editar</a>
-									<a href="{% url 'usuario_cambiar_password' usuario.id %}" class="btn btn-sm btn-dark">    🔑 Contraseña</a>
-									<a href="{% url 'usuario_clientes' usuario.id %}" class="btn btn-sm btn-primary">  👥 Clientes</a>
-                                    <a href="{% url 'usuario_cambiar_estado' usuario.id %}" class="btn btn-sm {% if usuario.is_active %} btn-danger {% else %} btn-success {% endif %}">
-									{% if usuario.is_active %}
-									🔒 Desactivar
-									{% else %}
-									🔓 Activar
-									{% endif %}
-									</a>
-                                </td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td  colspan="5" class="text-center py-5" >
-                                    <h4>                                        No hay asesores registrados                                    </h4>
-                                    <p class="text-muted"> Todavía no existen usuarios    pertenecientes al grupo ASESOR.                                    </p>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div
+                class="alert alert-{{ message.tags }} alert-dismissible fade show"
+                role="alert"
+            >
+
+                {{ message }}
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                ></button>
+
             </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- ================================================== -->
+    <!-- TABLA DE ASESORES -->
+    <!-- ================================================== -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-dark text-white">
+
+            <i class="bi bi-people-fill"></i>
+
+            Lista de Asesores
+
         </div>
+
+
+        <div class="card-body p-0">
+
+            {% if usuarios %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>
+                                    Usuario
+                                </th>
+
+                                <th>
+                                    Nombre
+                                </th>
+
+                                <th>
+                                    Correo
+                                </th>
+
+                                <th class="text-center">
+                                    Estado
+                                </th>
+
+                                <th class="text-center">
+                                    Acciones
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for usuario in usuarios %}
+
+                                <tr>
+
+                                    <!-- USUARIO -->
+
+                                    <td>
+
+                                        <strong>
+
+                                            <i class="bi bi-person-circle"></i>
+
+                                            {{ usuario.username }}
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- NOMBRE -->
+
+                                    <td>
+
+                                        {% if usuario.get_full_name %}
+
+                                            {{ usuario.get_full_name }}
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+
+                                                Sin nombre registrado
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- CORREO -->
+
+                                    <td>
+
+                                        {% if usuario.email %}
+
+                                            {{ usuario.email }}
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+
+                                                Sin correo
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- ESTADO -->
+
+                                    <td class="text-center">
+
+                                        {% if usuario.is_active %}
+
+                                            <span class="badge bg-success">
+
+                                                <i class="bi bi-check-circle-fill"></i>
+
+                                                Activo
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-danger">
+
+                                                <i class="bi bi-x-circle-fill"></i>
+
+                                                Inactivo
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- ACCIONES -->
+
+                                    <td class="text-center">
+
+                                        <div class="btn-group">
+
+                                            <!-- EDITAR -->
+
+                                            <a
+                                                href="{% url 'accounts:usuario_editar' usuario.pk %}"
+                                                class="btn btn-sm btn-outline-primary"
+                                                title="Editar asesor"
+                                            >
+
+                                                <i class="bi bi-pencil-fill"></i>
+
+                                            </a>
+
+
+                                            <!-- CLIENTES -->
+
+                                            <a
+                                                href="{% url 'accounts:usuario_clientes' usuario.pk %}"
+                                                class="btn btn-sm btn-outline-success"
+                                                title="Ver clientes"
+                                            >
+
+                                                <i class="bi bi-people-fill"></i>
+
+                                            </a>
+
+
+                                            <!-- CAMBIAR CONTRASEÑA -->
+
+                                            <a
+                                                href="{% url 'accounts:usuario_cambiar_password' usuario.pk %}"
+                                                class="btn btn-sm btn-outline-warning"
+                                                title="Cambiar contraseña"
+                                            >
+
+                                                <i class="bi bi-key-fill"></i>
+
+                                            </a>
+
+
+                                            <!-- CAMBIAR ESTADO -->
+
+                                            <a
+                                                href="{% url 'accounts:usuario_cambiar_estado' usuario.pk %}"
+                                                class="btn btn-sm btn-outline-secondary"
+                                                title="Cambiar estado"
+                                            >
+
+                                                {% if usuario.is_active %}
+
+                                                    <i class="bi bi-person-dash-fill"></i>
+
+                                                {% else %}
+
+                                                    <i class="bi bi-person-check-fill"></i>
+
+                                                {% endif %}
+
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <!-- ====================================== -->
+                <!-- SIN ASESORES -->
+                <!-- ====================================== -->
+
+                <div class="text-center py-5">
+
+                    <i
+                        class="bi bi-person-x"
+                        style="font-size: 3rem;"
+                    ></i>
+
+                    <h5 class="mt-3">
+
+                        No existen asesores registrados
+
+                    </h5>
+
+                    <p class="text-muted">
+
+                        Puedes registrar el primer asesor utilizando
+                        el botón "Nuevo Asesor".
+
+                    </p>
+
+                    <a
+                        href="{% url 'accounts:usuario_crear' %}"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="bi bi-person-plus-fill"></i>
+
+                        Registrar Asesor
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
     </div>
-    <!-- VOLVER -->
+
+
+    <!-- ================================================== -->
+    <!-- REGRESAR -->
+    <!-- ================================================== -->
+
     <div class="mt-4">
-        <a            href="{% url 'dashboard_master' %}"            class="btn btn-secondary"        >            ← Volver al Dashboard        </a>
+
+        <a
+            href="{% url 'dashboard:inicio' %}"
+            class="btn btn-outline-secondary"
+        >
+
+            <i class="bi bi-arrow-left"></i>
+
+            Volver al Dashboard
+
+        </a>
+
     </div>
+
 
 </div>
 
 
-<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- ====================================================== -->
+<!-- BOOTSTRAP JS -->
+<!-- ====================================================== -->
+
+<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+
 </body>
+
 </html>

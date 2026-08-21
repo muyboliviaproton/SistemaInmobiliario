@@ -1,0 +1,444 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    Detalle de Visita | Sistema Inmobiliario
+{% endblock %}
+
+
+{% block contenido %}
+
+<div class="container-fluid">
+
+    <!-- ================================================== -->
+    <!-- ENCABEZADO -->
+    <!-- ================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+
+                <i class="bi bi-calendar-check text-success"></i>
+
+                Detalle de Visita
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                Información y resultado de la visita
+
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'visitas:visita_lista' %}"
+            class="btn btn-outline-secondary"
+        >
+
+            <i class="bi bi-arrow-left"></i>
+
+            Volver a visitas
+
+        </a>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- ESTADO -->
+    <!-- ================================================== -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <small class="text-muted">
+                        Estado de la visita
+                    </small>
+
+                    <div class="mt-1">
+
+                        {% if visita.estado == 'PENDIENTE' %}
+
+                            <span class="badge bg-warning text-dark fs-6">
+                                <i class="bi bi-clock"></i>
+                                Pendiente
+                            </span>
+
+                        {% elif visita.estado == 'CONFIRMADA' %}
+
+                            <span class="badge bg-primary fs-6">
+                                <i class="bi bi-check-circle"></i>
+                                Confirmada
+                            </span>
+
+                        {% elif visita.estado == 'REALIZADA' %}
+
+                            <span class="badge bg-success fs-6">
+                                <i class="bi bi-check2-all"></i>
+                                Realizada
+                            </span>
+
+                        {% elif visita.estado == 'CANCELADA' %}
+
+                            <span class="badge bg-danger fs-6">
+                                <i class="bi bi-x-circle"></i>
+                                Cancelada
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACCIONES -->
+
+                <div class="d-flex gap-2">
+
+                    {% if visita.estado == 'PENDIENTE' or visita.estado == 'CONFIRMADA' %}
+
+                    <a
+                        href="{% url 'visitas:visita_realizar' visita.id %}"
+                        class="btn btn-success"
+                    >
+
+                        <i class="bi bi-check2-circle"></i>
+
+                        Realizar visita
+
+                    </a>
+
+                    {% endif %}
+
+
+                    {% if visita.estado != 'REALIZADA' %}
+
+                    <a
+                        href="{% url 'visitas:visita_editar' visita.id %}"
+                        class="btn btn-warning"
+                    >
+
+                        <i class="bi bi-pencil"></i>
+
+                        Editar
+
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- ================================================== -->
+        <!-- INFORMACIÓN DEL CLIENTE -->
+        <!-- ================================================== -->
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-header bg-success text-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-person-fill"></i>
+
+                        Cliente
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <h4 class="fw-bold">
+
+                        {{ visita.cliente.nombre_completo }}
+
+                    </h4>
+
+
+                    {% if visita.cliente.telefono %}
+
+                    <p class="mb-2">
+
+                        <i class="bi bi-telephone-fill text-success"></i>
+
+                        {{ visita.cliente.telefono }}
+
+                    </p>
+
+                    {% endif %}
+
+
+                    {% if visita.cliente.email %}
+
+                    <p class="mb-2">
+
+                        <i class="bi bi-envelope-fill text-primary"></i>
+
+                        {{ visita.cliente.email }}
+
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================== -->
+        <!-- INFORMACIÓN DE LA VISITA -->
+        <!-- ================================================== -->
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-calendar-event"></i>
+
+                        Datos de la visita
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <p>
+
+                        <strong>
+                            <i class="bi bi-calendar3"></i>
+                            Fecha:
+                        </strong>
+
+                        {{ visita.fecha|date:"d/m/Y" }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            <i class="bi bi-clock"></i>
+                            Hora:
+                        </strong>
+
+                        {{ visita.hora|time:"H:i" }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            <i class="bi bi-geo-alt-fill"></i>
+                            Lugar:
+                        </strong>
+
+                        {{ visita.lugar }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            <i class="bi bi-person-badge"></i>
+                            Asesor:
+                        </strong>
+
+                        {{ visita.asesor.get_full_name|default:visita.asesor.username }}
+
+                    </p>
+
+
+                    <p class="mb-0">
+
+                        <strong>
+                            Prioridad:
+                        </strong>
+
+                        {% if visita.prioridad == 'ALTA' %}
+
+                            <span class="badge bg-danger">
+                                Alta
+                            </span>
+
+                        {% elif visita.prioridad == 'MEDIA' %}
+
+                            <span class="badge bg-warning text-dark">
+                                Media
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary">
+                                Baja
+                            </span>
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================== -->
+        <!-- RESULTADO -->
+        <!-- ================================================== -->
+
+        {% if visita.estado == 'REALIZADA' %}
+
+        <div class="col-12">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-success text-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-clipboard-check"></i>
+
+                        Resultado de la visita
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="mb-4">
+
+                        <h6 class="fw-bold">
+                            Resultado
+                        </h6>
+
+                        {% if visita.resultado %}
+
+                            <div class="bg-light rounded p-3">
+
+                                {{ visita.resultado|linebreaks }}
+
+                            </div>
+
+                        {% else %}
+
+                            <span class="text-muted">
+                                No se registró resultado.
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div>
+
+                        <h6 class="fw-bold">
+                            Observaciones
+                        </h6>
+
+                        {% if visita.observaciones %}
+
+                            <div class="bg-light rounded p-3">
+
+                                {{ visita.observaciones|linebreaks }}
+
+                            </div>
+
+                        {% else %}
+
+                            <span class="text-muted">
+                                No se registraron observaciones.
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- ================================================== -->
+        <!-- OPORTUNIDAD -->
+        <!-- ================================================== -->
+
+        {% if visita.oportunidad %}
+
+        <div class="col-12">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-light">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-briefcase-fill"></i>
+
+                        Oportunidad relacionada
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <p class="mb-0">
+
+                        Esta visita está relacionada con una oportunidad
+                        comercial del cliente.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

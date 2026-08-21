@@ -1,11 +1,51 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from datetime import datetime, time, timedelta
 
 from clientes.models import Cliente
 
 from .forms import SeguimientoForm
 from .models import Seguimiento
+
+
+# ============================================================
+# FUNCIONES AUXILIARES
+# ============================================================
+
+def usuario_es_master(user):
+    """
+    Determina si el usuario pertenece al grupo MASTER.
+    """
+    return user.groups.filter(
+        name='MASTER'
+    ).exists()
+
+
+def usuario_es_asesor(user):
+    """
+    Determina si el usuario pertenece al grupo ASESOR.
+    """
+    return user.groups.filter(
+        name='ASESOR'
+    ).exists()
+
+
+def obtener_asesores():
+    """
+    Obtiene únicamente usuarios activos pertenecientes
+    al grupo ASESOR.
+    """
+
+    return User.objects.filter(
+        is_active=True,
+        groups__name='ASESOR'
+    ).distinct().order_by(
+        'first_name',
+        'last_name',
+        'username'
+    )
 
 
 # ============================================================
@@ -15,77 +55,57 @@ from .models import Seguimiento
 @login_required
 def inicio_seguimientos(request):
 
-    # ========================================================
-    # VERIFICAR SI EL USUARIO ES MASTER
-    # ========================================================
+    es_master = usuario_es_master(
+        request.user
+    )
 
-    es_master = request.user.groups.filter(
-        name='MASTER'
-    ).exists()
+    # --------------------------------------------------------
+    # ASESOR SELECCIONADO
+    # --------------------------------------------------------
 
-    # ========================================================
-    # OBTENER ASESOR SELECCIONADO
-    # ========================================================
-
-    asesor_id = request.GET.get('asesor')
+    asesor_id = request.GET.get(
+        'asesor'
+    )
 
     asesor_seleccionado = None
 
-    # ========================================================
-    # LISTA DE ASESORES PARA EL MASTER
-    # ========================================================
+    # --------------------------------------------------------
+    # MASTER
+    # --------------------------------------------------------
 
     if es_master:
 
-        asesores = User.objects.filter(
-            is_active=True,
-            groups__name='ASESOR'
-        ).distinct().order_by(
-            'first_name',
-            'last_name',
-            'username'
-        )
-
-        # ====================================================
-        # SI EL MASTER SELECCIONÓ UN ASESOR
-        # ====================================================
+        asesores = obtener_asesores()
 
         if asesor_id:
 
-            try:
+            asesor_seleccionado = User.objects.filter(
+                id=asesor_id,
+                is_active=True,
+                groups__name='ASESOR'
+            ).first()
 
-                asesor_seleccionado = User.objects.get(
-                    id=asesor_id,
-                    is_active=True,
-                    groups__name='ASESOR'
-                )
-
-            except User.DoesNotExist:
-
-                asesor_seleccionado = None
+    # --------------------------------------------------------
+    # ASESOR
+    # --------------------------------------------------------
 
     else:
 
-        # ====================================================
-        # SI ES ASESOR
-        # SOLO TRABAJA CON SUS PROPIOS CLIENTES
-        # ====================================================
+        asesores = []
 
         asesor_seleccionado = request.user
 
-        asesores = []
-
-    # ========================================================
-    # BASE DE CLIENTES ACTIVOS
-    # ========================================================
+    # --------------------------------------------------------
+    # CLIENTES ACTIVOS
+    # --------------------------------------------------------
 
     clientes_base = Cliente.objects.filter(
         eliminado=False
     )
 
-    # ========================================================
-    # FILTRAR POR ASESOR
-    # ========================================================
+    # --------------------------------------------------------
+    # FILTRAR CLIENTES POR ASESOR
+    # --------------------------------------------------------
 
     if asesor_seleccionado:
 
@@ -93,47 +113,57 @@ def inicio_seguimientos(request):
             asesor=asesor_seleccionado
         )
 
-    # ========================================================
+    # --------------------------------------------------------
     # CLIENTES SIN SEGUIMIENTO
-    # ========================================================
+    # --------------------------------------------------------
 
-    clientes_sin_seguimiento = clientes_base.filter(
-        seguimientos__isnull=True
-    ).select_related(
-        'asesor'
-    ).distinct()
+    clientes_sin_seguimiento = (
+        clientes_base
+        .filter(
+            seguimientos__isnull=True
+        )
+        .select_related(
+            'asesor'
+        )
+        .distinct()
+        .order_by(
+            'nombre_completo'
+        )
+    )
 
-    # ========================================================
-    # TOTAL DE CLIENTES
-    # ========================================================
+    # --------------------------------------------------------
+    # TOTALES
+    # --------------------------------------------------------
 
     total_clientes = clientes_base.count()
 
-    # ========================================================
-    # TOTAL DE CLIENTES CON SEGUIMIENTO
-    # ========================================================
+    clientes_con_seguimiento = (
+        clientes_base
+        .filter(
+            seguimientos__isnull=False
+        )
+        .distinct()
+        .count()
+    )
 
-    clientes_con_seguimiento = clientes_base.filter(
-        seguimientos__isnull=False
-    ).distinct().count()
+    total_sin_seguimiento = (
+        clientes_sin_seguimiento.count()
+    )
 
-    # ========================================================
-    # TOTAL DE CLIENTES SIN SEGUIMIENTO
-    # ========================================================
-
-    total_sin_seguimiento = clientes_sin_seguimiento.count()
-
-    # ========================================================
+    # --------------------------------------------------------
     # CONTEXTO
-    # ========================================================
+    # --------------------------------------------------------
 
     contexto = {
 
-        'es_master': es_master,
+        'es_master':
+            es_master,
 
-        'asesores': asesores,
+        'asesores':
+            asesores,
 
-        'asesor_seleccionado': asesor_seleccionado,
+        'asesor_seleccionado':
+            asesor_seleccionado,
 
         'clientes_sin_seguimiento':
             clientes_sin_seguimiento,
@@ -149,10 +179,6 @@ def inicio_seguimientos(request):
 
     }
 
-    # ========================================================
-    # MOSTRAR PÁGINA
-    # ========================================================
-
     return render(
         request,
         'gestion_seguimientos/inicio.html',
@@ -167,26 +193,19 @@ def inicio_seguimientos(request):
 @login_required
 def seguimiento_lista(request, cliente_id):
 
-    # ========================================================
-    # BUSCAR CLIENTE
-    # ========================================================
-
     cliente = get_object_or_404(
         Cliente,
-        id=cliente_id
+        id=cliente_id,
+        eliminado=False
     )
 
-    # ========================================================
-    # VERIFICAR SI EL USUARIO ES MASTER
-    # ========================================================
+    es_master = usuario_es_master(
+        request.user
+    )
 
-    es_master = request.user.groups.filter(
-        name='MASTER'
-    ).exists()
-
-    # ========================================================
-    # VALIDAR ACCESO DEL ASESOR
-    # ========================================================
+    # --------------------------------------------------------
+    # CONTROL DE ACCESO
+    # --------------------------------------------------------
 
     if not es_master:
 
@@ -201,33 +220,39 @@ def seguimiento_lista(request, cliente_id):
                 status=403
             )
 
-    # ========================================================
-    # OBTENER SEGUIMIENTOS
-    # ========================================================
+    # --------------------------------------------------------
+    # SEGUIMIENTOS
+    # --------------------------------------------------------
 
-    seguimientos = Seguimiento.objects.filter(
-        cliente=cliente
-    ).select_related(
-        'asesor'
+    seguimientos = (
+        Seguimiento.objects
+        .filter(
+            cliente=cliente
+        )
+        .select_related(
+            'asesor'
+        )
+        .order_by(
+            '-fecha'
+        )
     )
 
-    # ========================================================
+    # --------------------------------------------------------
     # CONTEXTO
-    # ========================================================
+    # --------------------------------------------------------
 
     contexto = {
 
-        'cliente': cliente,
+        'cliente':
+            cliente,
 
-        'seguimientos': seguimientos,
+        'seguimientos':
+            seguimientos,
 
-        'es_master': es_master,
+        'es_master':
+            es_master,
 
     }
-
-    # ========================================================
-    # MOSTRAR HISTORIAL
-    # ========================================================
 
     return render(
         request,
@@ -237,15 +262,11 @@ def seguimiento_lista(request, cliente_id):
 
 
 # ============================================================
-# CREAR NUEVO SEGUIMIENTO
+# CREAR SEGUIMIENTO
 # ============================================================
 
 @login_required
 def seguimiento_crear(request, cliente_id):
-
-    # ========================================================
-    # BUSCAR CLIENTE ACTIVO
-    # ========================================================
 
     cliente = get_object_or_404(
         Cliente,
@@ -253,17 +274,13 @@ def seguimiento_crear(request, cliente_id):
         eliminado=False
     )
 
-    # ========================================================
-    # VERIFICAR SI ES MASTER
-    # ========================================================
+    es_master = usuario_es_master(
+        request.user
+    )
 
-    es_master = request.user.groups.filter(
-        name='MASTER'
-    ).exists()
-
-    # ========================================================
-    # VALIDAR ACCESO DEL ASESOR
-    # ========================================================
+    # --------------------------------------------------------
+    # CONTROL DE ACCESO
+    # --------------------------------------------------------
 
     if not es_master:
 
@@ -278,9 +295,9 @@ def seguimiento_crear(request, cliente_id):
                 status=403
             )
 
-    # ========================================================
-    # PROCESAR FORMULARIO
-    # ========================================================
+    # --------------------------------------------------------
+    # FORMULARIO
+    # --------------------------------------------------------
 
     if request.method == 'POST':
 
@@ -294,18 +311,13 @@ def seguimiento_crear(request, cliente_id):
                 commit=False
             )
 
-            # Asignar cliente
+            # Cliente al que pertenece el seguimiento
             seguimiento.cliente = cliente
 
-            # Registrar usuario que realizó el seguimiento
+            # Usuario que registra la gestión
             seguimiento.asesor = request.user
 
-            # Guardar
             seguimiento.save()
-
-            # =================================================
-            # VOLVER AL HISTORIAL
-            # =================================================
 
             return redirect(
                 'gestion_seguimientos:seguimiento_lista',
@@ -316,21 +328,19 @@ def seguimiento_crear(request, cliente_id):
 
         form = SeguimientoForm()
 
-    # ========================================================
+    # --------------------------------------------------------
     # CONTEXTO
-    # ========================================================
+    # --------------------------------------------------------
 
     contexto = {
 
-        'form': form,
+        'form':
+            form,
 
-        'cliente': cliente,
+        'cliente':
+            cliente,
 
     }
-
-    # ========================================================
-    # MOSTRAR FORMULARIO
-    # ========================================================
 
     return render(
         request,
@@ -346,42 +356,30 @@ def seguimiento_crear(request, cliente_id):
 @login_required
 def seguimiento_editar(request, seguimiento_id):
 
-    # ========================================================
-    # BUSCAR SEGUIMIENTO
-    # ========================================================
-
     seguimiento = get_object_or_404(
         Seguimiento,
         id=seguimiento_id
     )
 
-    # ========================================================
-    # OBTENER CLIENTE
-    # ========================================================
-
     cliente = seguimiento.cliente
 
-    # ========================================================
-    # VERIFICAR SI ES MASTER
-    # ========================================================
+    es_master = usuario_es_master(
+        request.user
+    )
 
-    es_master = request.user.groups.filter(
-        name='MASTER'
-    ).exists()
-
-    # ========================================================
-    # VALIDAR PERMISOS
+    # --------------------------------------------------------
+    # CONTROL DE ACCESO
     #
     # MASTER:
-    # Puede editar cualquier seguimiento.
+    # puede editar cualquier seguimiento.
     #
     # ASESOR:
-    # Solo puede editar sus propios seguimientos.
-    # ========================================================
+    # solamente puede editar seguimientos de sus clientes.
+    # --------------------------------------------------------
 
     if not es_master:
 
-        if seguimiento.asesor != request.user:
+        if cliente.asesor != request.user:
 
             return render(
                 request,
@@ -392,9 +390,9 @@ def seguimiento_editar(request, seguimiento_id):
                 status=403
             )
 
-    # ========================================================
-    # PROCESAR FORMULARIO
-    # ========================================================
+    # --------------------------------------------------------
+    # PROCESAR
+    # --------------------------------------------------------
 
     if request.method == 'POST':
 
@@ -418,25 +416,25 @@ def seguimiento_editar(request, seguimiento_id):
             instance=seguimiento
         )
 
-    # ========================================================
+    # --------------------------------------------------------
     # CONTEXTO
-    # ========================================================
+    # --------------------------------------------------------
 
     contexto = {
 
-        'form': form,
+        'form':
+            form,
 
-        'cliente': cliente,
+        'cliente':
+            cliente,
 
-        'seguimiento': seguimiento,
+        'seguimiento':
+            seguimiento,
 
-        'es_master': es_master,
+        'es_master':
+            es_master,
 
     }
-
-    # ========================================================
-    # MOSTRAR FORMULARIO
-    # ========================================================
 
     return render(
         request,
@@ -452,42 +450,24 @@ def seguimiento_editar(request, seguimiento_id):
 @login_required
 def seguimiento_eliminar(request, seguimiento_id):
 
-    # ========================================================
-    # BUSCAR SEGUIMIENTO
-    # ========================================================
-
     seguimiento = get_object_or_404(
         Seguimiento,
         id=seguimiento_id
     )
 
-    # ========================================================
-    # OBTENER CLIENTE
-    # ========================================================
-
     cliente = seguimiento.cliente
 
-    # ========================================================
-    # VERIFICAR SI ES MASTER
-    # ========================================================
+    es_master = usuario_es_master(
+        request.user
+    )
 
-    es_master = request.user.groups.filter(
-        name='MASTER'
-    ).exists()
-
-    # ========================================================
-    # VALIDAR PERMISOS
-    #
-    # MASTER:
-    # Puede eliminar cualquier seguimiento.
-    #
-    # ASESOR:
-    # Solo puede eliminar sus propios seguimientos.
-    # ========================================================
+    # --------------------------------------------------------
+    # CONTROL DE ACCESO
+    # --------------------------------------------------------
 
     if not es_master:
 
-        if seguimiento.asesor != request.user:
+        if cliente.asesor != request.user:
 
             return render(
                 request,
@@ -498,9 +478,9 @@ def seguimiento_eliminar(request, seguimiento_id):
                 status=403
             )
 
-    # ========================================================
-    # CONFIRMAR ELIMINACIÓN
-    # ========================================================
+    # --------------------------------------------------------
+    # ELIMINAR
+    # --------------------------------------------------------
 
     if request.method == 'POST':
 
@@ -511,152 +491,180 @@ def seguimiento_eliminar(request, seguimiento_id):
             cliente_id=cliente.id
         )
 
-    # ========================================================
+    # --------------------------------------------------------
     # CONTEXTO
-    # ========================================================
+    # --------------------------------------------------------
 
     contexto = {
 
-        'seguimiento': seguimiento,
+        'seguimiento':
+            seguimiento,
 
-        'cliente': cliente,
+        'cliente':
+            cliente,
 
-        'es_master': es_master,
+        'es_master':
+            es_master,
 
     }
-
-    # ========================================================
-    # MOSTRAR CONFIRMACIÓN
-    # ========================================================
 
     return render(
         request,
         'gestion_seguimientos/confirmar_eliminar_seguimiento.html',
         contexto
     )
+
+
 # ============================================================
 # AGENDA DE SEGUIMIENTOS
 # ============================================================
 
-from django.utils import timezone
-
-
 @login_required
 def agenda_seguimientos(request):
 
-    # ========================================================
-    # VERIFICAR SI EL USUARIO ES MASTER
-    # ========================================================
-
-    es_master = request.user.groups.filter(
-        name='MASTER'
-    ).exists()
-
-
-    # ========================================================
-    # OBTENER SEGUIMIENTOS CON PRÓXIMA GESTIÓN
-    # ========================================================
-
-    seguimientos = Seguimiento.objects.filter(
-        proxima_gestion__isnull=False
-    ).select_related(
-        'cliente',
-        'asesor'
+    es_master = usuario_es_master(
+        request.user
     )
 
+    # --------------------------------------------------------
+    # BASE
+    #
+    # La agenda se determina por el ASESOR DEL CLIENTE,
+    # no por quién registró el seguimiento.
+    # --------------------------------------------------------
 
-    # ========================================================
-    # SI NO ES MASTER
-    # SOLO VE SUS PROPIOS SEGUIMIENTOS
-    # ========================================================
-
-    if not es_master:
-
-        seguimientos = seguimientos.filter(
-            asesor=request.user
+    seguimientos = (
+        Seguimiento.objects
+        .filter(
+            proxima_gestion__isnull=False,
+            cliente__eliminado=False
         )
+        .select_related(
+            'cliente',
+            'asesor'
+        )
+    )
 
-
-    # ========================================================
-    # FILTRO POR ASESOR PARA MASTER
-    # ========================================================
+    # --------------------------------------------------------
+    # ASESOR
+    # --------------------------------------------------------
 
     asesor_id = request.GET.get(
         'asesor'
     )
 
+    # --------------------------------------------------------
+    # ASESOR NORMAL
+    # --------------------------------------------------------
 
-    if es_master and asesor_id:
+    if not es_master:
 
         seguimientos = seguimientos.filter(
-            asesor_id=asesor_id
+            cliente__asesor=request.user
         )
-
-
-    # ========================================================
-    # FECHA Y HORA ACTUAL
-    # ========================================================
-
-    ahora = timezone.localtime()
-
-
-    # ========================================================
-    # GESTIONES VENCIDAS
-    # ========================================================
-
-    gestiones_vencidas = seguimientos.filter(
-        proxima_gestion__lt=ahora
-    ).order_by(
-        'proxima_gestion'
-    )
-
-
-    # ========================================================
-    # GESTIONES PARA HOY
-    # ========================================================
-
-    gestiones_hoy = seguimientos.filter(
-        proxima_gestion__date=ahora.date()
-    ).order_by(
-        'proxima_gestion'
-    )
-
-
-    # ========================================================
-    # GESTIONES FUTURAS
-    # ========================================================
-
-    gestiones_proximas = seguimientos.filter(
-        proxima_gestion__gt=ahora
-    ).exclude(
-        proxima_gestion__date=ahora.date()
-    ).order_by(
-        'proxima_gestion'
-    )
-
-
-    # ========================================================
-    # LISTA DE ASESORES
-    # ========================================================
-
-    if es_master:
-
-        asesores = User.objects.filter(
-            is_active=True
-        ).order_by(
-            'first_name',
-            'last_name',
-            'username'
-        )
-
-    else:
 
         asesores = []
 
+    # --------------------------------------------------------
+    # MASTER
+    # --------------------------------------------------------
 
-    # ========================================================
+    else:
+
+        asesores = obtener_asesores()
+
+        if asesor_id:
+
+            asesor_valido = User.objects.filter(
+                id=asesor_id,
+                is_active=True,
+                groups__name='ASESOR'
+            ).exists()
+
+            if asesor_valido:
+
+                seguimientos = seguimientos.filter(
+                    cliente__asesor_id=asesor_id
+                )
+
+            else:
+
+                asesor_id = ''
+
+    # --------------------------------------------------------
+    # FECHA Y HORA ACTUAL
+    # --------------------------------------------------------
+
+    ahora = timezone.localtime()
+
+    fecha_hoy = ahora.date()
+
+    inicio_hoy = timezone.make_aware(
+        datetime.combine(
+            fecha_hoy,
+            time.min
+        )
+    )
+
+    inicio_manana = inicio_hoy + timedelta(
+        days=1
+    )
+
+    # --------------------------------------------------------
+    # GESTIONES VENCIDAS
+    #
+    # Todo lo que tenga fecha anterior a HOY.
+    # --------------------------------------------------------
+
+    gestiones_vencidas = (
+        seguimientos
+        .filter(
+            proxima_gestion__lt=inicio_hoy
+        )
+        .order_by(
+            'proxima_gestion'
+        )
+    )
+
+    # --------------------------------------------------------
+    # GESTIONES PARA HOY
+    #
+    # Desde las 00:00 de hoy hasta antes de las 00:00
+    # del día siguiente.
+    #
+    # Así NO se mezclan con las vencidas.
+    # --------------------------------------------------------
+
+    gestiones_hoy = (
+        seguimientos
+        .filter(
+            proxima_gestion__gte=inicio_hoy,
+            proxima_gestion__lt=inicio_manana
+        )
+        .order_by(
+            'proxima_gestion'
+        )
+    )
+
+    # --------------------------------------------------------
+    # PRÓXIMAS GESTIONES
+    #
+    # A partir de mañana.
+    # --------------------------------------------------------
+
+    gestiones_proximas = (
+        seguimientos
+        .filter(
+            proxima_gestion__gte=inicio_manana
+        )
+        .order_by(
+            'proxima_gestion'
+        )
+    )
+
+    # --------------------------------------------------------
     # CONTEXTO
-    # ========================================================
+    # --------------------------------------------------------
 
     contexto = {
 
@@ -689,16 +697,13 @@ def agenda_seguimientos(request):
 
     }
 
-
-    # ========================================================
-    # MOSTRAR AGENDA
-    # ========================================================
-
     return render(
         request,
         'gestion_seguimientos/agenda.html',
         contexto
     )
+
+
 # ============================================================
 # DASHBOARD COMERCIAL
 # ============================================================
@@ -706,81 +711,53 @@ def agenda_seguimientos(request):
 @login_required
 def dashboard_comercial(request):
 
-    # ========================================================
-    # VERIFICAR SI EL USUARIO ES MASTER
-    # ========================================================
+    es_master = usuario_es_master(
+        request.user
+    )
 
-    es_master = request.user.groups.filter(
-        name='MASTER'
-    ).exists()
+    # --------------------------------------------------------
+    # ASESOR SELECCIONADO
+    # --------------------------------------------------------
 
-
-    # ========================================================
-    # OBTENER ASESOR SELECCIONADO
-    # ========================================================
-
-    asesor_id = request.GET.get('asesor')
-
+    asesor_id = request.GET.get(
+        'asesor'
+    )
 
     asesor_seleccionado = None
 
-
-    # ========================================================
-    # LISTA DE ASESORES
-    # ========================================================
+    # --------------------------------------------------------
+    # MASTER
+    # --------------------------------------------------------
 
     if es_master:
 
-        asesores = User.objects.filter(
-            is_active=True
-        ).order_by(
-            'first_name',
-            'last_name',
-            'username'
-        )
-
-
-        # ====================================================
-        # FILTRAR POR ASESOR
-        # ====================================================
+        asesores = obtener_asesores()
 
         if asesor_id:
 
-            try:
+            asesor_seleccionado = User.objects.filter(
+                id=asesor_id,
+                is_active=True,
+                groups__name='ASESOR'
+            ).first()
 
-                asesor_seleccionado = User.objects.get(
-                    id=asesor_id,
-                    is_active=True
-                )
-
-            except User.DoesNotExist:
-
-                asesor_seleccionado = None
-
+    # --------------------------------------------------------
+    # ASESOR
+    # --------------------------------------------------------
 
     else:
 
-        # ====================================================
-        # EL ASESOR SOLO VE SUS DATOS
-        # ====================================================
+        asesores = []
 
         asesor_seleccionado = request.user
 
-        asesores = []
-
-
-    # ========================================================
-    # BASE DE CLIENTES ACTIVOS
-    # ========================================================
+    # --------------------------------------------------------
+    # CLIENTES ACTIVOS
+    # --------------------------------------------------------
 
     clientes_base = Cliente.objects.filter(
         eliminado=False
     )
-
-
-    # ========================================================
-    # FILTRAR CLIENTES POR ASESOR
-    # ========================================================
 
     if asesor_seleccionado:
 
@@ -788,19 +765,13 @@ def dashboard_comercial(request):
             asesor=asesor_seleccionado
         )
 
-
-    # ========================================================
-    # BASE DE SEGUIMIENTOS
-    # ========================================================
+    # --------------------------------------------------------
+    # SEGUIMIENTOS
+    # --------------------------------------------------------
 
     seguimientos_base = Seguimiento.objects.filter(
         cliente__eliminado=False
     )
-
-
-    # ========================================================
-    # FILTRAR SEGUIMIENTOS POR ASESOR
-    # ========================================================
 
     if asesor_seleccionado:
 
@@ -808,78 +779,105 @@ def dashboard_comercial(request):
             cliente__asesor=asesor_seleccionado
         )
 
-
-    # ========================================================
-    # ESTADÍSTICAS DE CLIENTES
-    # ========================================================
+    # --------------------------------------------------------
+    # CLIENTES
+    # --------------------------------------------------------
 
     total_clientes = clientes_base.count()
 
+    clientes_con_seguimiento = (
+        clientes_base
+        .filter(
+            seguimientos__isnull=False
+        )
+        .distinct()
+        .count()
+    )
 
-    clientes_con_seguimiento = clientes_base.filter(
-        seguimientos__isnull=False
-    ).distinct().count()
+    clientes_sin_seguimiento = (
+        clientes_base
+        .filter(
+            seguimientos__isnull=True
+        )
+        .distinct()
+        .count()
+    )
 
+    # --------------------------------------------------------
+    # TOTAL SEGUIMIENTOS
+    # --------------------------------------------------------
 
-    clientes_sin_seguimiento = clientes_base.filter(
-        seguimientos__isnull=True
-    ).distinct().count()
+    total_seguimientos = (
+        seguimientos_base.count()
+    )
 
+    # --------------------------------------------------------
+    # INTERESADOS
+    # --------------------------------------------------------
 
-    # ========================================================
-    # ESTADÍSTICAS DE SEGUIMIENTOS
-    # ========================================================
+    clientes_interesados = (
+        seguimientos_base
+        .filter(
+            resultado='INTERESADO'
+        )
+        .values(
+            'cliente'
+        )
+        .distinct()
+        .count()
+    )
 
-    total_seguimientos = seguimientos_base.count()
+    # --------------------------------------------------------
+    # NEGOCIACIÓN
+    # --------------------------------------------------------
 
+    clientes_negociacion = (
+        seguimientos_base
+        .filter(
+            resultado='NEGOCIACION'
+        )
+        .values(
+            'cliente'
+        )
+        .distinct()
+        .count()
+    )
 
-    # ========================================================
-    # CLIENTES INTERESADOS
-    # ========================================================
+    # --------------------------------------------------------
+    # VISITAS
+    # --------------------------------------------------------
 
-    clientes_interesados = seguimientos_base.filter(
-        resultado='INTERESADO'
-    ).values(
-        'cliente'
-    ).distinct().count()
+    visitas_agendadas = (
+        seguimientos_base
+        .filter(
+            resultado='VISITA_AGENDADA'
+        )
+        .values(
+            'cliente'
+        )
+        .distinct()
+        .count()
+    )
 
+    # --------------------------------------------------------
+    # VENTAS
+    # --------------------------------------------------------
 
-    # ========================================================
-    # CLIENTES EN NEGOCIACIÓN
-    # ========================================================
+    ventas_realizadas = (
+        seguimientos_base
+        .filter(
+            resultado='VENTA'
+        )
+        .values(
+            'cliente'
+        )
+        .distinct()
+        .count()
+    )
 
-    clientes_negociacion = seguimientos_base.filter(
-        resultado='NEGOCIACION'
-    ).values(
-        'cliente'
-    ).distinct().count()
-
-
-    # ========================================================
-    # VISITAS AGENDADAS
-    # ========================================================
-
-    visitas_agendadas = seguimientos_base.filter(
-        resultado='VISITA_AGENDADA'
-    ).values(
-        'cliente'
-    ).distinct().count()
-
-
-    # ========================================================
-    # VENTAS REALIZADAS
-    # ========================================================
-
-    ventas_realizadas = seguimientos_base.filter(
-        resultado='VENTA'
-    ).values(
-        'cliente'
-    ).distinct().count()
-
-
-    # ========================================================
+    # --------------------------------------------------------
     # CONTEXTO
-    # ========================================================
+    # --------------------------------------------------------
 
     contexto = {
 
@@ -892,10 +890,6 @@ def dashboard_comercial(request):
         'asesor_seleccionado':
             asesor_seleccionado,
 
-        # ----------------------------------------------------
-        # CLIENTES
-        # ----------------------------------------------------
-
         'total_clientes':
             total_clientes,
 
@@ -905,16 +899,8 @@ def dashboard_comercial(request):
         'clientes_sin_seguimiento':
             clientes_sin_seguimiento,
 
-        # ----------------------------------------------------
-        # SEGUIMIENTOS
-        # ----------------------------------------------------
-
         'total_seguimientos':
             total_seguimientos,
-
-        # ----------------------------------------------------
-        # ESTADOS COMERCIALES
-        # ----------------------------------------------------
 
         'clientes_interesados':
             clientes_interesados,
@@ -929,11 +915,6 @@ def dashboard_comercial(request):
             ventas_realizadas,
 
     }
-
-
-    # ========================================================
-    # MOSTRAR DASHBOARD
-    # ========================================================
 
     return render(
         request,

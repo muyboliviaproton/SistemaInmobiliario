@@ -11,25 +11,15 @@ class Oportunidad(models.Model):
     # ========================================================
 
     ETAPAS = [
-
         ('NUEVO', 'Nuevo'),
-
         ('CONTACTADO', 'Contactado'),
-
         ('INTERESADO', 'Cliente interesado'),
-
         ('VISITA_PENDIENTE', 'Visita pendiente'),
-
         ('VISITA_REALIZADA', 'Visita realizada'),
-
         ('NEGOCIACION', 'En negociación'),
-
         ('RESERVA', 'Reserva'),
-
         ('VENTA_CERRADA', 'Venta cerrada'),
-
         ('PERDIDA', 'Oportunidad perdida'),
-
     ]
 
 
@@ -38,15 +28,20 @@ class Oportunidad(models.Model):
     # ========================================================
 
     PRIORIDADES = [
-
         ('BAJA', 'Baja'),
-
         ('MEDIA', 'Media'),
-
         ('ALTA', 'Alta'),
-
         ('URGENTE', 'Urgente'),
+    ]
 
+
+    # ========================================================
+    # MODALIDAD DE VENTA
+    # ========================================================
+
+    MODALIDADES_VENTA = [
+        ('CONTADO', 'Contado'),
+        ('CREDITO', 'Crédito'),
     ]
 
 
@@ -55,13 +50,9 @@ class Oportunidad(models.Model):
     # ========================================================
 
     cliente = models.ForeignKey(
-
         Cliente,
-
         on_delete=models.CASCADE,
-
         related_name='oportunidades'
-
     )
 
 
@@ -70,13 +61,9 @@ class Oportunidad(models.Model):
     # ========================================================
 
     asesor = models.ForeignKey(
-
         User,
-
         on_delete=models.PROTECT,
-
         related_name='oportunidades'
-
     )
 
 
@@ -85,9 +72,7 @@ class Oportunidad(models.Model):
     # ========================================================
 
     nombre = models.CharField(
-
         max_length=150
-
     )
 
 
@@ -96,13 +81,9 @@ class Oportunidad(models.Model):
     # ========================================================
 
     etapa = models.CharField(
-
         max_length=30,
-
         choices=ETAPAS,
-
         default='NUEVO'
-
     )
 
 
@@ -111,30 +92,23 @@ class Oportunidad(models.Model):
     # ========================================================
 
     prioridad = models.CharField(
-
         max_length=20,
-
         choices=PRIORIDADES,
-
         default='MEDIA'
-
     )
 
 
     # ========================================================
     # PRESUPUESTO ESTIMADO
+    # USD
     # ========================================================
 
     presupuesto = models.DecimalField(
-
         max_digits=12,
-
         decimal_places=2,
-
         null=True,
-
-        blank=True
-
+        blank=True,
+        verbose_name='Presupuesto estimado (USD)'
     )
 
 
@@ -143,11 +117,39 @@ class Oportunidad(models.Model):
     # ========================================================
 
     fecha_estimada_compra = models.DateField(
-
         null=True,
-
         blank=True
+    )
 
+
+    # ========================================================
+    # INFORMACIÓN DE LA VENTA
+    # ========================================================
+
+    modalidad_venta = models.CharField(
+        max_length=10,
+        choices=MODALIDADES_VENTA,
+        null=True,
+        blank=True,
+        verbose_name='Modalidad de venta'
+    )
+
+
+    precio_final = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name='Precio final de venta (USD)'
+    )
+
+
+    cuota_inicial = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name='Cuota inicial (USD)'
     )
 
 
@@ -156,11 +158,8 @@ class Oportunidad(models.Model):
     # ========================================================
 
     observaciones = models.TextField(
-
         blank=True,
-
         null=True
-
     )
 
 
@@ -169,16 +168,12 @@ class Oportunidad(models.Model):
     # ========================================================
 
     creado_en = models.DateTimeField(
-
         auto_now_add=True
-
     )
 
 
     actualizado_en = models.DateTimeField(
-
         auto_now=True
-
     )
 
 
@@ -189,11 +184,8 @@ class Oportunidad(models.Model):
     def __str__(self):
 
         return (
-
             f"{self.nombre} - "
-
             f"{self.cliente.nombre_completo}"
-
         )
 
 
@@ -204,11 +196,8 @@ class Oportunidad(models.Model):
     class Meta:
 
         ordering = [
-
             '-creado_en'
-
         ]
 
         verbose_name = 'Oportunidad'
-
         verbose_name_plural = 'Oportunidades'

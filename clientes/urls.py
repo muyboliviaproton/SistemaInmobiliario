@@ -5,6 +5,7 @@ from .views import (
     cliente_crear,
     cliente_detalle,
     cliente_editar,
+    cliente_inactivar,
     cliente_eliminar,
     papelera_clientes,
     restaurar_cliente,
@@ -97,6 +98,14 @@ urlpatterns = [
                 '<int:pk>/eliminar-definitivamente/',
                 eliminar_definitivamente,
                 name='eliminar_definitivamente'
+    ),
+    # ========================================================
+    # INACTIVAR CLIENTE
+    # ========================================================
+    path(
+    '<int:pk>/inactivar/',
+    cliente_inactivar,
+    name='cliente_inactivar'
     ),
 
 ]

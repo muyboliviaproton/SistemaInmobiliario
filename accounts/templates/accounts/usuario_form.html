@@ -1,80 +1,385 @@
+{% extends "base.html" %}
+
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta       name="viewport"        content="width=device-width, initial-scale=1.0"    >
-    <title>        Registrar Asesor    </title>
-    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
-</head>
-<body class="bg-light">
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-        <a            class="navbar-brand"            href="{% url 'dashboard_master' %}"        >            🏡 Sistema Inmobiliario        </a>
-        <span class="text-white">
-            Usuario:            {{ request.user.username }}
-        </span>
+
+{% block titulo %}
+    Registrar Asesor
+{% endblock %}
+
+
+{% block contenido %}
+
+<div class="container-fluid py-4">
+    <!-- ===================================================== -->
+    <!-- ENCABEZADO -->
+    <!-- ===================================================== -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">      <i class="bi bi-person-plus-fill"></i>                Registrar nuevo asesor            </h2>
+            <p class="text-muted mb-0">                Crear una nueva cuenta de usuario para un asesor            </p>
+        </div>
+        <div>
+            <a href="{% url 'accounts:usuarios_lista' %}" class="btn btn-secondary">                <i class="bi bi-arrow-left"></i>                Volver            </a>
+        </div>
     </div>
-</nav>
-<div class="container mt-5">
+    <!-- ===================================================== -->
+    <!-- MENSAJES -->
+    <!-- ===================================================== -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <!-- ===================================================== -->
+    <!-- ERRORES GENERALES -->
+    <!-- ===================================================== -->
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>                Se encontraron errores:            </strong>
+            {% for error in form.non_field_errors %}
+                <div>                    {{ error }}                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- ===================================================== -->
+    <!-- FORMULARIO -->
+    <!-- ===================================================== -->
+
     <div class="row justify-content-center">
-        <div class="col-md-7">
-            <div class="card shadow">
+
+        <div class="col-lg-8 col-xl-7">
+
+            <div class="card shadow-sm">
+
+                <!-- =========================================== -->
+                <!-- CABECERA -->
+                <!-- =========================================== -->
+
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">                        👤 Registrar nuevo asesor                    </h4>
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-person-badge-fill"></i>
+
+                        Datos del nuevo asesor
+
+                    </h5>
+
                 </div>
 
+
+                <!-- =========================================== -->
+                <!-- CUERPO -->
+                <!-- =========================================== -->
+
                 <div class="card-body">
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div                                class="alert alert-danger"                            >                                {{ message }}                       </div>
-                        {% endfor %}
-                    {% endif %}
-                    <form                        method="POST"                    >
+
+                    <form method="POST">
+
                         {% csrf_token %}
+
+
+                        <!-- ===================================== -->
                         <!-- USUARIO -->
+                        <!-- ===================================== -->
+
                         <div class="mb-3">
-                            <label class="form-label">                                Nombre de usuario *                            </label>
-                            <input type="text" name="username" class="form-control" required                                autofocus                            >
-                        </div>
-                        <!-- NOMBRE -->
-                        <div class="mb-3">
-                            <label class="form-label">                                Nombre                            </label>
-                            <input type="text"                                name="first_name"                                class="form-control"                            >
-                        </div>
-                        <!-- APELLIDO -->
-                        <div class="mb-3">
-                            <label class="form-label">                                Apellido                            </label>
-                            <input type="text"                                name="last_name"                                class="form-control"                            >
-                        </div>
-                        <!-- CORREO -->
-                        <div class="mb-3">
-                            <label class="form-label">                         Correo electrónico                            </label>
-                            <input type="email"                                name="email"                                class="form-control"                            >
-                        </div>
-                        <!-- CONTRASEÑA -->
-                        <div class="mb-3">
-                            <label class="form-label">                               Contraseña *                            </label>
-                            <input type="password" name="password"                                class="form-control"                                required                            >
-                        </div>
-                        <!-- CONFIRMAR CONTRASEÑA -->
-                        <div class="mb-3">
-                            <label class="form-label">                                Confirmar contraseña *
+
+                            <label
+                                for="id_username"
+                                class="form-label fw-bold"
+                            >
+
+                                Nombre de usuario
+                                <span class="text-danger">*</span>
+
                             </label>
-                            <input type="password" name="password_confirmacion" class="form-control"      required      >
+
+
+                            <input
+                                type="text"
+                                name="username"
+                                id="id_username"
+                                class="form-control"
+                                value="{{ request.POST.username|default:'' }}"
+                                required
+                                autofocus
+                            >
+
+
+                            {% if form.username.errors %}
+
+                                <div class="text-danger small mt-1">
+
+                                    {{ form.username.errors }}
+
+                                </div>
+
+                            {% endif %}
+
                         </div>
+
+
+                        <!-- ===================================== -->
+                        <!-- NOMBRE -->
+                        <!-- ===================================== -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="id_first_name"
+                                class="form-label fw-bold"
+                            >
+
+                                Nombre
+
+                            </label>
+
+
+                            <input
+                                type="text"
+                                name="first_name"
+                                id="id_first_name"
+                                class="form-control"
+                                value="{{ request.POST.first_name|default:'' }}"
+                            >
+
+
+                            {% if form.first_name.errors %}
+
+                                <div class="text-danger small mt-1">
+
+                                    {{ form.first_name.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ===================================== -->
+                        <!-- APELLIDO -->
+                        <!-- ===================================== -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="id_last_name"
+                                class="form-label fw-bold"
+                            >
+
+                                Apellido
+
+                            </label>
+
+
+                            <input
+                                type="text"
+                                name="last_name"
+                                id="id_last_name"
+                                class="form-control"
+                                value="{{ request.POST.last_name|default:'' }}"
+                            >
+
+
+                            {% if form.last_name.errors %}
+
+                                <div class="text-danger small mt-1">
+
+                                    {{ form.last_name.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ===================================== -->
+                        <!-- CORREO -->
+                        <!-- ===================================== -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="id_email"
+                                class="form-label fw-bold"
+                            >
+
+                                Correo electrónico
+
+                            </label>
+
+
+                            <input
+                                type="email"
+                                name="email"
+                                id="id_email"
+                                class="form-control"
+                                value="{{ request.POST.email|default:'' }}"
+                            >
+
+
+                            {% if form.email.errors %}
+
+                                <div class="text-danger small mt-1">
+
+                                    {{ form.email.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ===================================== -->
+                        <!-- CONTRASEÑA -->
+                        <!-- ===================================== -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="id_password"
+                                class="form-label fw-bold"
+                            >
+
+                                Contraseña
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <input
+                                type="password"
+                                name="password"
+                                id="id_password"
+                                class="form-control"
+                                required
+                            >
+
+
+                            {% if form.password.errors %}
+
+                                <div class="text-danger small mt-1">
+
+                                    {{ form.password.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ===================================== -->
+                        <!-- CONFIRMAR CONTRASEÑA -->
+                        <!-- ===================================== -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="id_password_confirmacion"
+                                class="form-label fw-bold"
+                            >
+
+                                Confirmar contraseña
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <input
+                                type="password"
+                                name="password_confirmacion"
+                                id="id_password_confirmacion"
+                                class="form-control"
+                                required
+                            >
+
+
+                            {% if form.password_confirmacion.errors %}
+
+                                <div class="text-danger small mt-1">
+
+                                    {{ form.password_confirmacion.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ===================================== -->
                         <!-- INFORMACIÓN -->
+                        <!-- ===================================== -->
+
                         <div class="alert alert-info">
-                            <strong>                                Información:                            </strong>
-                            Este usuario será registrado automáticamente                      como <strong>ASESOR</strong>.
+
+                            <div class="d-flex">
+
+                                <div class="me-3">
+
+                                    <i class="bi bi-info-circle-fill fs-4"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <strong>
+                                        Información del usuario
+                                    </strong>
+
+                                    <p class="mb-0 mt-1">
+
+                                        Este usuario será registrado
+                                        automáticamente como
+                                        <strong>ASESOR</strong>
+                                        dentro del sistema.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
                         </div>
+
+
+                        <!-- ===================================== -->
                         <!-- BOTONES -->
+                        <!-- ===================================== -->
+
+                        <hr class="my-4">
+
+
                         <div class="d-flex justify-content-between">
-                            <a                                href="{% url 'usuarios_lista' %}"                                class="btn btn-secondary"                            >
-                                ← Cancelar                            </a>
-                            <button         type="submit"                  class="btn btn-success"                            >
-                                💾 Registrar asesor
-                            </button>
+
+                            <a
+                                href="{% url 'accounts:usuarios_lista' %}"
+                                class="btn btn-secondary"
+                            >
+
+                                <i class="bi bi-x-circle"></i>
+
+                                Cancelar
+
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-success"
+                            >
+
+                                <i class="bi bi-person-plus-fill"></i>                                Registrar asesor                            </button>
                         </div>
                     </form>
                 </div>
@@ -82,6 +387,5 @@
         </div>
     </div>
 </div>
-<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-</body>
-</html>
+
+{% endblock %}

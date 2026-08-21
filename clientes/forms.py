@@ -1,6 +1,7 @@
 from django import forms
-from .models import Cliente
 from django.contrib.auth.models import User
+
+from .models import Cliente
 
 
 class ClienteForm(forms.ModelForm):
@@ -24,50 +25,59 @@ class ClienteForm(forms.ModelForm):
 
             'nombre_completo': forms.TextInput(
                 attrs={
-                    'class': 'form-control'
+                    'class': 'form-control',
+                    'placeholder': 'Nombre completo del cliente',
                 }
             ),
 
             'telefono': forms.TextInput(
                 attrs={
-                    'class': 'form-control'
+                    'class': 'form-control',
+                    'placeholder': 'Número de teléfono',
                 }
             ),
 
             'whatsapp': forms.TextInput(
                 attrs={
-                    'class': 'form-control'
+                    'class': 'form-control',
+                    'placeholder': 'Número de WhatsApp',
                 }
             ),
 
             'correo': forms.EmailInput(
                 attrs={
-                    'class': 'form-control'
+                    'class': 'form-control',
+                    'placeholder': 'correo@ejemplo.com',
                 }
             ),
 
             'direccion': forms.TextInput(
                 attrs={
-                    'class': 'form-control'
+                    'class': 'form-control',
+                    'placeholder': 'Dirección del cliente',
                 }
             ),
 
             'capacidad_pago_mensual': forms.NumberInput(
                 attrs={
-                    'class': 'form-control'
+                    'class': 'form-control',
+                    'placeholder': '0.00',
+                    'step': '0.01',
+                    'min': '0',
                 }
             ),
 
             'estado': forms.Select(
                 attrs={
-                    'class': 'form-select'
+                    'class': 'form-select',
                 }
             ),
 
             'observaciones': forms.Textarea(
                 attrs={
                     'class': 'form-control',
-                    'rows': 4
+                    'rows': 4,
+                    'placeholder': 'Observaciones del cliente...',
                 }
             ),
         }
@@ -101,11 +111,15 @@ class ClienteForm(forms.ModelForm):
                 queryset=User.objects.filter(
                     groups__name='ASESOR',
                     is_active=True
-                ).distinct(),
+                ).distinct().order_by(
+                    'username'
+                ),
 
                 required=True,
 
                 label='Asesor responsable',
+
+                empty_label='Seleccione un asesor',
 
                 widget=forms.Select(
                     attrs={
@@ -125,24 +139,37 @@ class ClienteForm(forms.ModelForm):
                     self.instance.asesor
                 )
 
-def clean_telefono(self):
 
-        telefono = self.cleaned_data.get('telefono')
+    # ========================================================
+    # VALIDAR TELÉFONO
+    # ========================================================
+
+    def clean_telefono(self):
+
+        telefono = self.cleaned_data.get(
+            'telefono'
+        )
 
         if not telefono:
+
             return telefono
 
-        # Buscar si ya existe otro cliente con este teléfono
+
         clientes = Cliente.objects.filter(
             telefono=telefono
         )
 
-        # Si estamos editando, excluir el cliente actual
+
+        # ----------------------------------------------------
+        # AL EDITAR EXCLUIR EL CLIENTE ACTUAL
+        # ----------------------------------------------------
+
         if self.instance and self.instance.pk:
 
             clientes = clientes.exclude(
                 pk=self.instance.pk
             )
+
 
         if clientes.exists():
 
@@ -150,5 +177,6 @@ def clean_telefono(self):
                 '⚠️ Este número de teléfono ya está registrado. '
                 'Verifique los datos del cliente.'
             )
+
 
         return telefono

@@ -2,47 +2,33 @@ from functools import wraps
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.models import User, Group
-from clientes.models import Cliente
+from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import redirect, render
+from django import forms
 
-from gestion_seguimientos.models import Seguimiento
-from oportunidades.models import Oportunidad
-from visitas.models import Visita
-from recordatorios.models import Recordatorio
-from lotes.models import Lote
 
-from django.utils import timezone
 # ============================================================
 # LOGIN
 # ============================================================
 
 class LoginUsuarioView(LoginView):
+
     template_name = 'accounts/login.html'
     redirect_authenticated_user = False
-
-
 # ============================================================
 # LOGOUT
 # ============================================================
-
 class LogoutUsuarioView(LogoutView):
     next_page = '/accounts/login/'
-
-
 # ============================================================
 # INICIO DE ACCOUNTS
 # ============================================================
-
 def inicio_accounts(request):
     return redirect('login')
-
-
 # ============================================================
-# OBTENER ROL DEL USUARIO
+# OBTENER ROL
 # ============================================================
-
 def obtener_rol_usuario(usuario):
 
     if usuario.groups.filter(name='MASTER').exists():
@@ -55,7 +41,7 @@ def obtener_rol_usuario(usuario):
 
 
 # ============================================================
-# PROTECCIÓN PARA MASTER
+# PROTECCIÓN MASTER
 # ============================================================
 
 def master_required(view_func):
@@ -68,7 +54,7 @@ def master_required(view_func):
             name='MASTER'
         ).exists():
 
-            return redirect('dashboard')
+            return redirect('dashboard:inicio')
 
         return view_func(
             request,
@@ -80,7 +66,7 @@ def master_required(view_func):
 
 
 # ============================================================
-# PROTECCIÓN PARA ASESOR
+# PROTECCIÓN ASESOR
 # ============================================================
 
 def asesor_required(view_func):
@@ -93,7 +79,7 @@ def asesor_required(view_func):
             name='ASESOR'
         ).exists():
 
-            return redirect('dashboard')
+            return redirect('dashboard:inicio')
 
         return view_func(
             request,
@@ -105,67 +91,7 @@ def asesor_required(view_func):
 
 
 # ============================================================
-# DASHBOARD GENERAL
-# ============================================================
-
-@login_required
-def dashboard(request):
-
-    hoy = timezone.localdate()
-
-    # ==========================================
-    # CLIENTES
-    # ==========================================
-
-    total_clientes = Cliente.objects.filter(
-        eliminado=False
-    ).count()
-
-    # ==========================================
-    # SEGUIMIENTOS
-    # ==========================================
-
-    total_seguimientos = Seguimiento.objects.count()
-    # ==========================================
-    # OPORTUNIDADES
-    # ==========================================
-    total_oportunidades = Oportunidad.objects.count()
-    # ==========================================
-    # VISITAS
-    # ==========================================
-    total_visitas = Visita.objects.count()
-    # ==========================================
-    # TEMPORAL
-    # ==========================================
-    #total_recordatorios = Recordatorio.objects.count()
-    total_recordatorios = 0
-    total_lotes = 0
-    agenda_semana = 0
-    pendientes_hoy = 0
-
-    contexto = {
-
-        "total_clientes": total_clientes,
-        "total_seguimientos": total_seguimientos,
-        "total_oportunidades": total_oportunidades,
-        "total_visitas": total_visitas,
-        "total_recordatorios": total_recordatorios,
-        "total_lotes": total_lotes,
-        "agenda_semana": agenda_semana,
-        "pendientes_hoy": pendientes_hoy,
-
-    }
-
-    return render(
-
-        request,
-        "dashboard/dashboard.html",
-        contexto
-
-    )
-# ============================================================
-# GESTIÓN DE USUARIOS / ASESORES
-# SOLO MASTER
+# LISTA DE ASESORES
 # ============================================================
 
 @master_required
@@ -187,9 +113,10 @@ def usuarios_lista(request):
         'accounts/usuarios_lista.html',
         contexto
     )
+
+
 # ============================================================
-# CREAR NUEVO ASESOR
-# SOLO MASTER
+# CREAR ASESOR
 # ============================================================
 
 @master_required
@@ -227,10 +154,6 @@ def usuario_crear(request):
             ''
         )
 
-        # ====================================================
-        # VALIDAR USUARIO
-        # ====================================================
-
         if User.objects.filter(
             username=username
         ).exists():
@@ -245,11 +168,6 @@ def usuario_crear(request):
                 'accounts/usuario_form.html'
             )
 
-
-        # ====================================================
-        # VALIDAR CONTRASEÑAS
-        # ====================================================
-
         if password != password_confirmacion:
 
             messages.error(
@@ -261,11 +179,6 @@ def usuario_crear(request):
                 request,
                 'accounts/usuario_form.html'
             )
-
-
-        # ====================================================
-        # VALIDAR CONTRASEÑA VACÍA
-        # ====================================================
 
         if not password:
 
@@ -279,63 +192,38 @@ def usuario_crear(request):
                 'accounts/usuario_form.html'
             )
 
-
-        # ====================================================
-        # CREAR USUARIO
-        # ====================================================
-
         usuario = User.objects.create_user(
-
             username=username,
-
             first_name=first_name,
-
             last_name=last_name,
-
             email=email,
-
             password=password
-
         )
 
-
-        # ====================================================
-        # ASIGNAR GRUPO ASESOR
-        # ====================================================
-
         grupo_asesor, creado = Group.objects.get_or_create(
-
             name='ASESOR'
-
         )
 
         usuario.groups.add(
             grupo_asesor
         )
 
-
-        # ====================================================
-        # MENSAJE
-        # ====================================================
-
         messages.success(
-
             request,
-
-            f'El asesor "{usuario.username}" fue registrado correctamente.'
-
+            f'El asesor "{usuario.username}" '
+            'fue registrado correctamente.'
         )
-
 
         return redirect(
-            'usuarios_lista'
+            'accounts:usuarios_lista'
         )
-
 
     return render(
         request,
         'accounts/usuario_form.html'
     )
+
+
 # ============================================================
 # DASHBOARD MASTER
 # ============================================================
@@ -372,9 +260,64 @@ def dashboard_asesor(request):
         'accounts/dashboard_asesor.html',
         contexto
     )
+
+
+# ============================================================
+# FORMULARIO PARA EDITAR ASESOR
+# ============================================================
+
+class AsesorEditarForm(forms.ModelForm):
+
+    class Meta:
+
+        model = User
+
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+        ]
+
+        labels = {
+            'username': 'Nombre de usuario',
+            'first_name': 'Nombre',
+            'last_name': 'Apellido',
+            'email': 'Correo electrónico',
+        }
+
+        widgets = {
+
+            'username': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'readonly': 'readonly',
+                }
+            ),
+
+            'first_name': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                }
+            ),
+
+            'last_name': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                }
+            ),
+
+            'email': forms.EmailInput(
+                attrs={
+                    'class': 'form-control',
+                }
+            ),
+
+        }
+
+
 # ============================================================
 # EDITAR ASESOR
-# SOLO MASTER
 # ============================================================
 
 @master_required
@@ -393,56 +336,61 @@ def usuario_editar(request, pk):
         )
 
         return redirect(
-            'usuarios_lista'
+            'accounts:usuarios_lista'
         )
 
+    # ========================================================
+    # GUARDAR CAMBIOS
+    # ========================================================
 
     if request.method == 'POST':
 
-        usuario.first_name = request.POST.get(
-            'first_name',
-            ''
-        ).strip()
-
-        usuario.last_name = request.POST.get(
-            'last_name',
-            ''
-        ).strip()
-
-        usuario.email = request.POST.get(
-            'email',
-            ''
-        ).strip()
-
-        usuario.save()
-
-
-        messages.success(
-            request,
-            f'El asesor "{usuario.username}" fue actualizado correctamente.'
+        form = AsesorEditarForm(
+            request.POST,
+            instance=usuario
         )
 
+        if form.is_valid():
 
-        return redirect(
-            'usuarios_lista'
+            form.save()
+
+            messages.success(
+                request,
+                f'El asesor "{usuario.username}" '
+                'fue actualizado correctamente.'
+            )
+
+            return redirect(
+                'accounts:usuarios_lista'
+            )
+
+    # ========================================================
+    # MOSTRAR DATOS ACTUALES
+    # ========================================================
+
+    else:
+
+        form = AsesorEditarForm(
+            instance=usuario
         )
-
 
     contexto = {
 
         'usuario': usuario,
 
-    }
+        'form': form,
 
+    }
 
     return render(
         request,
         'accounts/usuario_editar.html',
         contexto
     )
+
+
 # ============================================================
-# ACTIVAR / DESACTIVAR ASESOR
-# SOLO MASTER
+# CAMBIAR ESTADO
 # ============================================================
 
 @master_required
@@ -461,11 +409,9 @@ def usuario_cambiar_estado(request, pk):
         )
 
         return redirect(
-            'usuarios_lista'
+            'accounts:usuarios_lista'
         )
 
-
-    # Evitar que un usuario pueda cambiar su propio estado
     if usuario == request.user:
 
         messages.error(
@@ -474,9 +420,8 @@ def usuario_cambiar_estado(request, pk):
         )
 
         return redirect(
-            'usuarios_lista'
+            'accounts:usuarios_lista'
         )
-
 
     if request.method == 'POST':
 
@@ -488,46 +433,45 @@ def usuario_cambiar_estado(request, pk):
             ]
         )
 
-
         if usuario.is_active:
 
             messages.success(
                 request,
-                f'El asesor "{usuario.username}" fue activado correctamente.'
+                f'El asesor "{usuario.username}" '
+                'fue activado correctamente.'
             )
 
         else:
 
             messages.warning(
                 request,
-                f'El asesor "{usuario.username}" fue desactivado correctamente.'
+                f'El asesor "{usuario.username}" '
+                'fue desactivado correctamente.'
             )
 
-
         return redirect(
-            'usuarios_lista'
+            'accounts:usuarios_lista'
         )
 
-
     contexto = {
-
         'usuario': usuario,
-
     }
-
 
     return render(
         request,
         'accounts/confirmar_cambio_estado.html',
         contexto
     )
+
+
 # ============================================================
-# CLIENTES DE UN ASESOR
-# SOLO MASTER
+# CLIENTES DEL ASESOR
 # ============================================================
 
 @master_required
 def usuario_clientes(request, pk):
+
+    from clientes.models import Cliente
 
     asesor = User.objects.filter(
         pk=pk,
@@ -542,9 +486,8 @@ def usuario_clientes(request, pk):
         )
 
         return redirect(
-            'usuarios_lista'
+            'accounts:usuarios_lista'
         )
-
 
     clientes = Cliente.objects.filter(
         asesor=asesor,
@@ -552,7 +495,6 @@ def usuario_clientes(request, pk):
     ).order_by(
         '-fecha_registro'
     )
-
 
     contexto = {
 
@@ -562,23 +504,21 @@ def usuario_clientes(request, pk):
 
     }
 
-
     return render(
         request,
         'accounts/usuario_clientes.html',
         contexto
     )
+
+
 # ============================================================
-# REASIGNAR CLIENTES DE UN ASESOR
-# SOLO MASTER
+# REASIGNAR CLIENTES
 # ============================================================
 
 @master_required
 def usuario_reasignar_clientes(request, pk):
 
-    # ========================================================
-    # BUSCAR ASESOR ACTUAL
-    # ========================================================
+    from clientes.models import Cliente
 
     asesor_actual = User.objects.filter(
         pk=pk,
@@ -593,13 +533,8 @@ def usuario_reasignar_clientes(request, pk):
         )
 
         return redirect(
-            'usuarios_lista'
+            'accounts:usuarios_lista'
         )
-
-
-    # ========================================================
-    # OBTENER CLIENTES ACTIVOS DEL ASESOR
-    # ========================================================
 
     clientes = Cliente.objects.filter(
         asesor=asesor_actual,
@@ -607,11 +542,6 @@ def usuario_reasignar_clientes(request, pk):
     ).order_by(
         'nombre_completo'
     )
-
-
-    # ========================================================
-    # OBTENER OTROS ASESORES ACTIVOS
-    # ========================================================
 
     asesores = User.objects.filter(
         groups__name='ASESOR',
@@ -621,11 +551,6 @@ def usuario_reasignar_clientes(request, pk):
     ).distinct().order_by(
         'username'
     )
-
-
-    # ========================================================
-    # PROCESAR REASIGNACIÓN
-    # ========================================================
 
     if request.method == 'POST':
 
@@ -637,11 +562,6 @@ def usuario_reasignar_clientes(request, pk):
             'nuevo_asesor'
         )
 
-
-        # ====================================================
-        # VALIDAR CLIENTES SELECCIONADOS
-        # ====================================================
-
         if not clientes_ids:
 
             messages.error(
@@ -650,21 +570,15 @@ def usuario_reasignar_clientes(request, pk):
             )
 
             return redirect(
-                'usuario_reasignar_clientes',
+                'accounts:usuario_reasignar_clientes',
                 pk=pk
             )
-
-
-        # ====================================================
-        # VALIDAR NUEVO ASESOR
-        # ====================================================
 
         nuevo_asesor = User.objects.filter(
             pk=nuevo_asesor_id,
             groups__name='ASESOR',
             is_active=True
         ).first()
-
 
         if not nuevo_asesor:
 
@@ -674,14 +588,9 @@ def usuario_reasignar_clientes(request, pk):
             )
 
             return redirect(
-                'usuario_reasignar_clientes',
+                'accounts:usuario_reasignar_clientes',
                 pk=pk
             )
-
-
-        # ====================================================
-        # EVITAR REASIGNACIÓN AL MISMO ASESOR
-        # ====================================================
 
         if nuevo_asesor.pk == asesor_actual.pk:
 
@@ -691,14 +600,9 @@ def usuario_reasignar_clientes(request, pk):
             )
 
             return redirect(
-                'usuario_reasignar_clientes',
+                'accounts:usuario_reasignar_clientes',
                 pk=pk
             )
-
-
-        # ====================================================
-        # REASIGNAR CLIENTES
-        # ====================================================
 
         clientes_reasignados = Cliente.objects.filter(
             id__in=clientes_ids,
@@ -706,18 +610,11 @@ def usuario_reasignar_clientes(request, pk):
             eliminado=False
         )
 
-
         cantidad = clientes_reasignados.count()
-
 
         clientes_reasignados.update(
             asesor=nuevo_asesor
         )
-
-
-        # ====================================================
-        # MENSAJE DE CONFIRMACIÓN
-        # ====================================================
 
         messages.success(
             request,
@@ -727,16 +624,10 @@ def usuario_reasignar_clientes(request, pk):
             f'"{nuevo_asesor.username}".'
         )
 
-
         return redirect(
-            'usuario_clientes',
+            'accounts:usuario_clientes',
             pk=asesor_actual.pk
         )
-
-
-    # ========================================================
-    # CONTEXTO
-    # ========================================================
 
     contexto = {
 
@@ -748,33 +639,24 @@ def usuario_reasignar_clientes(request, pk):
 
     }
 
-
     return render(
         request,
         'accounts/usuario_reasignar_clientes.html',
         contexto
     )
+
+
 # ============================================================
-# CAMBIAR CONTRASEÑA DE ASESOR
-# SOLO MASTER
+# CAMBIAR CONTRASEÑA
 # ============================================================
 
 @master_required
 def usuario_cambiar_password(request, pk):
 
-    # ========================================================
-    # BUSCAR ASESOR
-    # ========================================================
-
     usuario = User.objects.filter(
         pk=pk,
         groups__name='ASESOR'
     ).first()
-
-
-    # ========================================================
-    # VALIDAR QUE EL USUARIO EXISTA
-    # ========================================================
 
     if not usuario:
 
@@ -784,13 +666,8 @@ def usuario_cambiar_password(request, pk):
         )
 
         return redirect(
-            'usuarios_lista'
+            'accounts:usuarios_lista'
         )
-
-
-    # ========================================================
-    # PROCESAR FORMULARIO
-    # ========================================================
 
     if request.method == 'POST':
 
@@ -803,11 +680,6 @@ def usuario_cambiar_password(request, pk):
             'password_confirmacion',
             ''
         )
-
-
-        # ====================================================
-        # VALIDAR CONTRASEÑA VACÍA
-        # ====================================================
 
         if not password:
 
@@ -824,11 +696,6 @@ def usuario_cambiar_password(request, pk):
                 }
             )
 
-
-        # ====================================================
-        # VALIDAR LONGITUD
-        # ====================================================
-
         if len(password) < 6:
 
             messages.error(
@@ -843,11 +710,6 @@ def usuario_cambiar_password(request, pk):
                     'usuario': usuario,
                 }
             )
-
-
-        # ====================================================
-        # VALIDAR CONFIRMACIÓN
-        # ====================================================
 
         if password != password_confirmacion:
 
@@ -864,58 +726,28 @@ def usuario_cambiar_password(request, pk):
                 }
             )
 
-
-        # ====================================================
-        # CAMBIAR CONTRASEÑA
-        # ====================================================
-
         usuario.set_password(
             password
         )
 
         usuario.save()
 
-
-        # ====================================================
-        # MENSAJE
-        # ====================================================
-
         messages.success(
-
             request,
-
             f'La contraseña del asesor "{usuario.username}" '
-            f'fue actualizada correctamente.'
-
+            'fue actualizada correctamente.'
         )
-
-
-        # ====================================================
-        # VOLVER A LISTA DE ASESORES
-        # ====================================================
 
         return redirect(
-            'usuarios_lista'
+            'accounts:usuarios_lista'
         )
 
-
-    # ========================================================
-    # MOSTRAR FORMULARIO
-    # ========================================================
-
     contexto = {
-
         'usuario': usuario,
-
     }
 
-
     return render(
-
         request,
-
         'accounts/usuario_cambiar_password.html',
-
         contexto
-
     )

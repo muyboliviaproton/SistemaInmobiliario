@@ -1,54 +1,47 @@
 from django.urls import path
+
 from . import views
 
 app_name = 'oportunidades'
-
 urlpatterns = [
     # ========================================================
-    # LISTA GENERAL DE OPORTUNIDADES
+    # LISTA PRINCIPAL
     # ========================================================
-    path(
-        '',
-        views.oportunidad_lista,
-        name='oportunidad_lista'
-    ),
+    path('',views.oportunidad_lista,name='oportunidad_lista'),
     # ========================================================
-    # CREAR OPORTUNIDAD DESDE UN CLIENTE
+    # LISTA POR ETAPA
     # ========================================================
-
+    path('etapa/<str:etapa>/',views.oportunidad_etapa,name='oportunidad_etapa'),
+    # ========================================================
+    # CREAR OPORTUNIDAD DESDE CLIENTE
+    # ========================================================
     path(
         'cliente/<int:cliente_id>/nueva/',
         views.oportunidad_crear,
         name='oportunidad_crear'
     ),
-
-
     # ========================================================
-    # EDITAR OPORTUNIDAD
+    # EDITAR
     # ========================================================
-
     path(
         '<int:oportunidad_id>/editar/',
         views.oportunidad_editar,
         name='oportunidad_editar'
     ),
-
-
     # ========================================================
-    # ELIMINAR OPORTUNIDAD
+    # ELIMINAR
     # ========================================================
-
     path(
         '<int:oportunidad_id>/eliminar/',
         views.oportunidad_eliminar,
         name='oportunidad_eliminar'
     ),
-
-   # DETALLE DE UNA OPORTUNIDAD
+    # ========================================================
+    # DETALLE
+    # ========================================================
     path(
         '<int:pk>/',
         views.oportunidad_detalle,
         name='oportunidad_detalle'
     ),
-
 ]

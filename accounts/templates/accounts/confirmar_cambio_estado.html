@@ -1,78 +1,303 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta        name="viewport"        content="width=device-width, initial-scale=1.0"    >
-    <title>        Confirmar cambio de estado    </title>
-    <link        href="{% static 'bootstrap/css/bootstrap.min.css' %}"        rel="stylesheet"    >
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Confirmar cambio de estado
+    </title>
+
+    <link
+        href="{% static 'bootstrap/css/bootstrap.min.css' %}"
+        rel="stylesheet"
+    >
+
+    <link
+        href="{% static 'bootstrap-icons/font/bootstrap-icons.css' %}"
+        rel="stylesheet"
+    >
+
 </head>
+
+
 <body class="bg-light">
+
+
+<!-- ====================================================== -->
+<!-- NAVBAR -->
+<!-- ====================================================== -->
+
 <nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-        <a            class="navbar-brand"            href="{% url 'dashboard_master' %}"        >            🏡 Sistema Inmobiliario        </a>
+
+    <div class="container-fluid">
+
+        <a
+            class="navbar-brand"
+            href="{% url 'dashboard:inicio' %}"
+        >
+
+            <i class="bi bi-building"></i>
+
+            Sistema Inmobiliario
+
+        </a>
+
+
         <span class="text-white">
-            Usuario:           {{ request.user.username }}
+
+            <i class="bi bi-person-circle"></i>
+
+            {{ request.user.get_full_name|default:request.user.username }}
+
         </span>
+
     </div>
+
 </nav>
+
+
+<!-- ====================================================== -->
+<!-- CONTENIDO -->
+<!-- ====================================================== -->
+
 <div class="container mt-5">
+
     <div class="row justify-content-center">
+
         <div class="col-md-7">
+
             <div class="card shadow">
-                <div class="card-header                    {% if usuario.is_active %} bg-danger             {% else %}                  bg-success {% endif %} text-white" >
+
+
+                <!-- ================================================== -->
+                <!-- CABECERA -->
+                <!-- ================================================== -->
+
+                <div
+                    class="card-header
+                    {% if usuario.is_active %}
+                        bg-danger
+                    {% else %}
+                        bg-success
+                    {% endif %}
+                    text-white"
+                >
+
                     <h4 class="mb-0">
+
                         {% if usuario.is_active %}
-                            🔒 Desactivar asesor
+
+                            <i class="bi bi-person-dash-fill"></i>
+
+                            Desactivar asesor
+
                         {% else %}
-                            🔓 Activar asesor
+
+                            <i class="bi bi-person-check-fill"></i>
+
+                            Activar asesor
+
                         {% endif %}
+
                     </h4>
+
                 </div>
+
+
+                <!-- ================================================== -->
+                <!-- CUERPO -->
+                <!-- ================================================== -->
+
                 <div class="card-body text-center">
+
+
                     {% if usuario.is_active %}
+
                         <div class="alert alert-warning">
-                            ⚠️ Estás a punto de desactivar al siguiente asesor:
+
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+
+                            Estás a punto de desactivar al siguiente
+                            asesor:
+
                         </div>
+
                     {% else %}
+
                         <div class="alert alert-success">
-                            Estás a punto de activar al siguiente asesor:
+
+                            <i class="bi bi-check-circle-fill"></i>
+
+                            Estás a punto de activar al siguiente
+                            asesor:
+
                         </div>
+
                     {% endif %}
-                    <h3>                        {{ usuario.username }}                    </h3>
-                    <p>              {{ usuario.first_name }}                {{ usuario.last_name }}      </p>
-                    <hr>
-                    {% if usuario.is_active %}
-                        <p>                 El asesor                  <strong>NO será eliminado</strong>.
-                            <br>
-                            Sus clientes permanecerán registrados  y conservarán su asignación actual.
-                            <br><br>
-                            El asesor no podrá iniciar sesión mientras esté inactivo.
+
+
+                    <!-- DATOS DEL ASESOR -->
+
+                    <div class="my-4">
+
+                        <i
+                            class="bi bi-person-circle"
+                            style="font-size: 4rem;"
+                        ></i>
+
+
+                        <h3 class="mt-3">
+
+                            {{ usuario.username }}
+
+                        </h3>
+
+
+                        <p class="text-muted">
+
+                            {{ usuario.first_name }}
+                            {{ usuario.last_name }}
+
                         </p>
-                    {% else %}
-                        <p>El asesor podrá volver a iniciar sesión y trabajar con sus clientes.  </p>
-                    {% endif %}
-                    <div class="d-flex justify-content-center gap-3 mt-4" >
-                        <a href="{% url 'usuarios_lista' %}" class="btn btn-secondary">
-                            ← Cancelar                 </a>
-                        <form method="POST">
-                            {% csrf_token %}
-                            {% if usuario.is_active %}
-                                <button type="submit" class="btn btn-danger">
-                                    🔒 Sí, desactivar asesor
-                                </button>
-                            {% else %}
-                                <button type="submit" class="btn btn-success">
-                                    🔓 Sí, activar asesor
-                                </button>
-                            {% endif %}
-                        </form>
+
                     </div>
+
+
+                    <hr>
+
+
+                    <!-- ================================================== -->
+                    <!-- INFORMACIÓN -->
+                    <!-- ================================================== -->
+
+                    {% if usuario.is_active %}
+
+                        <div class="alert alert-light border">
+
+                            <p class="mb-2">
+
+                                El asesor
+
+                                <strong>
+                                    NO será eliminado.
+                                </strong>
+
+                            </p>
+
+                            <p class="mb-2">
+
+                                Sus clientes permanecerán registrados
+                                y conservarán su asignación actual.
+
+                            </p>
+
+                            <p class="mb-0">
+
+                                El asesor no podrá iniciar sesión
+                                mientras esté inactivo.
+
+                            </p>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="alert alert-light border">
+
+                            <p class="mb-0">
+
+                                El asesor podrá volver a iniciar sesión
+                                y trabajar con sus clientes.
+
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- ================================================== -->
+                    <!-- BOTONES -->
+                    <!-- ================================================== -->
+
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+
+
+                        <a
+                            href="{% url 'accounts:usuarios_lista' %}"
+                            class="btn btn-secondary"
+                        >
+
+                            <i class="bi bi-arrow-left"></i>
+
+                            Cancelar
+
+                        </a>
+
+
+                        <form method="POST">
+
+                            {% csrf_token %}
+
+
+                            {% if usuario.is_active %}
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-danger"
+                                >
+
+                                    <i class="bi bi-person-dash-fill"></i>
+
+                                    Sí, desactivar asesor
+
+                                </button>
+
+                            {% else %}
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-success"
+                                >
+
+                                    <i class="bi bi-person-check-fill"></i>
+
+                                    Sí, activar asesor
+
+                                </button>
+
+                            {% endif %}
+
+                        </form>
+
+                    </div>
+
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
-<script    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+
+<script
+    src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"
+></script>
+
+
 </body>
+
 </html>

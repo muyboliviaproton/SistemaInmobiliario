@@ -1,11 +1,8 @@
 from django import forms
+
 from .models import Seguimiento
-
-
 class SeguimientoForm(forms.ModelForm):
-
     class Meta:
-
         model = Seguimiento
 
         fields = [
@@ -25,55 +22,45 @@ class SeguimientoForm(forms.ModelForm):
 
             'tipo_contacto': forms.Select(
                 attrs={
-                    'class': 'form-select'
+                    'class': 'form-select',
                 }
             ),
-
-
             # ====================================================
             # RESULTADO
             # ====================================================
-
             'resultado': forms.Select(
                 attrs={
-                    'class': 'form-select'
+                    'class': 'form-select',
                 }
             ),
-
-
             # ====================================================
             # ESTADO COMERCIAL
             # ====================================================
-
             'estado_comercial': forms.Select(
                 attrs={
-                    'class': 'form-select'
+                    'class': 'form-select',
                 }
             ),
-
-
             # ====================================================
             # PRIORIDAD
             # ====================================================
-
             'prioridad': forms.Select(
                 attrs={
-                    'class': 'form-select'
+                    'class': 'form-select',
                 }
             ),
-
 
             # ====================================================
             # PRÓXIMA GESTIÓN
             # ====================================================
 
             'proxima_gestion': forms.DateTimeInput(
+                format='%Y-%m-%dT%H:%M',
                 attrs={
                     'class': 'form-control',
-                    'type': 'datetime-local'
+                    'type': 'datetime-local',
                 }
             ),
-
 
             # ====================================================
             # OBSERVACIONES
@@ -111,3 +98,57 @@ class SeguimientoForm(forms.ModelForm):
             'observaciones':
                 'Observaciones',
         }
+
+    # ============================================================
+    # CONFIGURACIÓN DEL FORMULARIO
+    # ============================================================
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        # --------------------------------------------------------
+        # Formato correcto para datetime-local
+        # --------------------------------------------------------
+
+        self.fields[
+            'proxima_gestion'
+        ].input_formats = [
+            '%Y-%m-%dT%H:%M'
+        ]
+
+        # --------------------------------------------------------
+        # Campos obligatorios
+        # --------------------------------------------------------
+
+        self.fields[
+            'tipo_contacto'
+        ].required = True
+
+        self.fields[
+            'resultado'
+        ].required = True
+
+        self.fields[
+            'estado_comercial'
+        ].required = True
+
+        self.fields[
+            'prioridad'
+        ].required = True
+
+        # --------------------------------------------------------
+        # Próxima gestión es opcional
+        # --------------------------------------------------------
+
+        self.fields[
+            'proxima_gestion'
+        ].required = False
+
+        # --------------------------------------------------------
+        # Observaciones opcionales
+        # --------------------------------------------------------
+
+        self.fields[
+            'observaciones'
+        ].required = False
